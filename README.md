@@ -1,2 +1,2 @@
 # W3TEG
-WWW TEG is a rewrite of TEG in HTML5 &amp; JS.
+Web based TEG using HTML5, CSS3 and JQuery
