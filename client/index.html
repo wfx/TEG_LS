@@ -2,9 +2,9 @@
 <head>
     <meta charset="UTF-8">
     <title>TEG</title>
-    <link rel="stylesheet" href="css/teg.css" type="text/css" media="all" />
-    <script src="lib/jquery-2.1.3.min.js"></script>
-    <script src="lib/snap.svg.js"></script>
+    <link rel="stylesheet" href="css/screen.css" type="text/css" media="all" />
+    <script src="js/jquery-2.1.3.min.js"></script>
+    <script src="js/snap.svg.js"></script>
 </head>
 <body>
     <!--
@@ -19,7 +19,12 @@
 var countries = new Array();
 
 var Country = function () {
+    /* 
+    STRING: id, name, owner, neighbour(countryID)
+    INT: amies
+    */
     this.id = '';
+    this.continent = '';
     this.name = '';
     this.owner = '';
     this.armies = 0;
@@ -28,12 +33,12 @@ var Country = function () {
 
     this.addNeighbour = function ( countryID ) {
         this.neighbour.push( countryID );
-        console.log( this.neighbour );
+        //console.log( this.neighbour );
     };
 
     this.isNeighbour = function ( countryID ) {
         var idx = this.neighbour.indexOf ( countryID );
-        console.log('neighbour:', idx);
+        //console.log('neighbour:', idx);
         return idx;
     };
 
@@ -63,7 +68,7 @@ var country_click_cb = function( el ) {
     console.log(el);
 }
 
-var map = Snap.load("themes/map_risk.svg", function ( f ) {
+var map = Snap.load("map/map_test.svg", function ( f ) {
     var p = f.selectAll ( 'path' );
     p.forEach(function ( el ) {
         var c = el.node.id.split('-');
@@ -71,12 +76,15 @@ var map = Snap.load("themes/map_risk.svg", function ( f ) {
             var idx = c[1]+c[2];
             countries[ idx ] = new Country();
             countries[ idx ].id = idx;
+            countries[ idx ].continent = c[1];
             countries[ idx ].name = c[2].replace('_', ' ');
             countries[ idx ].svg = el;
             countries[ idx ].svg.hover( country_hoverover_cb, country_hoverout_cb );
             countries[ idx ].svg.click( country_click_cb );
-            //countries.addNeighbour( 'Wien' );
-            //countries.isNeighbour( 'Wien' );
+            var d = el.select('desc').node.textContent.split('-');
+            d.forEach(function(n) {
+                countries[ idx ].addNeighbour(n);
+            });
         }
     });
     g.append( f );
