@@ -71,10 +71,12 @@ var state:
         "armies_place": ,
         "armies_move": ,
         "attac": ,
+        "attac_repeating": ,    // repating as possible
+        "attac_until": ,        // n armies left ot other dependings
         "attac_lose": ,
         "attac_won": ,
         "game_init": ,
-        "game_lose": ,  // A player lose but can view the gameplay
+        "game_lose": ,          // A player lose but can view the gameplay
         "game_won": ,
         "end_turn": ,
     };
