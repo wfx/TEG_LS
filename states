@@ -26,6 +26,7 @@
             "armies": the number of armies available for the player,
             "countries": an array with the id's of the countries owned by the player,
             "cards": an array with card ids
+            "type": Human, Bot_Easy, Bot_Hard, Bot_Extreme as int value (0..3).
         }
 * "continents":
     - An object containing (continentId, "continent" object) pairs.
@@ -62,10 +63,20 @@
 
 var state:
     {
-        "connected": false,
-        "choose_color": false,
-        "observe": false, -> A player lose but can view the gameplay
-        ...
+        "server_connect": ,
+        "server_disconnetc": ,
+        "choose_color": ,
+        "card_get": ,
+        "card_trade": ,
+        "armies_place": ,
+        "armies_move": ,
+        "attac": ,
+        "attac_lose": ,
+        "attac_won": ,
+        "game_init": ,
+        "game_lose": ,  // A player lose but can view the gameplay
+        "game_won": ,
+        "end_turn": ,
     };
 
 * "cards":
@@ -78,7 +89,7 @@ var state:
             "country": name of the country represented by the card,
             "type": ship, cannon, airplane or wildcard, Internal we should use numbers (0-3).
             "status": owned by an user or not, any other?
-             ^^^^^^ "owner": bot- player-name or none ?
+             ^^^^^^ "owner": player or none ?
             "used": counter for use 
             "selected": true || false
         }
