@@ -65,7 +65,10 @@ var country_hoverout_cb = function( el ) {
 }
 
 var country_click_cb = function( el ) {
-    console.log(el);
+    var c = this.node.id.split('-');
+    console.log("Continent: " + countries[ c[1]+c[2] ].continent);
+    console.log("Country: " + countries[ c[1]+c[2] ].name);
+    console.log("Neighbour: " + countries[ c[1]+c[2] ].neighbour);
 }
 
 var map = Snap.load("map/map_test.svg", function ( f ) {
