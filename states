@@ -75,6 +75,7 @@ var state:
         "attac_until": ,        // n armies left ot other dependings
         "attac_lose": ,
         "attac_won": ,
+        "dice_role": ,
         "game_init": ,
         "game_lose": ,          // A player lose but can view the gameplay
         "game_won": ,
