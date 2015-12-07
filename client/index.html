@@ -23,10 +23,10 @@ var Country = function () {
     STRING: id, name, owner, neighbour(countryID)
     INT: amies
     */
-    this.id = '';
-    this.continent = '';
-    this.name = '';
-    this.owner = '';
+    this.id = "";
+    this.continent = "";
+    this.name = "";
+    this.owner = "";
     this.armies = 0;
     this.svg = new Object();
     this.neighbour = new Array();
@@ -51,17 +51,27 @@ var hinfo = new Object();
 var country_hoverover_cb = function( el ) {
     var c = this.node.id.split('-');
     this.attr({'fill-opacity': 0.2});
-    hinfo = g.text( this.getBBox().cx-20, this.getBBox().cy-200, countries[ c[1]+c[2] ].name);
+    hinfo = g.text( 20, 40, "Continent: " + countries[ c[1]+c[2] ].continent.replace("_", " ") +
+                            " | " +
+                            "Country: " + countries[ c[1]+c[2] ].name +
+                            " | " +
+                            "Neighbour: " + countries[ c[1]+c[2] ].neighbour);
     hinfo.attr({
-        'font-weight': 'bold',
-        'font-size': 20,
-        'fill': '#fff'
+        "font-size": 12,
+        "fill": "#000"
+    });
+    cinfo = g.text( this.getBBox().cx-20, this.getBBox().cy-200, countries[ c[1]+c[2] ].name );
+    cinfo.attr({
+        "font-weight": "bold",
+        "font-size": 18,
+        "fill": "#fff"
     });
 }
 
 var country_hoverout_cb = function( el ) {
     this.attr({'fill-opacity': 1});
     hinfo.remove();
+    cinfo.remove();
 }
 
 var country_click_cb = function( el ) {
@@ -72,19 +82,19 @@ var country_click_cb = function( el ) {
 }
 
 var map = Snap.load("map/map_test.svg", function ( f ) {
-    var p = f.selectAll ( 'path' );
+    var p = f.selectAll ( "path" );
     p.forEach(function ( el ) {
-        var c = el.node.id.split('-');
-        if (c[0] === 'Country') {
+        var c = el.node.id.split("-");
+        if (c[0] === "Country") {
             var idx = c[1]+c[2];
             countries[ idx ] = new Country();
             countries[ idx ].id = idx;
             countries[ idx ].continent = c[1];
-            countries[ idx ].name = c[2].replace('_', ' ');
+            countries[ idx ].name = c[2].replace("_", " ");
             countries[ idx ].svg = el;
             countries[ idx ].svg.hover( country_hoverover_cb, country_hoverout_cb );
             countries[ idx ].svg.click( country_click_cb );
-            var d = el.select('desc').node.textContent.split('-');
+            var d = el.select("desc").node.textContent.split("-");
             d.forEach(function(n) {
                 countries[ idx ].addNeighbour(n);
             });
