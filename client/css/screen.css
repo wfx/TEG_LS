@@ -80,15 +80,13 @@ body {
     TODO: draw a mockup.
     ------------------------------------------------------------------- */
 #map {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
   height: 100%;
+  width: 100%;
 }
-
-/*  Style: View/Map
-    ------------------------------------------------------------------- */
-#map {
-  text-align: center;
+#map > svg {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  left: 0;
+  top: 0;
 }

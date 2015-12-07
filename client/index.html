@@ -3,8 +3,6 @@
     <meta charset="UTF-8">
     <title>TEG</title>
     <link rel="stylesheet" href="css/screen.css" type="text/css" media="all" />
-    <script src="js/jquery-2.1.3.min.js"></script>
-    <script src="js/snap.svg.js"></script>
 </head>
 <body>
     <!--
@@ -12,97 +10,22 @@
     http://snapsvg.io/docs/
     http://svg.dabbles.info/
     -->
+    <nav id="action" style="background-color: #fff;">
+        <ul>
+            <li id="armies_placing"></li>
+            <li id="country_attac"></li>
+            <li id="armies_moveing"></li>
+            <li id="end_turn"></li>
+            <li id="card_exchange"></li>
+            <li id="giveup"></li>
+        </ul>
+    </nav>
+    <object id="map"></object>
 </body>
 
-<script>
+<script src="js/jquery-2.1.3.min.js"></script>
+<script src="socket.io/socket.io.js"></script>
+<script src="js/snap.svg.js"></script>
+<script src="js/client.js"></script>
 
-var countries = new Array();
-
-var Country = function () {
-    /* 
-    STRING: id, name, owner, neighbour(countryID)
-    INT: amies
-    */
-    this.id = "";
-    this.continent = "";
-    this.name = "";
-    this.owner = "";
-    this.armies = 0;
-    this.svg = new Object();
-    this.neighbour = new Array();
-
-    this.addNeighbour = function ( countryID ) {
-        this.neighbour.push( countryID );
-        //console.log( this.neighbour );
-    };
-
-    this.isNeighbour = function ( countryID ) {
-        var idx = this.neighbour.indexOf ( countryID );
-        //console.log('neighbour:', idx);
-        return idx;
-    };
-
-}
-
-var g = Snap();
-g.attr({ viewBox: [0, 0, 900, 900] });
-var hinfo = new Object();
-
-var country_hoverover_cb = function( el ) {
-    var c = this.node.id.split('-');
-    this.attr({'fill-opacity': 0.2});
-    hinfo = g.text( 20, 40, "Continent: " + countries[ c[1]+c[2] ].continent.replace("_", " ") +
-                            " | " +
-                            "Country: " + countries[ c[1]+c[2] ].name +
-                            " | " +
-                            "Neighbour: " + countries[ c[1]+c[2] ].neighbour);
-    hinfo.attr({
-        "font-size": 12,
-        "fill": "#000"
-    });
-    cinfo = g.text( this.getBBox().cx-20, this.getBBox().cy-200, countries[ c[1]+c[2] ].name );
-    cinfo.attr({
-        "font-weight": "bold",
-        "font-size": 18,
-        "fill": "#fff"
-    });
-}
-
-var country_hoverout_cb = function( el ) {
-    this.attr({'fill-opacity': 1});
-    hinfo.remove();
-    cinfo.remove();
-}
-
-var country_click_cb = function( el ) {
-    var c = this.node.id.split('-');
-    console.log("Continent: " + countries[ c[1]+c[2] ].continent);
-    console.log("Country: " + countries[ c[1]+c[2] ].name);
-    console.log("Neighbour: " + countries[ c[1]+c[2] ].neighbour);
-}
-
-var map = Snap.load("map/map_test.svg", function ( f ) {
-    var p = f.selectAll ( "path" );
-    p.forEach(function ( el ) {
-        var c = el.node.id.split("-");
-        if (c[0] === "Country") {
-            var idx = c[1]+c[2];
-            countries[ idx ] = new Country();
-            countries[ idx ].id = idx;
-            countries[ idx ].continent = c[1];
-            countries[ idx ].name = c[2].replace("_", " ");
-            countries[ idx ].svg = el;
-            countries[ idx ].svg.hover( country_hoverover_cb, country_hoverout_cb );
-            countries[ idx ].svg.click( country_click_cb );
-            var d = el.select("desc").node.textContent.split("-");
-            d.forEach(function(n) {
-                countries[ idx ].addNeighbour(n);
-            });
-        }
-    });
-    g.append( f );
-
-} );
-
-</script>
 </html>
