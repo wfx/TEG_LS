@@ -1,4 +1,4 @@
-var map = Snap("#map");
+var board = Snap("#map");
 var io = new Socket( "http://127.0.0.1", "8080");
 var countries = new Array();
 
@@ -82,51 +82,51 @@ function Country () {
         return idx;
     };
 
-    this.hoverover_cb = function ( el ) {
+    this.hoverover_cb = function () {
         this.fillOpacity = this.attr("fill-opacity");
         this.attr({"fill-opacity": 0.2});
     }
 
-    this.hoverout_cb = function ( el ) {
+    this.hoverout_cb = function () {
         this.attr({"fill-opacity": this.fillOpacity});
     }
 
-    this.click_cb = function( el ) {
-        var c = this.node.id.split('-');
-        var idx = c[1]+c[2];
-        io.send( "msg", "Continent: " + countries[ idx ].continent +
-                        " | Country: " + countries[ idx ].name +
-                        " | Neighbour: " + countries[ idx ].neighbour
-        );
+    this.click_cb = function() {
+        io.send("msg", "Country click event: " + this.name);
     }
 
+    this.showInfo = function () {
+        io.send("msg",  "ID: " + this.id +
+                        " | Continent: " + this.continent +
+                        " | Country: " + this.name +
+                        " | Neighbour: " + this.neighbour
+        );
+    }
 }
 
 // Get map data...
 var foo = Snap.load("../map/map_test.svg", function ( f ) {
-    // id  : 0 = Country Artwork , 1 = Continent Name, 2 = Country Name
-    // desc: n Country name
-    var p = f.selectAll ( "path" );
-    p.forEach(function ( el ) {
-        var c = el.node.id.split("-");
-        if (c[0] === "Country") {
-            var idx = c[1]+c[2];
+    var g = f.selectAll ( "g" );
+    g.forEach(function ( el ) {
+        if (el.node.attributes["teg:continent"]) {
+            continent = el.node.attributes["teg:continent"].value;
+        }
+        if (el.node.attributes["teg:country"]) {
+            // idx = ContinentCountry with removed withespaces
+            idx = continent + el.node.attributes["teg:country"].value;
+            idx = idx.replace(/ /g,'');
             countries[ idx ] = new Country();
             countries[ idx ].id = idx;
-            countries[ idx ].continent = c[1];
-            countries[ idx ].name = c[2].replace("_", " ");
+            countries[ idx ].continent = continent;
+            countries[ idx ].name = el.node.attributes["teg:country"].value;
             countries[ idx ].artwork = el;
             countries[ idx ].artwork.hover( countries[ idx ].hoverover_cb, countries[ idx ].hoverout_cb );
             countries[ idx ].artwork.click( countries[ idx ].click_cb );
-            var d = el.select("desc").node.textContent.split("-");
-            d.forEach(function(n) {
-                countries[ idx ].addNeighbour(n);
+            data = el.node.attributes["teg:boundary"].value.split(",");
+            data.forEach(function( n ){
+                countries[ idx ].addNeighbour( n );
             });
         }
-        //if (c[0] === "Artwork") {
-            console.log("All: " + c);
-        //}
     });
-    map.append( f );
-
+    board.append( f );
 } );
