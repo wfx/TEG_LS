@@ -1078,7 +1078,8 @@
      id="Continent-South_America"
      inkscape:label="South_America"
      style="display:inline"
-     teg:continent="South America">
+     teg:continent="South America"
+     teg:quality="2">
     <g
        inkscape:groupmode="layer"
        id="Country-Argentina"
