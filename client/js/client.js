@@ -156,7 +156,7 @@ var foo = Snap.load("../map/map_test.svg", function ( f ) {
         cont[ contID ].sendDATA();
         io.send("msg", "=== Country data ===");
         cont[ contID ].country.forEach(function ( countryID ){
-            cnty[ cntyID ].sendDATA();
+            cnty[ countryID ].sendDATA();
         });
     }
 
