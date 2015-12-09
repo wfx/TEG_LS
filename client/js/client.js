@@ -127,6 +127,7 @@ var foo = Snap.load("../map/map_test.svg", function ( f ) {
             // contID = Continent name with removed withespaces
             contID = el.node.attributes["teg:continent"].value.replace(/ /g,'');
             cont[ contID ]  = new Continent();
+            cont[ contID ].id = contID;
             cont[ contID ].name = el.node.attributes["teg:continent"].value;
             cont[ contID ].quality = el.node.attributes["teg:quality"].value;
         }
@@ -147,16 +148,17 @@ var foo = Snap.load("../map/map_test.svg", function ( f ) {
                 cnty[ cntyID ].addBoundary( n );
             });
         }
-
-        // TEST: send to server
-        if (typeof contID != 'undefined') {
-            io.send("msg", "=== Continent data ===");
-            cont[ contID ].sendDATA();
-        }
-        if (typeof cntyID != 'undefined') {
-            io.send("msg", "=== Country data ===");
-            cnty[ cntyID ].sendDATA();
-        };
     });
+
+    // TEST: send to server
+    if (typeof contID != 'undefined') {
+        io.send("msg", "=== Continent data ===");
+        cont[ contID ].sendDATA();
+        io.send("msg", "=== Country data ===");
+        cont[ contID ].country.forEach(function ( countryID ){
+            cnty[ cntyID ].sendDATA();
+        });
+    }
+
     board.append( f );
 } );
