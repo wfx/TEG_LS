@@ -77,7 +77,7 @@ function Country () {
     this.id = "";
     this.name = "";
     this.continent = "";
-    this.owned = Boolean;
+    this.owned = false;
     this.armies = 0;
     this.artwork = "";
     this.boundary = new Array();
