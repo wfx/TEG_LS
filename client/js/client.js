@@ -1,6 +1,8 @@
 var board = Snap("#map");
 var io = new Socket( "http://127.0.0.1", "8080");
-var countries = new Array();
+var cont = new Array();  // Continent
+var cnty = new Array();  // Country
+
 
 
 // Socket...
@@ -46,7 +48,6 @@ function Player () {
 
 function Continent () {
     this.id = "";
-    this.continent = "";
     this.name = "";
     this.quality = 0;  // each continent hase it's own quality
     this.country = new Array();
@@ -60,26 +61,35 @@ function Continent () {
         return this.country.indexOf ( countryID );
     };
 
+    this.sendDATA = function () {
+        data = {
+            id: this.id,
+            name: this.name,
+            quality: this.quality,
+            country: this.country
+        }
+        io.send("msg", data);
+    }
 }
 
 
 function Country () {
     this.id = "";
-    this.continent = "";
     this.name = "";
+    this.continent = "";
     this.owned = Boolean;
     this.armies = 0;
     this.artwork = "";
-    this.neighbour = new Array();
-    this.fillOpacity = "";
+    this.boundary = new Array();
+    this.fillOpacity = "";  //  Store original fillOpacity -> hoveriver
 
-    this.addNeighbour = function ( countryID ) {
-        this.neighbour.push( countryID );
+    this.addBoundary = function ( countryID ) {
+        this.boundary.push( countryID );
     };
 
-    this.isNeighbour = function ( countryID ) {
-        var idx = this.neighbour.indexOf ( countryID );
-        return idx;
+    this.isBoundary = function ( countryID ) {
+        var id = this.boundary.indexOf ( countryID );
+        return id;
     };
 
     this.hoverover_cb = function () {
@@ -92,15 +102,20 @@ function Country () {
     }
 
     this.click_cb = function() {
+        // fix: why is this.name undefined?
         io.send("msg", "Country click event: " + this.name);
     }
 
-    this.showInfo = function () {
-        io.send("msg",  "ID: " + this.id +
-                        " | Continent: " + this.continent +
-                        " | Country: " + this.name +
-                        " | Neighbour: " + this.neighbour
-        );
+    this.sendDATA = function () {
+        data = {
+            id: this.id,
+            name: this.name,
+            continent: this.continent,
+            owned: this.owned,
+            armies: this.armies,
+            boundary: this.boundary
+        }
+        io.send("msg", data);
     }
 }
 
@@ -109,24 +124,39 @@ var foo = Snap.load("../map/map_test.svg", function ( f ) {
     var g = f.selectAll ( "g" );
     g.forEach(function ( el ) {
         if (el.node.attributes["teg:continent"]) {
-            continent = el.node.attributes["teg:continent"].value;
+            // contID = Continent name with removed withespaces
+            contID = el.node.attributes["teg:continent"].value.replace(/ /g,'');
+            cont[ contID ]  = new Continent();
+            cont[ contID ].name = el.node.attributes["teg:continent"].value;
+            cont[ contID ].quality = el.node.attributes["teg:quality"].value;
         }
         if (el.node.attributes["teg:country"]) {
-            // idx = ContinentCountry with removed withespaces
-            idx = continent + el.node.attributes["teg:country"].value;
-            idx = idx.replace(/ /g,'');
-            countries[ idx ] = new Country();
-            countries[ idx ].id = idx;
-            countries[ idx ].continent = continent;
-            countries[ idx ].name = el.node.attributes["teg:country"].value;
-            countries[ idx ].artwork = el;
-            countries[ idx ].artwork.hover( countries[ idx ].hoverover_cb, countries[ idx ].hoverout_cb );
-            countries[ idx ].artwork.click( countries[ idx ].click_cb );
+            // cntyID = Continent & Country name with removed withespaces
+            cntyID = cont + el.node.attributes["teg:country"].value;
+            cntyID = cntyID.replace(/ /g,'');
+            cnty[ cntyID ] = new Country();
+            cnty[ cntyID ].id = cntyID;
+            cnty[ cntyID ].continent = contID;
+            cont[ contID ].addCountry( cntyID );
+            cnty[ cntyID ].name = el.node.attributes["teg:country"].value;
+            cnty[ cntyID ].artwork = el;
+            cnty[ cntyID ].artwork.hover( cnty[ cntyID ].hoverover_cb, cnty[ cntyID ].hoverout_cb );
+            cnty[ cntyID ].artwork.click( cnty[ cntyID ].click_cb );
             data = el.node.attributes["teg:boundary"].value.split(",");
             data.forEach(function( n ){
-                countries[ idx ].addNeighbour( n );
+                cnty[ cntyID ].addBoundary( n );
             });
         }
+
+        // TEST: send to server
+        if (typeof contID != 'undefined') {
+            io.send("msg", "=== Continent data ===");
+            cont[ contID ].sendDATA();
+        }
+        if (typeof cntyID != 'undefined') {
+            io.send("msg", "=== Country data ===");
+            cnty[ cntyID ].sendDATA();
+        };
     });
     board.append( f );
 } );
