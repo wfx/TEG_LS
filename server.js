@@ -5,6 +5,13 @@ var express = require('express')
     , io = require('socket.io').listen(server)
     , conf = require('./config.json');
 
+// https://nodejs.org/api/readline.html
+var readline = require('readline');
+var rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout
+})
+
 // Webserver
 server.listen(conf.port);
 app.use(express.static(__dirname + '/client'));
@@ -23,7 +30,26 @@ io.on('connection', function(client) {
 
     client.on('join', function(data) {
         console.log(data);
-        client.emit('msg', 'SERVER: Welcome');
+        client.emit('msg', 'SERVER: Hi 5 client');
+        rl.setPrompt('cmd> ');
+        rl.prompt();
+        rl.on('line', function(line) {
+            switch(line.trim()) {
+                case "help":
+                    console.log("quit : for exit");
+                    break;
+                case "quit":
+                    console.log("Servus :)");
+                    process.exit(0);
+                default:
+                    console.log("command " + line.trim() + " unknow");
+                    break;
+            }
+            rl.prompt();
+        }).on('close', function() {  // ctr+c
+            console.log("Servus :)");
+            process.exit(0);
+        });
     });
 
     client.on('msg', function(data) {
