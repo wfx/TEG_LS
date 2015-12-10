@@ -16,7 +16,21 @@ function Socket ( server, port ) {
     });
 
     socket.on("msg", function(data) {
-        console.log(data);
+        switch(data) {
+            case "cinfo":
+                if (typeof contID != 'undefined') {
+                    io.send("msg", "=== Continent data ===");
+                    cont[ contID ].sendDATA();
+                    io.send("msg", "=== Country data ===");
+                    cont[ contID ].country.forEach(function ( countryID ){
+                        cnty[ countryID ].sendDATA();
+                    });
+                }
+                break;
+            default:
+                self.send("unknow query");
+                break;
+        }
     });
 
     self.send = function ( type, data ) {
@@ -165,16 +179,6 @@ Snap.load( boardName, function ( f ) {
             });
         }
     });
-
-    // TEST: send to server
-    if (typeof contID != 'undefined') {
-        io.send("msg", "=== Continent data ===");
-        cont[ contID ].sendDATA();
-        io.send("msg", "=== Country data ===");
-        cont[ contID ].country.forEach(function ( countryID ){
-            cnty[ countryID ].sendDATA();
-        });
-    }
 
     board.append( f );
 } );
