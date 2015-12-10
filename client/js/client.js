@@ -24,49 +24,51 @@ function Socket ( server, port ) {
 }
 
 function Player () {
-    this.id = 0;
-    this.name = "";
-    this.human = Boolean;
-    this.country = new Array();
-    this.cards = new Object();
+    var self = this;
+    self.id = 0;
+    self.name = "";
+    self.human = Boolean;
+    self.country = new Array();
+    self.cards = new Object();
 
-    this.addCountry = function ( countryID ) {
-        this.country.push( countryID );
-        io.send( "msg", "add countryID " + countryID + "to player / id " + this.name + "/" + this.id );
+    self.addCountry = function ( countryID ) {
+        self.country.push( countryID );
+        io.send( "msg", "add countryID " + countryID + "to player / id " + self.name + "/" + self.id );
     };
 
     this.rmCountry = function ( countryID ) {
-        if ( this.country[ countryID ].owned ) {
+        if ( self.country[ countryID ].owned ) {
             var idx = array.indexOf(countryID);
             if ( idx != -1) {
-                this.country.splice(idx, 1);
+                self.country.splice(idx, 1);
             }
-            io.send( "msg", "rm countryID " + countryID + "from player / id " + this.name + "/" + this.id );
+            io.send( "msg", "rm countryID " + countryID + "from player / id " + self.name + "/" + self.id );
         }
     };
 }
 
 function Continent () {
-    this.id = "";
-    this.name = "";
-    this.quality = 0;  // each continent hase it's own quality
-    this.country = new Array();
-    this.artwork = new Object();
+    var self = this;
+    self.id = "";
+    self.name = "";
+    self.quality = 0;  // each continent hase it's own quality
+    self.country = new Array();
+    self.artwork = new Object();
 
-    this.addCountry = function ( countryID ) {
-        this.country.push( countryID );
+    self.addCountry = function ( countryID ) {
+        self.country.push( countryID );
     };
 
-    this.isCountry = function ( countryID ) {
-        return this.country.indexOf ( countryID );
+    self.isCountry = function ( countryID ) {
+        return self.country.indexOf ( countryID );
     };
 
-    this.sendDATA = function () {
+    self.sendDATA = function () {
         data = {
-            id: this.id,
-            name: this.name,
-            quality: this.quality,
-            country: this.country
+            id: self.id,
+            name: self.name,
+            quality: self.quality,
+            country: self.country
         }
         io.send("msg", data);
     }
@@ -74,46 +76,48 @@ function Continent () {
 
 
 function Country () {
-    this.id = "";
-    this.name = "";
-    this.continent = "";
-    this.owned = false;
-    this.armies = 0;
-    this.artwork = "";
-    this.boundary = new Array();
-    this.fillOpacity = "";  //  Store original fillOpacity -> hoveriver
+    var self = this;
+    self.id = "";
+    self.name = "";
+    self.continent = "";
+    self.owned = false;
+    self.armies = 0;
+    self.artwork = "";
+    self.boundary = new Array();
+    self.fillOpacity = "";  //  Store original fillOpacity -> hoveriver
 
-    this.addBoundary = function ( countryID ) {
-        this.boundary.push( countryID );
+    self.addBoundary = function ( countryID ) {
+        self.boundary.push( countryID );
     };
 
-    this.isBoundary = function ( countryID ) {
-        var id = this.boundary.indexOf ( countryID );
+    self.isBoundary = function ( countryID ) {
+        var id = self.boundary.indexOf ( countryID );
         return id;
     };
 
-    this.hoverover_cb = function () {
-        this.fillOpacity = this.attr("fill-opacity");
-        this.attr({"fill-opacity": 0.2});
+    self.hoverover_cb = function ( el ) {
+        self.fillOpacity = self.artwork.attr("fill-opacity");
+        self.artwork.attr({"fill-opacity": 0.2});
+        console.log(self.artwork.attr("fill-opacity"));
     }
 
-    this.hoverout_cb = function () {
-        this.attr({"fill-opacity": this.fillOpacity});
+    self.hoverout_cb = function ( el ) {
+        self.artwork.attr({"fill-opacity": self.fillOpacity});
+        console.log(self.artwork.attr("fill-opacity"));
     }
 
-    this.click_cb = function() {
-        // fix: why is this.name undefined?
-        io.send("msg", "Country click event: " + this.name);
+    self.click_cb = function() {
+        io.send("msg", "Country click event: " + self.name);
     }
 
-    this.sendDATA = function () {
+    self.sendDATA = function () {
         data = {
-            id: this.id,
-            name: this.name,
-            continent: this.continent,
-            owned: this.owned,
-            armies: this.armies,
-            boundary: this.boundary
+            id: self.id,
+            name: self.name,
+            continent: self.continent,
+            owned: self.owned,
+            armies: self.armies,
+            boundary: self.boundary
         }
         io.send("msg", data);
     }
