@@ -1,4 +1,5 @@
-var board = Snap("#map");
+var board = Snap("svg#map");
+var boardName = "../map/map_test.svg";
 var io = new Socket( "http://127.0.0.1", "8080");
 var cont = new Array();  // Continent
 var cnty = new Array();  // Country
@@ -7,18 +8,18 @@ var cnty = new Array();  // Country
 
 // Socket...
 function Socket ( server, port ) {
+    var self = this;
+    var socket = io.connect( server + ":" + port );
 
-    var socket = io.connect(server + ":" + port);
-
-    socket.on('connect', function(data) {
+    socket.on("connect", function( data ) {
         socket.emit('join', 'CLIENT: Join server');
     });
 
-    socket.on('msg', function(data) {
+    socket.on("msg", function(data) {
         console.log(data);
     });
 
-    this.send = function ( type, data ) {
+    self.send = function ( type, data ) {
         socket.emit(type, data);
     };
 }
@@ -27,16 +28,16 @@ function Player () {
     var self = this;
     self.id = 0;
     self.name = "";
-    self.human = Boolean;
+    self.human = false;
     self.country = new Array();
-    self.cards = new Object();
+    self.cards = new Array();
 
     self.addCountry = function ( countryID ) {
         self.country.push( countryID );
         io.send( "msg", "add countryID " + countryID + "to player / id " + self.name + "/" + self.id );
     };
 
-    this.rmCountry = function ( countryID ) {
+    self.rmCountry = function ( countryID ) {
         if ( self.country[ countryID ].owned ) {
             var idx = array.indexOf(countryID);
             if ( idx != -1) {
@@ -82,9 +83,11 @@ function Country () {
     self.continent = "";
     self.owned = false;
     self.armies = 0;
-    self.artwork = "";
+    self.artwork = new Object();
     self.boundary = new Array();
+
     self.fillOpacity = "";  //  Store original fillOpacity -> hoveriver
+    self.cntyInfo = new Object();  // infobox (name, armies)
 
     self.addBoundary = function ( countryID ) {
         self.boundary.push( countryID );
@@ -96,14 +99,23 @@ function Country () {
     };
 
     self.hoverover_cb = function ( el ) {
+        // FIXME: opacity wont work becouse i have to select the path of the group (g)
+        // FIXME: .cx and .cy is wrong looks like the same as above.
         self.fillOpacity = self.artwork.attr("fill-opacity");
         self.artwork.attr({"fill-opacity": 0.2});
-        console.log(self.artwork.attr("fill-opacity"));
+        x = self.artwork.getBBox().cx;  // cx is center of x
+        y = self.artwork.getBBox().cy;  // cy is center of y
+        self.cntyInfo = board.text( x, y, self.name );
+        self.cntyInfo.attr({
+            'font-weight': 'bold',
+            'font-size': 16,
+            'fill': '#fff'
+        });
     }
 
     self.hoverout_cb = function ( el ) {
         self.artwork.attr({"fill-opacity": self.fillOpacity});
-        console.log(self.artwork.attr("fill-opacity"));
+        self.cntyInfo.remove();
     }
 
     self.click_cb = function() {
@@ -124,7 +136,7 @@ function Country () {
 }
 
 // Get map data...
-var foo = Snap.load("../map/map_test.svg", function ( f ) {
+Snap.load( boardName, function ( f ) {
     var g = f.selectAll ( "g" );
     g.forEach(function ( el ) {
         if (el.node.attributes["teg:continent"]) {

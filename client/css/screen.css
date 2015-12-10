@@ -61,7 +61,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   font-style: normal;
 }
 body {
-  background-color: #274253;
+  background-color: #333;
   color: #00000b;
   font-family: 'Roboto';
   font-weight: 100;
@@ -79,14 +79,11 @@ body {
 /*  Layout:
     TODO: draw a mockup.
     ------------------------------------------------------------------- */
-#map {
-  height: 100%;
+svg#map {
   width: 100%;
+  height: 100%;
 }
-#map > svg {
-  position: absolute;
-  height: 100%;
+svg#map svg {
   width: 100%;
-  left: 0;
-  top: 0;
+  height: 100%;
 }

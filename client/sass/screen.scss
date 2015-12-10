@@ -16,7 +16,7 @@
 }
 
 body {
-    background-color: $col_body_bg;
+  background-color: $col_body_bg;
 	color: $col_text;
 	font-family: 'Roboto';
 	font-weight: 100;
@@ -34,14 +34,11 @@ body {
 /*  Layout:
     TODO: draw a mockup.
     ------------------------------------------------------------------- */
-#map {
-    height: 100%;
+svg#map {
+  width: 100%;
+  height: 100%;
+  svg {
     width: 100%;
-    >svg {
-        position: absolute;
-        height: 100%;
-        width: 100%;
-        left: 0;
-        top: 0;
-    }
+    height: 100%;
+  }
 }
