@@ -12,7 +12,7 @@ function Socket ( server, port ) {
     var socket = io.connect( server + ":" + port );
 
     socket.on("connect", function( data ) {
-        socket.emit('join', 'CLIENT: Join server');
+        socket.emit('join', 'CLIENT: Hi 5 server');
     });
 
     socket.on("msg", function(data) {
@@ -99,8 +99,8 @@ function Country () {
     };
 
     self.hoverover_cb = function ( el ) {
-        // FIXME: opacity wont work becouse i have to select the path of the group (g)
-        // FIXME: .cx and .cy is wrong looks like the same as above.
+        // FIXME: opacity wont work becouse i have to select the path of the group (g)?
+        // FIXME: .cx and .cy is wrong looks like the same as above?
         self.fillOpacity = self.artwork.attr("fill-opacity");
         self.artwork.attr({"fill-opacity": 0.2});
         x = self.artwork.getBBox().cx;  // cx is center of x
