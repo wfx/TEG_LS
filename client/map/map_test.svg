@@ -264,7 +264,8 @@
          id="Country-South_America-Argentina"
          inkscape:connector-curvature="0"
          sodipodi:nodetypes="cccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
-         inkscape:label="Country-South_America-Argentina" />
+         inkscape:label="Country-South_America-Argentina"
+         teg:hover="'fill-opacity', '0.2'"/>
     </g>
     <g
        inkscape:groupmode="layer"
@@ -280,7 +281,8 @@
          id="Country-South_America-Brazil"
          inkscape:connector-curvature="0"
          sodipodi:nodetypes="ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
-         inkscape:label="Country-South_America-Brazil" />
+         inkscape:label="Country-South_America-Brazil"
+         teg:hover="'fill-opacity', '0.2'"/>
     </g>
     <g
        inkscape:groupmode="layer"
@@ -296,7 +298,8 @@
          id="Country-South_America-Peru"
          inkscape:connector-curvature="0"
          sodipodi:nodetypes="ccccccccccccccccsccccccccccccccccccccccccccccccc"
-         inkscape:label="Country-South_America-Peru" />
+         inkscape:label="Country-South_America-Peru"
+         teg:hover="'fill-opacity', '0.2'"/>
     </g>
     <g
        id="layer1"
@@ -312,7 +315,8 @@
          id="Country-South_America-Venezuela"
          inkscape:connector-curvature="0"
          sodipodi:nodetypes="cccccccccccccccccccccccccccccccccccccccccc"
-         inkscape:label="Country-South_America-Venezuela" />
+         inkscape:label="Country-South_America-Venezuela"
+         teg:hover="'fill-opacity', '0.2'" />
     </g>
   </g>
 </svg>

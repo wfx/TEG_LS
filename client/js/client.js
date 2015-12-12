@@ -98,10 +98,11 @@ function Country () {
     self.owned = false;
     self.armies = 0;
     self.artwork = new Object();
+    self.attrName = "";
+    self.attrValue = "";
+    self.attrOldValue = "";
     self.boundary = new Array();
-
-    self.fillOpacity = "";  //  Store original fillOpacity -> hoveriver
-    self.cntyInfo = new Object();  // infobox (name, armies)
+    self.cntyInfo = new Object();  // infobox (name, armies, etc.)
 
     self.addBoundary = function ( countryID ) {
         self.boundary.push( countryID );
@@ -112,27 +113,34 @@ function Country () {
         return id;
     };
 
-    self.hoverover_cb = function ( el ) {
-        // FIXME: opacity wont work becouse i have to select the path of the group (g)?
-        // FIXME: .cx and .cy is wrong looks like the same as above?
-        self.fillOpacity = self.artwork.attr("fill-opacity");
-        self.artwork.attr({"fill-opacity": 0.2});
-        x = self.artwork.getBBox().cx;  // cx is center of x
-        y = self.artwork.getBBox().cy;  // cy is center of y
-        self.cntyInfo = board.text( x, y, self.name );
-        self.cntyInfo.attr({
-            'font-weight': 'bold',
-            'font-size': 16,
-            'fill': '#fff'
-        });
+    self.effect = function ( data ) {
+        self.attrName = data[0];
+        self.attrValue = data[1];
+    };
+
+    self.hoverover_cb = function () {
+      // TODO: use a css class name for this?
+      json = {};
+      json[self.attrName] = self.attrValue;
+      self.artwork.attr(json);
+      x = self.artwork.getBBox().cx;
+      y = self.artwork.getBBox().cy;
+      self.cntyInfo = board.text( x, y, self.name );
+      self.cntyInfo.attr({
+          'font-weight': 'bold',
+          'font-size': 16,
+          'fill': '#fff'
+      });
     }
 
-    self.hoverout_cb = function ( el ) {
-        self.artwork.attr({"fill-opacity": self.fillOpacity});
-        self.cntyInfo.remove();
+    self.hoverout_cb = function () {
+      json = {};
+      json[self.attrName] = self.attrOldValue;
+      self.artwork.attr(json);
+      self.cntyInfo.remove();
     }
 
-    self.click_cb = function() {
+    self.click_cb = function () {
         io.send("msg", "Country click event: " + self.name);
     }
 
@@ -170,12 +178,18 @@ Snap.load( boardName, function ( f ) {
             cnty[ cntyID ].continent = contID;
             cont[ contID ].addCountry( cntyID );
             cnty[ cntyID ].name = el.node.attributes["teg:country"].value;
-            cnty[ cntyID ].artwork = el;
-            cnty[ cntyID ].artwork.hover( cnty[ cntyID ].hoverover_cb, cnty[ cntyID ].hoverout_cb );
-            cnty[ cntyID ].artwork.click( cnty[ cntyID ].click_cb );
-            data = el.node.attributes["teg:boundary"].value.split(",");
-            data.forEach(function( n ){
+            boundary = el.node.attributes["teg:boundary"].value.split(",");
+            boundary.forEach(function( n ){
                 cnty[ cntyID ].addBoundary( n );
+            });
+            aw = el.selectAll("path");
+            aw.forEach(function ( el) {
+              if (el.node.attributes["teg:hover"]) {
+                cnty[ cntyID ].effect( el.node.attributes["teg:hover"].value.split(",") );
+                cnty[ cntyID ].artwork = el;
+                cnty[ cntyID ].artwork.hover( cnty[ cntyID ].hoverover_cb, cnty[ cntyID ].hoverout_cb );
+                cnty[ cntyID ].artwork.click( cnty[ cntyID ].click_cb );
+              }
             });
         }
     });
