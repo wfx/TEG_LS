@@ -51,13 +51,13 @@
             "neighbours": an array with the neighbourgs countries,
             "continent": Identifier of the continent to which the country belongs
         }
-* "roundNumber": 
+* "roundNumber":
     - Number of round, starting from 0.
-* "round": 
+* "round":
     - An array of player ids, representing the order of the players in the round.
-* "current": 
+* "current":
     The index of the player who is playing.
-* "phase": 
+* "phase":
     - 0 if it's placing armies phase.
     - 1 if it's attack phase.
 
@@ -84,7 +84,7 @@ var state:
 
 * "cards":
     - An object containing (cardId, "card" object) pairs.
-    
+
 * "card":
     - An object with the following shape:
         {
@@ -93,6 +93,6 @@ var state:
             "type": ship, cannon, airplane or wildcard, Internal we should use numbers (0-3).
             "status": owned by an user or not, any other?
              ^^^^^^ "owner": player or none ?
-            "used": counter for use 
+            "used": counter for use
             "selected": true || false
         }
