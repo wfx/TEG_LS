@@ -10,7 +10,7 @@ var readline = require("readline");
 var rl = readline.createInterface({
     input: process.stdin,
     output: process.stdout
-})
+});
 
 // Webserver
 server.listen(conf.port);
