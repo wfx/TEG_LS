@@ -17,20 +17,34 @@ function Socket( server, port ) {
 
   // state
   socket.on( "state", function( data ) {
-    var done = "state_failed";
+    var done = "failed";
     switch ( data.state ) {
       // answer with state name or state_failed.
       case "place":
-        if ( cnty[ data.cntyID ].setArmies( data.chipAmount ) ) {
-          // board.chipPlace( data.cntyID, data.amount );
+        if ( cnty[ data.cntyID ].armiesPlace( data.chipAmount ) ) {
+          // board.chipPlace( data.cntyID, data.chipAmount );
           done = "place";
+        }
+        break;
+      case "remove":
+        if ( cnty[ data.cntyID ].armiesRemove( data.chipAmount ) ) {
+          // board.chipRemove( data.cntyID, data.chipAmount );
+          done = "remove";
+        }
+        break;
+      case "move":
+        if ( cnty[ data.cntyIDR ].armiesRemove( data.chipAmount ) ) {
+          // board.chipMove( data.cntyIDR, data.cntyIDP, data.chipAmount );
+          if ( cnty[ data.cntyIDP ].armiesPlace( data.chipAmount ) ) {
+            done = "move";
+          }
         }
         break;
       default:
         self.send( "msg", "i get a unknow state?" );
         break;
     }
-    self.send( "msg", done );
+    self.send( "state", done );
   } );
 
   // commands mostly for debug/testing
