@@ -10,58 +10,40 @@ var boardName = "../map/map_test.svg";
 var cont = []; // Continent
 var cnty = []; // Country
 
-function Chip() {
+function Animate() {
   var self = this;
-
-  self.Place = function( data ) {
+  self.place = function( data ) {
     /*
-    @data json
+      @data: json
       cntyID: string,
       chipAmount: numeric
     */
-    cnty[ data.cntyID ].armies += data.chipAmount
-    console.log( "placed at: " +
-      cnty[ data.cntyID ].id + ", " +
-      cnty[ data.cntyID ].armies + " armies" );
   }
 
-  self.Remove = function( data ) {
+  self.remove = function( data ) {
     /*
-    @data: json
+      @data: json
       cntyID: string,
       chipAmount: numeric
     */
-    cnty[ data.cntyID ].armies -= data.chipAmount
-    console.log( "placed at: " +
-      cnty[ data.cntyID ].id + ", " +
-      cnty[ data.cntyID ].armies + " armies" );
   }
 
-  self.Move = function( data ) {
+  self.move = function( data ) {
     /*
-    @data: json
-      cntyID: string, // from
+      @data: json
+      cntyIDR: string, // Remove from
+      cntyIDP: string  // Place to
       chipAmount: numeric
-      cntyID: string  // to
     */
-    cnty[ data.cntyID ].armies -= data.chipAmount
-    console.log( "placed at: " +
-      cnty[ data.cntyID ].id + ", " +
-      cnty[ data.cntyID ].armies + " armies" );
-    cnty[ data.cntyID ].armies += data.chipAmount
-    console.log( "placed at: " +
-      cnty[ data.cntyID ].id + ", " +
-      cnty[ data.cntyID ].armies + " armies" );
   }
-}
 
-function Dice( data ) {
-  var self = this;
-  /*
-  @data: json
-    diceAttac[n]: numeric // n depend on rules -> 0 to 2
-    diceDefend[n]: numerc // n depend on rules -> 0 to 1
-  */
+  self.dice = function( data ) {
+    /*
+      @data: json
+      diceAttac[n]: numeric // n depend on rules -> 0 to 2
+      diceDefend[n]: numerc // n depend on rules -> 0 to 1
+    */
+  }
 }
 
 // Get all from the board data...
@@ -102,5 +84,5 @@ Snap.load( boardName, function( f ) {
   } );
   board.append( f );
 } );
-// conect to server and listen for event's.
+// connect to server and listen for event's.
 var io = new Socket( "http://127.0.0.1", "8080" );
