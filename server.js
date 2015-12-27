@@ -99,14 +99,14 @@ io.on( 'connection', function( client ) {
 
   // Client send event's (like a click on country)
   client.on( "event", function( data ) {
-    console.log( "client send event:\n" + JSON.stringify(data) );
+    console.log( "client send event:\n" + JSON.stringify( data ) );
   } );
   // Client answer on a server state command.
   client.on( "state", function( data ) {
-    console.log( "client send state:\n" + JSON.stringify(data) );
+    console.log( "client send state:\n" + JSON.stringify( data ) );
   } );
   // For all other
   client.on( "msg", function( data ) {
-    console.log( "client send msg:\n" + JSON.stringify(data) );
+    console.log( "client send msg:\n" + JSON.stringify( data ) );
   } );
 } );
