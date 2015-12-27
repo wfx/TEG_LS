@@ -1,7 +1,23 @@
 {
     "name": "teg",
-    "description": "teg js server",
-    "author": "wolfgang.morawetz@gmail.com",
+    "version": "0.0.1",
+    "description": "Rewrite for the web",
+    "main": "server.js",
+    "scripts": {
+      "start": "node server.js"
+    },
+    "repository": {
+      "type": "git",
+      "url": "git+https://github.com/wfx/W3TEG.git"
+    },
+    "bugs": {
+      "url": "https://github.com/wfx/W3TEG/issues"
+    },
+    "author": {
+        "name": "Wolfgang Morawetz",
+        "email": "wolfgang.morawetz@gmail.com",
+        "url": "https://github.com/wfx/"
+    },
     "dependencies" : {
         "express": "3.x",
         "socket.io": "*"
