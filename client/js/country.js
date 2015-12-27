@@ -91,7 +91,8 @@ function Country() {
       continent: self.continent,
       owned: self.owned,
       armies: self.armies,
-      boundary: self.boundary
+      boundary: self.boundary,
+      selcet: self._select
     }
     return data;
   }
