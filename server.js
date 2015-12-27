@@ -48,24 +48,41 @@ io.on( 'connection', function( client ) {
           console.log( "Servus :)" );
           process.exit( 0 );
         case "getcont":
-          var data = {
+          data = {
             cmd: cmd[ 0 ],
             contID: cmd[ 1 ]
           }
           client.emit( "cmd", data )
           break;
         case "getcnty":
-          var data = {
+          data = {
             cmd: cmd[ 0 ],
             cntyID: cmd[ 1 ]
           }
           client.emit( "cmd", data )
           break;
         case "place":
-          var data = {
+          data = {
             state: "place",
             cntyID: cmd[ 1 ],
             chipAmount: cmd[ 2 ]
+          };
+          client.emit( "state", data )
+          break;
+        case "remove":
+          data = {
+            state: "remove",
+            cntyID: cmd[ 1 ],
+            chipAmount: cmd[ 2 ]
+          };
+          client.emit( "state", data )
+          break;
+        case "move":
+          data = {
+            state: "move",
+            cntyIDR: cmd[ 1 ],
+            cntyIDP: cmd[ 2 ],
+            chipAmount: cmd[ 3 ]
           };
           client.emit( "state", data )
           break;
@@ -80,10 +97,16 @@ io.on( 'connection', function( client ) {
     } );
   } );
 
-  client.on( "msg", function( data ) {
-    console.log( "msg: " + JSON.stringify(data) );
-  } );
+  // Client send event's (like a click on country)
   client.on( "event", function( data ) {
-    console.log( "event: " + JSON.stringify(data) );
-  } )
+    console.log( "client send event:\n" + JSON.stringify(data) );
+  } );
+  // Client answer on a server state command.
+  client.on( "state", function( data ) {
+    console.log( "client send state:\n" + JSON.stringify(data) );
+  } );
+  // For all other
+  client.on( "msg", function( data ) {
+    console.log( "client send msg:\n" + JSON.stringify(data) );
+  } );
 } );
