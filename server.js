@@ -81,7 +81,7 @@ io.on( 'connection', function( client ) {
   } );
 
   client.on( "msg", function( data ) {
-    console.log( "msg: " + data );
+    console.log( "msg: " + JSON.stringify(data) );
   } );
   client.on( "event", function( data ) {
     console.log( "event: " + JSON.stringify(data) );
