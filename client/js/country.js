@@ -52,12 +52,12 @@ function Country() {
   self.onCick = function() {
     self.swichSelect();
     data = {
-            event: "click",
-            contID: self.continent,
-            cntyID: self.id,
-            armies: self.armies,
-            select: self.select
-          };
+      event: "click",
+      contID: self.continent,
+      cntyID: self.id,
+      armies: self.armies,
+      select: self.select
+    };
     io.send( "event", data );
   }
 
@@ -79,9 +79,20 @@ function Country() {
     return self._select;
   }
 
-  self.setArmies = function( n ) {
-    // n can be negative or positive
-    return self.armies += Number( n );
+  self.armiesPlace = function( n ) {
+    n = Number( n );
+    self.armies += n;
+    return true;
+  }
+
+  self.armiesRemove = function( n ) {
+    n = Number( n );
+    if ( self.armies > n ) {
+      self.armies -= n;
+      return true;
+    } else {
+      return false;
+    }
   }
 
   self.getDATA = function() {
