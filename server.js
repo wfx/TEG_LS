@@ -38,7 +38,7 @@ io.on( 'connection', function( client ) {
         case "help":
           console.log(
             "help : show this \n" +
-            "quit : for exit\n" +
+            "quit : will kill youre kitty\n" +
             "getcont: get continent data; ID(Name) or all \n" +
             "getcnty: get country data; ID(Name) or all \n" +
             "place: place amries; cntyID amount"
@@ -64,8 +64,8 @@ io.on( 'connection', function( client ) {
         case "place":
           var data = {
             state: "place",
-            cntyID: cmd[1],
-            chipAmount: cmd[2]
+            cntyID: cmd[ 1 ],
+            chipAmount: cmd[ 2 ]
           };
           client.emit( "state", data )
           break;
@@ -81,7 +81,9 @@ io.on( 'connection', function( client ) {
   } );
 
   client.on( "msg", function( data ) {
-    console.log( data );
+    console.log( "msg: " + data );
   } );
-
+  client.on( "event", function( data ) {
+    console.log( "event: " + JSON.stringify(data) );
+  } )
 } );
