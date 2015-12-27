@@ -1,62 +1,87 @@
-
-var express = require("express")
-    , app = express()
-    , server = require("http").createServer(app)
-    , io = require("socket.io").listen(server)
-    , conf = require("./config.json");
+var express = require( "express" ),
+  app = express(),
+  server = require( "http" ).createServer( app ),
+  io = require( "socket.io" ).listen( server ),
+  conf = require( "./config.json" );
 
 // https://nodejs.org/api/readline.html
-var readline = require("readline");
-var rl = readline.createInterface({
-    input: process.stdin,
-    output: process.stdout
-});
+var readline = require( "readline" );
+var rl = readline.createInterface( {
+  input: process.stdin,
+  output: process.stdout
+} );
 
 // Webserver
-server.listen(conf.port);
-app.use(express.static(__dirname + "/client"));
+server.listen( conf.port );
+app.use( express.static( __dirname + "/client" ) );
 
 // Path only
-app.get('/', function (req, res) {
-    res.sendfile(__dirname + "/client/index.html");
-});
+app.get( '/', function( req, res ) {
+  res.sendfile( __dirname + "/client/index.html" );
+} );
 
 // Webserver info
-console.log("Server run at http://127.0.0.1:" + conf.port + "/");
+console.log( "Server run at http://127.0.0.1:" + conf.port + "/" );
 
 // Message
-io.on('connection', function(client) {
-    console.log("Client is connected...");
+io.on( 'connection', function( client ) {
+  console.log( "Client is connected..." );
 
-    client.on("join", function(data) {
-        console.log(data);
-        client.emit("msg", "SERVER: Hi 5 client");
-        rl.setPrompt("cmd> ");
-        rl.prompt();
-        rl.on('line', function(line) {
-            switch(line.trim()) {
-                case "help":
-                    console.log("quit : for exit\ncinfo: get all country data");
-                    break;
-                case "quit":
-                    console.log("Servus :)");
-                    process.exit(0);
-                case "cinfo":
-                    client.emit("msg", "cinfo")
-                    break;
-                default:
-                    console.log("command " + line.trim() + " unknow");
-                    break;
-            }
-            rl.prompt();
-        }).on("close", function() {  // ctr+c
-            console.log("Servus :)");
-            process.exit(0);
-        });
-    });
+  client.on( "join", function( data ) {
+    console.log( data );
+    client.emit( "msg", "SERVER: Hi 5 client" );
+    rl.setPrompt( "cmd> " );
+    rl.prompt();
+    rl.on( 'line', function( line ) {
+      cmd = line.split( " " );
+      switch ( cmd[ 0 ] ) {
+        case "help":
+          console.log(
+            "help : show this \n" +
+            "quit : for exit\n" +
+            "getcont: get continent data; ID(Name) or all \n" +
+            "getcnty: get country data; ID(Name) or all \n" +
+            "place: place amries; cntyID amount"
+          );
+          break;
+        case "quit":
+          console.log( "Servus :)" );
+          process.exit( 0 );
+        case "getcont":
+          var data = {
+            cmd: cmd[ 0 ],
+            contID: cmd[ 1 ]
+          }
+          client.emit( "cmd", data )
+          break;
+        case "getcnty":
+          var data = {
+            cmd: cmd[ 0 ],
+            cntyID: cmd[ 1 ]
+          }
+          client.emit( "cmd", data )
+          break;
+        case "place":
+          var data = {
+            state: "place",
+            cntyID: cmd[1],
+            chipAmount: cmd[2]
+          };
+          client.emit( "state", data )
+          break;
+        default:
+          console.log( "SERVER: command " + line.trim() + " unknow" );
+          break;
+      }
+      rl.prompt();
+    } ).on( "close", function() { // ctr+c
+      console.log( "Servus :)" );
+      process.exit( 0 );
+    } );
+  } );
 
-    client.on("msg", function(data) {
-        console.log(data);
-    });
+  client.on( "msg", function( data ) {
+    console.log( data );
+  } );
 
-});
+} );
