@@ -1,14 +1,17 @@
 function Player() {
   var self = this;
-  self.id = 0;
-  self.continent = "";
-  self.owned = false;
-  self.name = "";
-  self.color = "";
-  self.human = false;
-  self.country = [];
-  self.cards = [];
-  self.armies = ""; // hold the amount of armies that can placed
+  self.id = 0;  // it's the player numberit's the player number
+  self.name = ""; // a string chosen by the player
+  self.icon = "";
+  self.color = ""; // a string or number corresponding to the color chosen by the player
+  self.score = ""; // score of the player
+  self.misson = ""; // number corresponding to the mission to achieve if the mode chosen is "traditional-missions"
+  self.armies = ""; // the number of armies available for the player
+  self.continent = ""; // an array with the id's of the continets owned by the player
+  self.countries = []; // an array with the id's of the countries owned by the player
+  self.cards = []; // an array with card ids
+  self.turn = false; // player hase turn
+  self.type = 0; // None, Human, Bot_Easy, Bot_Hard, Bot_Extreme as int value (0..4)
 
   self.addCountry = function( countryID ) {
     self.country.push( countryID );
