@@ -3,7 +3,7 @@ function Player() {
   self.id = 0;  // it's the player numberit's the player number
   self.name = ""; // a string chosen by the player
   self.icon = "";
-  self.color = ""; // a string or number corresponding to the color chosen by the player
+  self.color = "#bada55"; // a string or number corresponding to the color chosen by the player
   self.score = ""; // score of the player
   self.misson = ""; // number corresponding to the mission to achieve if the mode chosen is "traditional-missions"
   self.armies = ""; // the number of armies available for the player
@@ -12,6 +12,7 @@ function Player() {
   self.cards = []; // an array with card ids
   self.turn = false; // player hase turn
   self.type = 0; // None, Human, Bot_Easy, Bot_Hard, Bot_Extreme as int value (0..4)
+  self.chipOne = {} // SVG artwork for chip value owned
 
   self.addCountry = function( countryID ) {
     self.country.push( countryID );

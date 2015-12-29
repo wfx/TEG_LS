@@ -1,5 +1,4 @@
 // http://socket.io/docs/
-
 function Socket( server, port ) {
   /*
   1, Connect to server.
@@ -21,39 +20,21 @@ function Socket( server, port ) {
     switch ( data.state ) {
       // answer with state name or state_failed.
       case "place":
-        /*
-          @data: json
-          cntyID: string,
-          chipAmount: numeric
-        */
-        if ( cnty[ data.cntyID ].armiesPlace( data.chipAmount ) ) {
-          // board.chipPlace( data.cntyID, data.chipAmount );
+        if ( map.chipPlace( data ) ) {
+          // Animate.place( data.cntyID, data.chipAmount );
           done = "place";
         }
         break;
       case "remove":
-        /*
-          @data: json
-          cntyID: string,
-          chipAmount: numeric
-        */
-        if ( cnty[ data.cntyID ].armiesRemove( data.chipAmount ) ) {
-          // board.chipRemove( data.cntyID, data.chipAmount );
+        if ( map.chipRemove( data ) ) {
+          // Animate.remove( data.cntyID, data.chipAmount );
           done = "remove";
         }
         break;
       case "move":
-        /*
-          @data: json
-          cntyIDR: string, // Remove from
-          cntyIDP: string  // Place to
-          chipAmount: numeric
-        */
-        if ( cnty[ data.cntyIDR ].armiesRemove( data.chipAmount ) ) {
-          // board.chipMove( data.cntyIDR, data.cntyIDP, data.chipAmount );
-          if ( cnty[ data.cntyIDP ].armiesPlace( data.chipAmount ) ) {
-            done = "move";
-          }
+        if ( map.chipMove( data ) ) {
+          // Animate.move( data.cntyIDR, data.cntyIDP, data.chipAmount );
+          done = "move";
         }
         break;
       default:
@@ -102,7 +83,7 @@ function Socket( server, port ) {
 
 function ServerState() {
   var self = this;
-  var self, token = {
+  self.token = {
     start: "start", // to start the game
     status: "status", // shows the status of the players
     message: "message", // to send a message

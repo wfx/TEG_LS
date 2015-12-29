@@ -39,9 +39,11 @@ io.on( 'connection', function( client ) {
           console.log(
             "help : show this \n" +
             "quit : will kill youre kitty\n" +
-            "getcont: get continent data; ID(Name) or all \n" +
-            "getcnty: get country data; ID(Name) or all \n" +
-            "place: place amries; cntyID amount"
+            "getarea: get area data; ID(Name) or all \n" +
+            "getfield: get field data; ID(Name) or all \n" +
+            "place: place chip, idField chipAmount\n" +
+            "remove: remove chip, idField chipAmount\n" +
+            "move: move chip, idFieldFrom idFieldTo chipAmount"
           );
           break;
         case "quit":
@@ -50,21 +52,21 @@ io.on( 'connection', function( client ) {
         case "getcont":
           data = {
             cmd: cmd[ 0 ],
-            contID: cmd[ 1 ]
+            idArea: cmd[ 1 ]
           }
           client.emit( "cmd", data )
           break;
         case "getcnty":
           data = {
             cmd: cmd[ 0 ],
-            cntyID: cmd[ 1 ]
+            idField: cmd[ 1 ]
           }
           client.emit( "cmd", data )
           break;
         case "place":
           data = {
             state: "place",
-            cntyID: cmd[ 1 ],
+            idField: cmd[ 1 ],
             chipAmount: cmd[ 2 ]
           };
           client.emit( "state", data )
@@ -72,7 +74,7 @@ io.on( 'connection', function( client ) {
         case "remove":
           data = {
             state: "remove",
-            cntyID: cmd[ 1 ],
+            idField: cmd[ 1 ],
             chipAmount: cmd[ 2 ]
           };
           client.emit( "state", data )
@@ -80,8 +82,8 @@ io.on( 'connection', function( client ) {
         case "move":
           data = {
             state: "move",
-            cntyIDR: cmd[ 1 ],
-            cntyIDP: cmd[ 2 ],
+            idFieldFrom: cmd[ 1 ],
+            idFieldTo: cmd[ 2 ],
             chipAmount: cmd[ 3 ]
           };
           client.emit( "state", data )
@@ -97,6 +99,7 @@ io.on( 'connection', function( client ) {
     } );
   } );
 
+  // Data for game logic
   // Client send event's (like a click on country)
   client.on( "event", function( data ) {
     console.log( "client send event:\n" + JSON.stringify( data ) );

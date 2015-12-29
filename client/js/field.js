@@ -1,17 +1,22 @@
-function Country() {
+function Field() {
+  "use strict";
   var self = this;
   self.id = "";
   self.name = "";
-  self.continent = "";
+  self.area = "";
   self.owned = false;
   self._select = false;
-  self.armies = 0;
+  self.chip = 0;
   self.artwork = {};
   self.attrName = "";
   self.attrValue = "";
   self.attrOldValue = "";
   self.boundary = [];
-  self.cntyInfo = {}; // infobox (name, armies, etc.)
+  self.fieldInfo = {}; // infobox (name, chip, etc.)
+
+  self.setArea = function ( idArea ) {
+    self.area = idArea;
+  }
 
   self.addBoundary = function( countryID ) {
     self.boundary.push( countryID );
@@ -29,13 +34,13 @@ function Country() {
 
   self.onHoverover = function() {
     // TODO: use a css class name for this?
-    json = {};
+    var json = {};
     json[ self.attrName ] = self.attrValue;
     self.artwork.attr( json );
-    x = self.artwork.getBBox().cx;
-    y = self.artwork.getBBox().cy;
-    self.cntyInfo = board.text( x, y, self.name );
-    self.cntyInfo.attr( {
+    var x = self.artwork.getBBox().cx;
+    var y = self.artwork.getBBox().cy;
+    self.fieldInfo = board.text( x, y, self.name );
+    self.fieldInfo.attr( {
       'font-weight': 'bold',
       'font-size': 16,
       'fill': '#fff'
@@ -43,19 +48,19 @@ function Country() {
   }
 
   self.onHoverout = function() {
-    json = {};
+    var json = {};
     json[ self.attrName ] = self.attrOldValue;
     self.artwork.attr( json );
-    self.cntyInfo.remove();
+    self.fieldInfo.remove();
   }
 
   self.onCick = function() {
     self.swichSelect();
-    data = {
+    var data = {
       event: "click",
-      contID: self.continent,
-      cntyID: self.id,
-      armies: self.armies,
+      idArea: self.continent,
+      idField: self.id,
+      chip: self.chip,
       select: self.select
     };
     io.send( "event", data );
@@ -79,16 +84,16 @@ function Country() {
     return self._select;
   }
 
-  self.armiesPlace = function( n ) {
+  self.chipPlace = function( n ) {
     n = Number( n );
-    self.armies += n;
+    self.chip += n;
     return true;
   }
 
-  self.armiesRemove = function( n ) {
+  self.chipRemove = function( n ) {
     n = Number( n );
-    if ( self.armies > n ) {
-      self.armies -= n;
+    if ( self.chip > n ) {
+      self.chip -= n;
       return true;
     } else {
       return false;
@@ -101,7 +106,7 @@ function Country() {
       name: self.name,
       continent: self.continent,
       owned: self.owned,
-      armies: self.armies,
+      chip: self.chip,
       boundary: self.boundary,
       selcet: self._select
     }
