@@ -1,115 +1,208 @@
-var express = require( "express" ),
+var express = require("express"),
   app = express(),
-  server = require( "http" ).createServer( app ),
-  io = require( "socket.io" ).listen( server ),
-  conf = require( "./config.json" );
+  server = require("http").createServer(app),
+  io = require("socket.io").listen(server),
+  conf = require("./config.json");
 
 // https://nodejs.org/api/readline.html
-var readline = require( "readline" );
-var rl = readline.createInterface( {
+var readline = require("readline");
+var rl = readline.createInterface({
   input: process.stdin,
   output: process.stdout
-} );
+});
 
-// Webserver
-server.listen( conf.port );
-app.use( express.static( __dirname + "/client" ) );
+// Init webserver
+server.listen(conf.port);
+app.use(express.static(__dirname + "/client"));
 
 // Path only
-app.get( '/', function( req, res ) {
-  res.sendfile( __dirname + "/client/index.html" );
-} );
+app.get('/', function(req, res) {
+  res.sendfile(__dirname + "/client/index.html");
+});
 
 // Webserver info
-console.log( "Server run at http://127.0.0.1:" + conf.port + "/" );
+console.log("Server run at http://127.0.0.1:" + conf.port + "/");
 
 // Message
-io.on( 'connection', function( client ) {
-  console.log( "Client is connected..." );
+io.on('connection', function(client) {
+  console.log("a client is connected.");
 
-  client.on( "join", function( data ) {
-    console.log( data );
-    client.emit( "msg", "SERVER: Hi 5 client" );
-    rl.setPrompt( "cmd> " );
+  //client.on("join", function(data) {
+  //  console.log(data);
+    client.emit("message", "client connect with id: ...");
+    rl.setPrompt("cmd> ");
     rl.prompt();
-    rl.on( 'line', function( line ) {
-      cmd = line.split( " " );
-      switch ( cmd[ 0 ] ) {
+    rl.on('line', function(line) {
+      cmd = line.split(" ");
+      switch (cmd[0]) {
         case "help":
           console.log(
             "help : show this \n" +
             "quit : will kill youre kitty\n" +
-            "getarea: get area data; ID(Name) or all \n" +
-            "getfield: get field data; ID(Name) or all \n" +
-            "place: place chip, idField chipAmount\n" +
-            "remove: remove chip, idField chipAmount\n" +
-            "move: move chip, idFieldFrom idFieldTo chipAmount"
+            "continents: It shows info about the continent CONTINENT or all \n" +
+            "countries: It shows info about the country COUNTRY or all \n" +
+            "place: place figure; TYPE AMOUNT COUNTRY\n" +
+            "remove: remove figure; TYPE AMOUNT COUNTRY\n" +
+            "move: move figure, COUNTRY COUNTRY TYPE AMOUNT"
           );
           break;
         case "quit":
-          console.log( "Servus :)" );
-          process.exit( 0 );
-        case "getcont":
-          data = {
-            cmd: cmd[ 0 ],
-            idArea: cmd[ 1 ]
-          }
-          client.emit( "cmd", data )
+          console.log("...going to kill youre kitty!");
+          process.exit(0);
           break;
-        case "getcnty":
-          data = {
-            cmd: cmd[ 0 ],
-            idField: cmd[ 1 ]
-          }
-          client.emit( "cmd", data )
+        case "continents":
+          client.emit("continents", { id: cmd[1] });
+          break;
+        case "countries":
+          client.emit("countries", { id: cmd[1] });
           break;
         case "place":
-          data = {
-            state: "place",
-            idField: cmd[ 1 ],
-            chipAmount: cmd[ 2 ]
-          };
-          client.emit( "state", data )
+          client.emit("place", { id: cmd[1], type: cmd[2], amount: cmd[3] });
           break;
         case "remove":
-          data = {
-            state: "remove",
-            idField: cmd[ 1 ],
-            chipAmount: cmd[ 2 ]
-          };
-          client.emit( "state", data )
+          client.emit("remove", { id: cmd[1], type: cmd[2], amount: cmd[3] });
           break;
         case "move":
-          data = {
-            state: "move",
-            idFieldFrom: cmd[ 1 ],
-            idFieldTo: cmd[ 2 ],
-            chipAmount: cmd[ 3 ]
-          };
-          client.emit( "state", data )
+          client.emit("move", { idFrom: cmd[1], idTo: cmd[2], type: cmd[3], amount: cmd[4] });
           break;
         default:
-          console.log( "SERVER: command " + line.trim() + " unknow" );
+          console.log("SERVER: command " + line.trim() + " unknow");
           break;
       }
       rl.prompt();
-    } ).on( "close", function() { // ctr+c
-      console.log( "Servus :)" );
-      process.exit( 0 );
-    } );
-  } );
+    }).on("close", function() { // ctr+c
+      console.log("Servus :)");
+      process.exit(0);
+    });
 
-  // Data for game logic
-  // Client send event's (like a click on country)
-  client.on( "event", function( data ) {
-    console.log( "client send event:\n" + JSON.stringify( data ) );
-  } );
-  // Client answer on a server state command.
-  client.on( "state", function( data ) {
-    console.log( "client send state:\n" + JSON.stringify( data ) );
-  } );
-  // For all other
-  client.on( "msg", function( data ) {
-    console.log( "client send msg:\n" + JSON.stringify( data ) );
-  } );
-} );
+  //});
+
+  client.on('disconnect', function() {
+    console.log('client disconnected.');
+  });
+  /*
+  STATES: ..... _________________________________
+  start: ...... to start the game
+  status: ..... shows the status of the players
+  message: .... to send a message
+  exit: ....... to exit the game
+  cversion: ... client version
+  sversion: ... server version
+  pversion: ... protocol version
+  playerID: ... to register as a player
+  help: ....... to ask for help
+  countries: .. It shows info about the countries
+  place: ...... to place armies
+  remove: ..... to remove armies
+  move: ....... to move armies
+  attac: ...... to attack a country
+  turn: ....... to finish youre turn
+  exchange: ... to exchange your cards for armies
+  mission: .... request a mission
+  color: ...... to select a color
+  echo: ....... to set an async callback
+  surrender: .. to surrender
+  options: .... to set options
+  robot: ...... to play with a robot
+  typeofgame:.. to know the type of game
+  */
+  client.on("start", function(data) {
+    console.log("get start:\n" + JSON.stringify(data));
+  });
+
+  client.on("client", function(data) {
+    console.log("get client:\n" + JSON.stringify(data));
+  });
+
+  client.on("status", function(data) {
+    console.log("get status:\n" + JSON.stringify(data));
+  });
+
+  client.on("message", function(data) {
+    console.log("get message:\n" + JSON.stringify(data));
+  });
+
+  client.on("exit", function(data) {
+    console.log("get exit:\n" + JSON.stringify(data));
+  });
+
+  client.on("cversion", function(data) {
+    console.log("get cversion:\n" + JSON.stringify(data));
+  });
+
+  client.on("sversion", function(data) {
+    console.log("get sversion:\n" + JSON.stringify(data));
+  });
+
+  client.on("pversion", function(data) {
+    console.log("get pversion:\n" + JSON.stringify(data));
+  });
+
+  client.on("playerID", function(data) {
+    console.log("get playerID:\n" + JSON.stringify(data));
+  });
+
+  client.on("help", function(data) {
+    console.log("get help:\n" + JSON.stringify(data));
+  });
+
+  client.on("continents", function(data) {
+    console.log("get continents:\n" + JSON.stringify(data));
+  });
+
+  client.on("countries", function(data) {
+    console.log("get countries:\n" + JSON.stringify(data));
+  });
+
+  client.on("place", function(data) {
+    console.log("get place:\n" + JSON.stringify(data));
+  });
+
+  client.on("remove", function(data) {
+    console.log("get remove:\n" + JSON.stringify(data));
+  });
+
+  client.on("move", function(data) {
+    console.log("get move:\n" + JSON.stringify(data));
+  });
+
+  client.on("attac", function(data) {
+    console.log("get attac:\n" + JSON.stringify(data));
+  });
+
+  client.on("turn", function(data) {
+    console.log("get turn:\n" + JSON.stringify(data));
+  });
+
+  client.on("exchange", function(data) {
+    console.log("get exchange:\n" + JSON.stringify(data));
+  });
+
+  client.on("mission", function(data) {
+    console.log("get mission:\n" + JSON.stringify(data));
+  });
+
+  client.on("color", function(data) {
+    console.log("get color:\n" + JSON.stringify(data));
+  });
+
+  client.on("echo", function(data) {
+    console.log("get echo:\n" + JSON.stringify(data));
+  });
+
+  client.on("surrender", function(data) {
+    console.log("get surrender:\n" + JSON.stringify(data));
+  });
+
+  client.on("options", function(data) {
+    console.log("get options:\n" + JSON.stringify(data));
+  });
+
+  client.on("robot", function(data) {
+    console.log("get robot:\n" + JSON.stringify(data));
+  });
+
+  client.on("typeofgame", function(data) {
+    console.log("get typeofgame:\n" + JSON.stringify(data));
+  });
+});

@@ -2,7 +2,7 @@
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 
 <svg
-   xmlns:teg="https://github.com/wfx/W3TEGhttps://github.com/wfx/W3TEG"
+   xmlns:board="https://github.com/wfx/W3TEGhttps://github.com/wfx/W3TEG"
    xmlns:dc="http://purl.org/dc/elements/1.1/"
    xmlns:cc="http://creativecommons.org/ns#"
    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
@@ -247,16 +247,16 @@
      id="Continent-South_America"
      inkscape:label="South_America"
      style="display:inline"
-     teg:continent="South America"
-     teg:quality="2"
+     board:area="South America"
+     board:quality="2"
      transform="translate(-1.9073486e-5,1.2302399e-4)">
     <g
        inkscape:groupmode="layer"
        id="Country-Argentina"
        inkscape:label="Country-South_America-Argentinia"
        style="display:inline"
-       teg:country="Argentinia"
-       teg:boundary="'Peru','Brazil'">
+       board:field="Argentinia"
+       board:boundary="'Peru','Brazil'">
       <path
          transform="translate(0,-180)"
          style="display:inline;fill:#70130c;fill-opacity:1;stroke:#000000;stroke-width:1.41970539;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
@@ -264,8 +264,7 @@
          id="Country-South_America-Argentina"
          inkscape:connector-curvature="0"
          sodipodi:nodetypes="cccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
-         inkscape:label="Country-South_America-Argentina"
-         teg:hover="'fill-opacity', '0.2'"/>
+         inkscape:label="Country-South_America-Argentina"/>
     </g>
     <g
        inkscape:groupmode="layer"
@@ -273,16 +272,15 @@
        inkscape:label="Country-South_America-Brazil"
        style="display:inline"
        transform="translate(0,-180)"
-       teg:country="Brazil"
-       teg:boundary="'Argentina','Peru','Venezuela'">
+       board:field="Brazil"
+       board:boundary="'Argentina','Peru','Venezuela'">
       <path
          style="fill:#c12b12;fill-opacity:1;stroke:#000000;stroke-width:1.41970539;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
          d="m 456.61382,494.59328 -2.72858,4.07048 -6.48032,2.03524 -11.93755,-2.03524 c -3.80393,0.47288 -7.16249,8.48018 -7.16249,8.48018 l -9.20895,1.01761 -3.06963,-6.4449 c 0,0 -5.52942,-2.47424 -6.48039,0.67836 l 0,18.65638 -15.3482,16.28189 c 0.007,-0.007 3.12895,9.24703 3.12895,9.24703 l -7.60737,5.98778 -15.52622,4.57188 0.94909,19.42326 8.39333,7.27084 3.81112,8.84887 6.6583,-6.28276 4.59705,-5.50101 12.679,-0.45721 4.90844,9.01111 3.17345,8.34743 14.90339,7.8902 7.91878,4.88165 -0.47454,6.62188 4.43392,4.71939 3.3366,24.59979 -4.44877,3.77558 -0.31144,12.60967 3.17345,2.37441 4.27081,8.18517 5.70926,8.0525 6.65831,4.24742 -6.18378,5.84025 -7.77053,10.55966 -7.75565,5.51575 -11.09225,0.16225 -8.09675,8.98158 1.74984,2.99392 6.1838,-0.47192 4.59706,5.3535 5.23469,-0.78166 5.38303,6.93166 14.42879,-3.93775 7.13285,-7.89025 7.44426,-15.44125 6.33208,-8.03775 8.88269,-19.70349 21.07229,-5.51575 15.70416,-19.08408 3.4849,-12.44739 6.49514,-8.50962 3.79632,-13.71575 5.39778,-6.9316 -0.80073,-6.62187 4.4487,-3.46583 -0.80073,-3.79023 7.93362,-11.34132 0.47453,-7.56581 1.42355,-8.99629 -3.81111,-10.86937 -5.85746,-8.36215 -6.96975,-8.81941 -5.87233,-5.84025 -1.1122,-4.71939 -6.8067,-9.4535 -1.74976,-7.09382 -5.01228,-3.17087 -4.09289,2.03524 -20.1232,4.40965 -3.41076,3.7313 c -4.43789,2.36447 -12.61963,-1.696 -12.61963,-1.696 l -5.79823,8.48014 -11.25538,-2.03524 0,-17.63874 -4.775,-4.74889 -0.34107,-5.42731 z"
          id="Country-South_America-Brazil"
          inkscape:connector-curvature="0"
          sodipodi:nodetypes="ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
-         inkscape:label="Country-South_America-Brazil"
-         teg:hover="'fill-opacity', '0.2'"/>
+         inkscape:label="Country-South_America-Brazil"/>
     </g>
     <g
        inkscape:groupmode="layer"
@@ -290,16 +288,15 @@
        inkscape:label="Country-South_America-Peru"
        style="display:inline"
        transform="translate(0,-180)"
-       teg:country="Peru"
-       teg:boundary="'Venezuela','Brazil','Argentina'">
+       board:field="Peru"
+       board:boundary="'Venezuela','Brazil','Argentina'">
       <path
          style="fill:#b72a19;fill-opacity:1;stroke:#000000;stroke-width:1.41970539;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
          d="m 353.56567,512.0993 -2.96584,10.24991 -2.10575,4.18846 1.17149,10.45642 -3.03996,8.59814 -3.02516,0.23596 -1.4088,7.43304 -0.23726,7.19707 c 0.46732,6.04195 9.11998,5.81076 9.11998,5.81076 -1.8693,5.3448 -1.86848,14.40886 -1.86848,14.40886 0,0 4.90527,5.58277 3.73696,12.78664 7.00982,5.80956 5.14571,12.31469 5.14571,12.31469 4.90688,5.34475 14.47492,5.57633 19.38181,10.45637 9.34643,7.43626 -1.39476,18.82612 0.47453,26.95953 l 14.25083,-2.78737 13.07937,10.79563 c -4.32273,12.54866 1.20081,15.23033 6.45547,17.05358 0,0 11.30394,-3.57042 8.03269,-7.17242 -0.47653,-2.42783 12.8569,7.669 12.8569,7.669 0,0 -0.46129,13.24625 3.27727,16.26717 0,0 8.17568,0.45925 14.25086,-4.18842 l 2.01676,-7.37408 -4.27081,-8.18517 -3.17345,-2.37441 0.31144,-12.60967 4.44877,-3.77558 -3.3366,-24.59979 -4.43392,-4.71939 0.47454,-6.62188 -7.91878,-4.88165 -14.90339,-7.8902 -3.17345,-8.34743 -4.90844,-9.01111 -12.679,0.45721 -4.59705,5.50101 -6.6583,6.28276 -3.81112,-8.84887 -8.39333,-7.27084 -0.94909,-19.42326 15.52622,-4.57188 7.60737,-5.98778 c 0,5e-5 -3.12326,-9.25411 -3.12895,-9.24703 l -2.04643,-4.40965 -10.57326,-2.37448 c 0,0 -3.22417,-8.09305 -7.50356,-7.46253 l -10.57321,2.37442 -7.16253,-4.40965 z"
          id="Country-South_America-Peru"
          inkscape:connector-curvature="0"
          sodipodi:nodetypes="ccccccccccccccccsccccccccccccccccccccccccccccccc"
-         inkscape:label="Country-South_America-Peru"
-         teg:hover="'fill-opacity', '0.2'"/>
+         inkscape:label="Country-South_America-Peru"/>
     </g>
     <g
        id="layer1"
@@ -307,16 +304,15 @@
        inkscape:groupmode="layer"
        style="display:inline"
        transform="translate(0,-180)"
-       teg:country="Venezuela"
-       teg:boundary="'Peru','Brazil'">
+       board:field="Venezuela"
+       board:boundary="'Peru','Brazil'">
       <path
          style="fill:#db4d1d;fill-opacity:1;stroke:#000000;stroke-width:1.41970539;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
          d="m 353.56929,512.09213 2.77659,8.95274 7.16225,4.40951 10.57277,-2.37437 c 4.27945,-0.63051 7.5033,7.46225 7.5033,7.46225 l 10.57281,2.37433 2.04635,4.40951 15.34763,-16.28123 0,-18.65562 c 0.95102,-3.1526 6.48011,-0.67841 6.48011,-0.67841 l 3.06953,6.44466 9.20858,-1.01754 c 0,0 3.35832,-8.00699 7.16223,-8.47986 l 11.93707,2.0352 6.48008,-2.0352 2.72847,-4.07029 3.41059,2.03514 0.34106,5.42707 4.77482,4.74869 0,17.63807 11.25494,2.03516 5.79799,-8.47981 c 0,0 8.18125,4.06042 12.6192,1.69596 l 3.41054,-3.73115 20.12244,-4.40948 4.09274,-2.03518 -1.70534,-9.15822 c -2.69445,-5.67465 -7.79781,-5.86776 -18.4171,-13.90692 l -8.52651,2.37438 c 0,0 -0.51533,-8.78686 -9.54963,-17.29884 l -6.19714,-6.3828 c -4.5964,-2.52208 -16.43304,-1.62416 -16.43304,-1.62416 -3.48693,-1.57629 1.96005,-3.91267 1.96005,-3.91267 0,0 -8.41194,-9.69305 -19.66523,-7.17096 0,0 -7.6634,2.85714 -13.2108,3.48765 l -10.91388,0.33925 -19.78139,14.58528 -4.77482,-1.35679 -14.32444,11.53259 -2.38744,4.0703 -8.52644,2.71355 c -8.24186,8.03916 -5.64118,16.09148 -16.41894,24.28821 z"
          id="Country-South_America-Venezuela"
          inkscape:connector-curvature="0"
          sodipodi:nodetypes="cccccccccccccccccccccccccccccccccccccccccc"
-         inkscape:label="Country-South_America-Venezuela"
-         teg:hover="'fill-opacity', '0.2'" />
+         inkscape:label="Country-South_America-Venezuela"/>
     </g>
   </g>
 </svg>
