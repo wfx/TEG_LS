@@ -13,71 +13,84 @@ var rl = readline.createInterface({
 
 // Init webserver
 server.listen(conf.port);
-app.use(express.static(__dirname + "/client"));
+app.use(express.static(__dirname + "/view"));
 
 // Path only
 app.get('/', function(req, res) {
-  res.sendfile(__dirname + "/client/index.html");
+  res.sendfile(__dirname + "/view/index.html");
 });
 
 // Webserver info
 console.log("Server run at http://127.0.0.1:" + conf.port + "/");
 
 // Message
-io.on('connection', function(client) {
+io.on('connection', function(socket) {
   console.log("a client is connected.");
 
-  //client.on("join", function(data) {
-  //  console.log(data);
-    client.emit("message", "client connect with id: ...");
-    rl.setPrompt("cmd> ");
+  socket.emit("message", "client connect with id: ...");
+  rl.setPrompt("cmd> ");
+  rl.prompt();
+  rl.on('line', function(line) {
+    cmd = line.split(" ");
+    switch (cmd[0]) {
+      case "help":
+        console.log(
+          "help : show this \n" +
+          "quit : will kill youre kitty\n" +
+          "continent [CONTINENT] : It shows info about the continent or all\n" +
+          "country [COUNTRY]: It shows info about the country or all\n" +
+          "place [TYPE] [AMOUNT] [COUNTRY]: place figure\n" +
+          "remove [TYPE] [AMOUNT] [COUNTRY]: remove figure\n" +
+          "move [COUNTRY] [COUNTRY] [TYPE] [AMOUNT]: move figure"
+        );
+        break;
+      case "quit":
+        console.log("...going to kill youre kitty!");
+        process.exit(0);
+        break;
+      case "continents":
+        socket.emit("continents", {
+          id: cmd[1]
+        });
+        break;
+      case "country":
+        socket.emit("country", {
+          id: cmd[1]
+        });
+        break;
+      case "place":
+        socket.emit("place", {
+          id: cmd[1],
+          type: cmd[2],
+          amount: cmd[3]
+        });
+        break;
+      case "remove":
+        socket.emit("remove", {
+          id: cmd[1],
+          type: cmd[2],
+          amount: cmd[3]
+        });
+        break;
+      case "move":
+        socket.emit("move", {
+          idFrom: cmd[1],
+          idTo: cmd[2],
+          type: cmd[3],
+          amount: cmd[4]
+        });
+        break;
+      default:
+        console.log("SERVER: command " + line.trim() + " unknow");
+        break;
+    }
     rl.prompt();
-    rl.on('line', function(line) {
-      cmd = line.split(" ");
-      switch (cmd[0]) {
-        case "help":
-          console.log(
-            "help : show this \n" +
-            "quit : will kill youre kitty\n" +
-            "continents: It shows info about the continent CONTINENT or all \n" +
-            "countries: It shows info about the country COUNTRY or all \n" +
-            "place: place figure; TYPE AMOUNT COUNTRY\n" +
-            "remove: remove figure; TYPE AMOUNT COUNTRY\n" +
-            "move: move figure, COUNTRY COUNTRY TYPE AMOUNT"
-          );
-          break;
-        case "quit":
-          console.log("...going to kill youre kitty!");
-          process.exit(0);
-          break;
-        case "continents":
-          client.emit("continents", { id: cmd[1] });
-          break;
-        case "countries":
-          client.emit("countries", { id: cmd[1] });
-          break;
-        case "place":
-          client.emit("place", { id: cmd[1], type: cmd[2], amount: cmd[3] });
-          break;
-        case "remove":
-          client.emit("remove", { id: cmd[1], type: cmd[2], amount: cmd[3] });
-          break;
-        case "move":
-          client.emit("move", { idFrom: cmd[1], idTo: cmd[2], type: cmd[3], amount: cmd[4] });
-          break;
-        default:
-          console.log("SERVER: command " + line.trim() + " unknow");
-          break;
-      }
-      rl.prompt();
-    }).on("close", function() { // ctr+c
-      console.log("Servus :)");
-      process.exit(0);
-    });
+  }).on("close", function() { // ctr+c
+    console.log("Servus :)");
+    process.exit(0);
+  });
 
-  //});
-
-  client.on('disconnect', function() {
+  socket.on('disconnect', function() {
     console.log('client disconnected.');
   });
   /*
@@ -91,7 +104,8 @@ io.on('connection', function(client) {
   pversion: ... protocol version
   playerID: ... to register as a player
   help: ....... to ask for help
-  countries: .. It shows info about the countries
+  country: .... It shows info about the country
+  continent: .. It shows info about the continet
   place: ...... to place armies
   remove: ..... to remove armies
   move: ....... to move armies
@@ -105,104 +119,109 @@ io.on('connection', function(client) {
   options: .... to set options
   robot: ...... to play with a robot
   typeofgame:.. to know the type of game
+  error ......... for any error's
   */
-  client.on("start", function(data) {
-    console.log("get start:\n" + JSON.stringify(data));
+  socket.on("start", function(data) {
+    console.log("receive start:\n" + data);
   });
 
-  client.on("client", function(data) {
-    console.log("get client:\n" + JSON.stringify(data));
+  socket.on("socket", function(data) {
+    console.log("receive socket:\n" + data);
   });
 
-  client.on("status", function(data) {
-    console.log("get status:\n" + JSON.stringify(data));
+  socket.on("status", function(data) {
+    console.log("receive status:\n" + data);
   });
 
-  client.on("message", function(data) {
-    console.log("get message:\n" + JSON.stringify(data));
+  socket.on("message", function(data) {
+    console.log("receive message:\n" + data);
   });
 
-  client.on("exit", function(data) {
-    console.log("get exit:\n" + JSON.stringify(data));
+  socket.on("exit", function(data) {
+    console.log("receive exit:\n" + data);
   });
 
-  client.on("cversion", function(data) {
-    console.log("get cversion:\n" + JSON.stringify(data));
+  socket.on("cversion", function(data) {
+    console.log("receive cversion:\n" + data);
   });
 
-  client.on("sversion", function(data) {
-    console.log("get sversion:\n" + JSON.stringify(data));
+  socket.on("sversion", function(data) {
+    console.log("receive sversion:\n" + data);
   });
 
-  client.on("pversion", function(data) {
-    console.log("get pversion:\n" + JSON.stringify(data));
+  socket.on("pversion", function(data) {
+    console.log("receive pversion:\n" + data);
   });
 
-  client.on("playerID", function(data) {
-    console.log("get playerID:\n" + JSON.stringify(data));
+  socket.on("playerID", function(data) {
+    console.log("receive playerID:\n" + data);
   });
 
-  client.on("help", function(data) {
-    console.log("get help:\n" + JSON.stringify(data));
+  socket.on("help", function(data) {
+    console.log("receive help:\n" + data);
   });
 
-  client.on("continents", function(data) {
-    console.log("get continents:\n" + JSON.stringify(data));
+  socket.on("continent", function(data) {
+    console.log("receive continent:\n" + data);
   });
 
-  client.on("countries", function(data) {
-    console.log("get countries:\n" + JSON.stringify(data));
+  socket.on("country", function(data) {
+    console.log("receive country:\n" + data);
   });
 
-  client.on("place", function(data) {
-    console.log("get place:\n" + JSON.stringify(data));
+  socket.on("place", function(data) {
+    console.log("receive place:\n" + data);
   });
 
-  client.on("remove", function(data) {
-    console.log("get remove:\n" + JSON.stringify(data));
+  socket.on("remove", function(data) {
+    console.log("receive remove:\n" + data);
   });
 
-  client.on("move", function(data) {
-    console.log("get move:\n" + JSON.stringify(data));
+  socket.on("move", function(data) {
+    console.log("receive move:\n" + data);
   });
 
-  client.on("attac", function(data) {
-    console.log("get attac:\n" + JSON.stringify(data));
+  socket.on("attac", function(data) {
+    console.log("receive attac:\n" + data);
   });
 
-  client.on("turn", function(data) {
-    console.log("get turn:\n" + JSON.stringify(data));
+  socket.on("turn", function(data) {
+    console.log("receive turn:\n" + data);
   });
 
-  client.on("exchange", function(data) {
-    console.log("get exchange:\n" + JSON.stringify(data));
+  socket.on("exchange", function(data) {
+    console.log("receive exchange:\n" + data);
   });
 
-  client.on("mission", function(data) {
-    console.log("get mission:\n" + JSON.stringify(data));
+  socket.on("mission", function(data) {
+    console.log("receive mission:\n" + data);
   });
 
-  client.on("color", function(data) {
-    console.log("get color:\n" + JSON.stringify(data));
+  socket.on("color", function(data) {
+    console.log("receive color:\n" + data);
   });
 
-  client.on("echo", function(data) {
-    console.log("get echo:\n" + JSON.stringify(data));
+  socket.on("echo", function(data) {
+    console.log("receive echo:\n" + data);
   });
 
-  client.on("surrender", function(data) {
-    console.log("get surrender:\n" + JSON.stringify(data));
+  socket.on("surrender", function(data) {
+    console.log("receive surrender:\n" + data);
   });
 
-  client.on("options", function(data) {
-    console.log("get options:\n" + JSON.stringify(data));
+  socket.on("options", function(data) {
+    console.log("receive options:\n" + data);
   });
 
-  client.on("robot", function(data) {
-    console.log("get robot:\n" + JSON.stringify(data));
+  socket.on("robot", function(data) {
+    console.log("receive robot:\n" + data);
   });
 
-  client.on("typeofgame", function(data) {
-    console.log("get typeofgame:\n" + JSON.stringify(data));
+  socket.on("typeofgame", function(data) {
+    console.log("receive typeofgame:\n" + data);
+  });
+
+  socket.on("error", function(data) {
+    u.cout("receive error: %s", data);
   });
 });

@@ -1,8 +1,8 @@
 function Board(options) {
   "use strict";
   var self = this,
-    area = [],
-    field = [],
+    area = {},
+    field = {},
     file = options.file,
     viewbox = options.viewbox,
     surface = new Snap(options.element);
@@ -43,12 +43,17 @@ function Board(options) {
   });
 
   self.getField = function(uID){
-    console.log(uID);
     if (uID) {
-      return field[uID];
-    } else {
-      return field;
+      return {
+        id: uID,
+        boundary: field[uID].boundary,
+        areaID: field[uID].areaID,
+        figure: field[uID].figure,
+        quality: field[uID].quality,
+        selected: field[uID].selected
+      };
     }
+    return false;
   };
 
 }
@@ -70,7 +75,7 @@ function Field(options) {
   self.name = "";
   self.boundary = [];
   self.areaID = "";
-  self.figure = [];
+  self.figure = {};
   self.quality = 0;
   self.image = {};
   self.selected = false;
@@ -85,13 +90,25 @@ function Field(options) {
     };
   });
 
+  var retData = function(){
+    return {
+        id: self.uID,
+        boundary: self.boundary,
+        areaID: self.areaID,
+        figure: self.figure,
+        quality: self.quality,
+        selected: self.selected
+    };
+  };
+
   self.onClick = function() {
-    clicked(self);
+    //clicked(self);
+    clicked(retData());
   };
   self.onHoverOver = function() {
-    hoverover(self);
+    hoverover(retData());
   };
   self.onHoverOut = function() {
-    hoverout(self);
+    hoverout(retData());
   };
 }
