@@ -1,48 +1,67 @@
 @import "compass/reset";
 @import "colors";
-
 // @include box-sizing(border-box);
 @mixin box-sizing($type) {
   -webkit-box-sizing: $type;
-     -moz-box-sizing: $type;
-          box-sizing: $type;
+  -moz-box-sizing: $type;
+  box-sizing: $type;
 }
-
 @font-face {
-    font-family: Gothic;
-    src: url(fonts/LiberationMono-Regular.ttf) format('truetype');
-    font-weight: 100;
-	font-style: normal;
+  font-family: Gothic;
+  src: url(fonts/LiberationMono-Regular.ttf) format('truetype');
+  font-weight: 100;
+  font-style: normal;
 }
-
 body {
   background-color: $col_body_bg;
-	color: $col_text;
-	font-family: 'Roboto';
-	font-weight: 100;
-	font-size: 100%;
+  color: $col_text;
+  font-family: 'Roboto';
+  font-weight: 100;
+  font-size: 100%;
 }
-
 .clearfix:after {
-    content: " ";
-    clear: both;
-    display: block;
-    visibility: hidden;
-    height: 0;
+  content: " ";
+  clear: both;
+  display: block;
+  visibility: hidden;
+  height: 0;
 }
-
 /*  Layout:
     TODO: draw a mockup.
     ------------------------------------------------------------------- */
-nav#action {
-  height: 48px;
+#ui {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 2;
+  background-color: rgba(0,0,0,.6);
   width: 100%;
+  height: 40px;
+  image {
+    vertical-align: middle;
+  }
 }
-
-svg#board {
+#board {
+  position: absolute;
+  z-index: 1;
   width: 100%;
   height: 100%;
   svg {
+    display: block;
+    align: right;
+    width: 100%;
+    height: 100%;
+  }
+}
+#background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  image {
+    opacity: .025;
     width: 100%;
     height: 100%;
   }
