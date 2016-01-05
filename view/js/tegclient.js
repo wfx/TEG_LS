@@ -10,15 +10,15 @@ function TEGClient() {
   "use strict";
 
   var onFieldClick = function(cb) {
-    console.log(cb);
+    socket.emit("echo", JSON.stringify(cb));
   };
 
   var onFieldHoverOver = function(cb) {
-    console.log(cb.id);
+    // give visiual feedback
   };
 
   var onFieldHoverOut = function(cb) {
-    console.log(cb.id);
+    // give visiual feedback
   };
 
   var socket = io.connect("http://127.0.0.1:8080");
