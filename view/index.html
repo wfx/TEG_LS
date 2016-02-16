@@ -3,27 +3,35 @@
 <head>
   <title>TEG</title>
   <meta charset="UTF-8">
-  <!-- lib -->
-  <!--<script src="js/jquery-2.1.3.min.js"></script>-->
-  <script src="socket.io/socket.io.js"></script>
-  <script src="js/snap.svg.js"></script>
   <link rel="stylesheet" href="css/screen.css" type="text/css" media="all" />
 </head>
 
 <body>
-  <svg id="background" viewbox="0 0 900 900" xml:space="preserve" preserveAspectRatio="none">
-    <image xlink:href="/map/map_risk.svg" src="/map/map_risk.svg" width="100%" height="100%" />
-  </svg>
-  <div id="ui">
-    <svg>
-      <image xlink:href="/img/menu_bar.svg" src="/img/menu_bar.svg" width="192" height="40" />
-    </svg>
+  <div id="boardgame">
+    <div id="navigation"></div>
+    <div id="playfield">
+      <svg id="board" </svg>
+    </div>
+    <div id="dialog">
+      <div id="fieldinfo">Field information dialog (mouseover).</div>
+      <div id="cards">Cards dialog.</div>
+      <div id="attac">Attac dialog.</div>
+      <div id="place">
+        <input type="button">Place</button>
+        <input class="input-range" type="range" value="2" min="1" max="500">
+        <span class="range-value"></span>
+      </div>
+      <div id="move">Move dialog.</div>
+    </div>
   </div>
-  <svg id="board"></svg>
 </body>
 
+<!-- lib -->
+<script src="js/jquery-2.1.3.min.js"></script>
+<script src="socket.io/socket.io.js"></script>
+<script src="js/snap.svg.js"></script>
+<script src="js/fsm.js"></script>
 <!-- client -->
-<script src="js/util.js"></script>
 <script src="js/board.js"></script>
 <script src="js/tegclient.js"></script>
 
