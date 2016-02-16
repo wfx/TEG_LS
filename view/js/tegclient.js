@@ -1,156 +1,139 @@
-/**
- * The main namespace of TEG Client
- * @namespace
- * @name tc
- */
 var tc = tc || {};
 tc.client = new TEGClient();
 
 function TEGClient() {
   "use strict";
+  var elementBoard = document.getElementById("board");
+  var svgPoint = elementBoard.createSVGPoint();
 
-  var onFieldClick = function(cb) {
-    socket.emit("echo", JSON.stringify(cb));
-  };
+  $("body").css("background-image", "url(map/bg_risk.png)");
 
-  var onFieldHoverOver = function(cb) {
-    // give visiual feedback
-  };
-
-  var onFieldHoverOut = function(cb) {
-    // give visiual feedback
-  };
-
-  var socket = io.connect("http://127.0.0.1:8080");
-  socket.on("connect", function(data) {
-    socket.emit('message', 'ok, connected');
-    socket.on("start", function(data) {
-      console.log("receive start:\n" + data);
-    });
-
-    socket.on("client", function(data) {
-      console.log("receive client:\n" + data);
-    });
-
-    socket.on("status", function(data) {
-      console.log("receive status:\n" + data);
-    });
-
-    socket.on("message", function(data) {
-      console.log("receive message:\n" + data);
-    });
-
-    socket.on("exit", function(data) {
-      console.log("receive exit:\n" + data);
-    });
-
-    socket.on("cversion", function(data) {
-      console.log("receive cversion:\n" + data);
-    });
-
-    socket.on("sversion", function(data) {
-      console.log("receive sversion:\n" + data);
-    });
-
-    socket.on("pversion", function(data) {
-      console.log("receive pversion:\n" + data);
-    });
-
-    socket.on("playerID", function(data) {
-      console.log("receive playerID:\n" + data);
-    });
-
-    socket.on("help", function(data) {
-      console.log("receive help:\n" + data);
-    });
-
-    socket.on("continent", function(data) {
-      console.log("receive continent:\n" + data);
-    });
-
-    socket.on("country", function(data) {
-      var result = board.getField(data.id);
-      if(result) {
-        socket.emit("echo", JSON.stringify(result));
-      } else {
-        // FIXME: client and not the server receive this message?
-        socket.emit("error", "country: need at least one ID");
+  var fsm = new EventStateMachine(
+    "ready", {
+      "ready": {
+        "server_down": "offline",
+        "view_main": "main"
+      },
+      "offline": {
+        "server_up": "ready"
+      },
+      "main": {
+        "view_game": "gameplay"
+      },
+      "gameplay": {
+        "data_country": "gameplay",
+        "field_clicked": "gameplay",
+        "server_down": "offline",
+        "attac_country": "attac",
+        "view_main": "main"
+      },
+      "attac": {
+        "data_country": "gameplay",
+        "attac_country": "attac",
+        "attac_end": "gameplay"
+      },
+      "move": {
+        "data_country": "gameplay",
+        "move_armies": "move",
+        "move_end": "gameplay"
       }
-    });
+    }
+  );
+  // testing
+  fsm.log = true;
 
-    socket.on("place", function(data) {
-      console.log("receive place:\n" + data);
-    });
-
-    socket.on("remove", function(data) {
-      console.log("receive remove:\n" + data);
-    });
-
-    socket.on("move", function(data) {
-      console.log("receive move:\n" + data);
-    });
-
-    socket.on("attac", function(data) {
-      console.log("receive attac:\n" + data);
-    });
-
-    socket.on("turn", function(data) {
-      console.log("receive turn:\n" + data);
-    });
-
-    socket.on("exchange", function(data) {
-      console.log("receive exchange:\n" + data);
-    });
-
-    socket.on("mission", function(data) {
-      console.log("receive mission:\n" + data);
-    });
-
-    socket.on("color", function(data) {
-      console.log("receive color:\n" + data);
-    });
-
-    socket.on("echo", function(data) {
-      console.log("receive echo:\n" + data);
-    });
-
-    socket.on("surrender", function(data) {
-      console.log("receive surrender:\n" + data);
-    });
-
-    socket.on("options", function(data) {
-      console.log("receive options:\n" + data);
-    });
-
-    socket.on("robot", function(data) {
-      console.log("receive robot:\n" + data);
-    });
-
-    socket.on("typeofgame", function(data) {
-      console.log("receive typeofgame:\n" + data);
-    });
-
-    socket.on("error", function(data) {
-      u.cout("receive error: %s", data);
-    });
-  });
-
-  self.send = function(data) {
-    // pass...
+  var onFieldClicked = function(uid) {
+    fsm.trigger("field_clicked", uid);
   };
 
-  // load the svg map
-  board = new Board({
-    element: "svg#board",
+  var fieldClicked = function(uid) {
+    // Send field informations.
+    socket.emit("echo", JSON.stringify({
+      id: board.field[uid].uID,
+      boundary: board.field[uid].boundary,
+      areaID: board.field[uid].areaID,
+      figure: board.field[uid].figure,
+      quality: board.field[uid].quality,
+      selected: board.field[uid].selected
+    }));
+  };
+
+  var onFieldHoverOver = function(uid) {
+    // give visiual feedback
+    board.field[uid].image.attr({
+      "fill-opacity": ".5"
+    });
+  };
+
+  var onFieldHoverOut = function(uid) {
+    // give visiual feedback
+    board.field[uid].image.attr({
+      "fill-opacity": "1"
+    });
+  };
+
+  var onFieldMouseMove = function() {
+    // pass
+  };
+
+  /*
+    Init Board
+    TODO: Add more options (board:area etc.)
+  */
+  var board = new Board({
+    element: document.getElementById("board"),
     file: "../map/map_test.svg",
     viewBox: "0 0 900 900",
     field: {
       figures: ["one", "five", "ten"],
       callbacks: {
-        clicked: onFieldClick,
+        clicked: onFieldClicked,
         hoverover: onFieldHoverOver,
-        hoverout: onFieldHoverOut
+        hoverout: onFieldHoverOut,
+        mousemove: onFieldMouseMove
       }
     }
   });
+
+  /*
+    Init socket
+  */
+
+  var sendCountryData = function(uid) {
+    if (uid) {
+      var result = JSON.stringify({
+        id: board.field[uid].uID,
+        boundary: board.field[uid].boundary,
+        areaID: board.field[uid].areaID,
+        figure: board.field[uid].figure,
+        quality: board.field[uid].quality,
+        selected: board.field[uid].selected
+      });
+      socket.emit("receive", result);
+    } else {
+      socket.emit("tarzan", "country: need at least one ID");
+    }
+  };
+
+  var socket = io.connect("http://127.0.0.1:8080");
+  socket.on("connect", function() {
+    socket.emit('message', 'ok, connected');
+    socket.on("state", function(state, data) {
+      if (state) {
+        fsm.trigger(state, data);
+      } else {
+        var jData = [];
+        jData.push(fsm.stateName);
+        jData.push(fsm.currentState);
+        socket.emit("receive", JSON.stringify(jData));
+      }
+    });
+  });
+
+  fsm.on("data_country", sendCountryData);
+  fsm.on("field_clicked", fieldClicked);
+
+  fsm.trigger("view_main");
+  fsm.trigger("view_game");
+
 }
