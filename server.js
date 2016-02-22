@@ -28,6 +28,11 @@ io.on('connection', function(socket) {
   console.log("a client is connected.");
 
   socket.emit("message", "client connect with id: ...");
+
+  // START Testing
+  socket.emit("ts", "start");
+  // END
+  //
   rl.setPrompt("cmd> ");
   rl.prompt();
   rl.on('line', function(line) {
@@ -37,15 +42,15 @@ io.on('connection', function(socket) {
         console.log(
           "help : show this \n" +
           "quit : will kill youre kitty\n" +
-          "state [STATE] [DATA]: trigger a state\n"
+          "ts [STATE] [DATA]: trigger a state\n"
         );
         break;
       case "quit":
         console.log("...going to kill youre kitty!");
         process.exit(0);
         break;
-      case "state":
-        socket.emit("state", cmd[1], cmd[2]);
+      case "ts":
+        socket.emit("ts", cmd[1], cmd[2]);
         break;
       default:
         console.log("SERVER: command " + line.trim() + " unknow");
@@ -60,34 +65,6 @@ io.on('connection', function(socket) {
   socket.on('disconnect', function() {
     console.log('client disconnected.');
   });
-  /*
-  TEG States.....................................
-  start: ...... to start the game
-  status: ..... shows the status of the players
-  message: .... to send a message
-  exit: ....... to exit the game
-  cversion: ... client version
-  sversion: ... server version
-  pversion: ... protocol version
-  playerID: ... to register as a player
-  help: ....... to ask for help
-  country: .... It shows info about the country
-  continent: .. It shows info about the continet
-  place: ...... to place armies
-  remove: ..... to remove armies
-  move: ....... to move armies
-  attac: ...... to attack a country
-  turn: ....... to finish youre turn
-  exchange: ... to exchange your cards for armies
-  mission: .... request a mission
-  color: ...... to select a color
-  echo: ....... to set an async callback
-  surrender: .. to surrender
-  options: .... to set options
-  robot: ...... to play with a robot
-  typeofgame:.. to know the type of game
-  error ....... for any error's
-  */
 
   socket.on("receive", function(data) {
     console.log("receive data:\n" + data);
@@ -101,3 +78,61 @@ io.on('connection', function(socket) {
     console.log("echo: " + data);
   });
 });
+/*
+  TEG Trigger States (short ts)............................
+
+  Transition        State     Description
+  ================= ready ... state ready
+  start ........... play .... to start the game
+  exit ............ ready ... to exit the game
+  client_version .. ready ... client version
+  type_of_game .... ready ... to know the type of game
+  options ......... ready ... to set options
+  error ........... ready ... for any error's
+
+  ================= play .... state play
+  field_data ...... play .... info about the field
+  field_select .... play .... to select a field
+  place ........... place ... to place n figures
+  attac ........... attac ... to attack a field by uid
+  move ............ move .... to move figures
+  card ............ card .... change to card state
+  game_lose ....... ready ... lose game
+  game_won ........ ready ... won game
+  game_surrender .. ready ... to surrender
+  save ............ ready ... to save the game
+  end_turn ........ play .... to finish youre turn
+  error ........... play .... for any error's
+
+  ================= card .... state card
+  card_get ........ card .... to get a card
+  card_trade ...... card .... to trade a card
+  card_done ....... play .... leave card state
+  error ........... card .... for any error's
+
+  ================= place ... state place
+  field_data ...... place ... info about the field
+  field_select .... place ... to select a field
+  place ........... place ... place n figures
+  place_done ...... play .... place done
+  error ........... place ... for any error's
+
+  ================= attac ... state attac
+  field_data ...... attac ... info about the field
+  field_select .... attac ... to select a field
+  attac ........... attac ... to attac a field
+  attac_repeating . attac ... DO WE NEED THIS?
+  attac_until ..... attac ... DO WE NEED THIS?
+  attac_lose ...... attac ... DO WE NEED THIS?
+  attac_won ....... attac ... DO WE NEED THIS?
+  attac_done ...... play .... attac done
+  error ........... attac ... for any error's
+
+  ================= move .... state move
+  field_data ...... move .... info about the field
+  field_select .... move .... to select a field
+  move ............ move .... move figures
+  move_done ....... play .... moveing done
+  error ........... move .... for any error's
+
+*/
