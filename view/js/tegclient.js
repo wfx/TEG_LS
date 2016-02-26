@@ -11,7 +11,11 @@ function TEGClient() {
 
   // Init Socket
 
-  var socket = io.connect("http://127.0.0.1:8080");
+  var socket = io.connect("http://127.0.0.1:8080",
+  {
+    reconnection: true,
+    forceNew: true
+  });
   socket.on("connect", function() {
     socket.emit('message', 'ok, connected');
     socket.on("ts", function(state, data) {
