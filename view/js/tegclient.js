@@ -18,9 +18,9 @@ function TEGClient() {
   });
   socket.on("connect", function() {
     socket.emit('message', 'ok, connected');
-    socket.on("ts", function(state, data) {
-      if (state) {
-        fsm.trigger(state, data);
+    socket.on("ts", function(trigger, data) {
+      if (trigger) {
+        fsm.trigger(trigger, data);
       } else {
         var jData = [];
         jData.push(fsm.stateName);
@@ -178,12 +178,7 @@ function TEGClient() {
   var stateFieldSelect = function(uid) {
     // Send field informations.
     socket.emit("echo", JSON.stringify({
-      id: board.field[uid].uID,
-      boundary: board.field[uid].boundary,
-      areaID: board.field[uid].areaID,
-      figure: board.field[uid].figure,
-      quality: board.field[uid].quality,
-      selected: board.field[uid].selected
+      fieldID: board.field[uid].uID
     }));
   };
 
@@ -193,7 +188,7 @@ function TEGClient() {
    * @param  {string} uid unique field id
    */
   var statePlaceFigure = function(uid) {
-    $("#place").addClass("Narnina");
+    $("#place").addClass("foo");
   };
 
   /**
@@ -202,15 +197,15 @@ function TEGClient() {
    * @param  {string} uid unique field id
    * @return {json}       emit field data to server (receive)
    */
-  var stateFieldData = function(uid) {
-    if (uid) {
+  var stateFieldData = function(data) {
+    if (data.fieldID) {
       var result = JSON.stringify({
-        id: board.field[uid].uID,
-        boundary: board.field[uid].boundary,
-        areaID: board.field[uid].areaID,
-        figure: board.field[uid].figure,
-        quality: board.field[uid].quality,
-        selected: board.field[uid].selected
+        id: board.field[data.fieldID].uID,
+        boundary: board.field[data.fieldID].boundary,
+        areaID: board.field[data.fieldID].areaID,
+        figure: board.field[data.fieldID].figure,
+        quality: board.field[data.fieldID].quality,
+        selected: board.field[data.fieldID].selected
       });
       socket.emit("receive", result);
     } else {
