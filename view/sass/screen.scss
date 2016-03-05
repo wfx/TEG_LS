@@ -1,17 +1,15 @@
+@import "compass/css3";
 @import "compass/reset";
-@import "colors";
-// @include box-sizing(border-box);
-@mixin box-sizing($type) {
-  -webkit-box-sizing: $type;
-  -moz-box-sizing: $type;
-  box-sizing: $type;
-}
+@import "var";
+@import "mixin";
+@import "elements";
 @font-face {
   font-family: Gothic;
-  src: url(fonts/LiberationMono-Regular.ttf) format('truetype');
+  src: url("fonts/LiberationMono-Regular.ttf") format('truetype');
   font-weight: 100;
   font-style: normal;
 }
+
 body {
   background-color: $col_body_bg;
   color: $col_text;
@@ -31,53 +29,30 @@ body {
   visibility: hidden;
   height: 0;
 }
-
 #playfield {
   > #board {
     height: 100%;
     width: 100%;
   }
 }
-
-// Dialog's
-#fieldinfo {
-  display: none;
-  position: fixed;
-  /* ---------------------------------- */
-  color: rgb(0, 0, 0);
-  background-color: rgba(255, 255, 255, .6);
-  border-top: 1px solid rgb(0, 0, 0);
-  border-right: 1px solid rgb(0, 0, 0);
-  border-bottom: 1px solid rgb(0, 0, 0);
-  /* player color */
-  border-left: 4px solid rgb(255, 0, 0);
-  padding: 4px;
-}
+// Widget ( short w_ )
+#widget {}
 #cards {
-  display: none;
-  position: fixed;
-}
-#attac {
-  display: none;
-  position: fixed;
-}
-#place {
-  display: none;
-  position: fixed;
-  > .range {
-    display: inline-block;
-    position: relative;
-    color: #fff;
-    font-size: 16px;
-    line-height: 20px;
-    text-align: center;
-    border-radius: 3px;
-    background: #353535;
-    padding: 5px 10px;
-    margin-left: 7px;
+  ul {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    display: table;
+    table-layout: fixed;
+    /* optional */
+    border-top: solid rgb(18,18,18) 1px;
+    li {
+      display: table-cell;
+      width: auto;
+    }
   }
 }
-#move {
-  display: none;
-  position: fixed;
+#attac {}
+#place {
 }
+#move {}

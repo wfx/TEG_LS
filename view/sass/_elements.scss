@@ -1,0 +1,65 @@
+// Widget ( short w_ )
+$w_dialog_z: 9;
+$w_dialog_width: 422px;
+$w_dialog_height: 156px;
+// Defaults
+.w_hide {
+  display: none;
+  position: fixed;
+}
+.w_show {
+  z-index: $dialog_z;
+  display: inline-block;
+  position: fixed;
+}
+.w_dialog {
+  width: $w_dialog_width;
+  height: $w_dialog_height;
+  top: calc(50% - #{$w_dialog_height} / 2);
+  left: calc(50% - #{$w_dialog_width} / 2);
+  border-top: solid rgb(7,8,9) 1px;
+  border-left: solid rgb(8,10,10) 1px;
+  border-bottom: solid rgb(10,11,12) 1px;
+  border-right: solid rgb(8,10,10) 1px;
+  border-radius: 2px;
+  @include bg-gradient-t2b(rgb(73,75,79),rgb(64,65,66));
+  @include box-shadow-rb(rbga(0,0,0,0.75));
+  color: rgb(242,242,242);
+  text-shadow: 1px 1px 0 #000000;
+  &::after {
+    content: "";
+    position: absolute;
+    top: 1px;
+    left: 1px;
+    right: 1px;
+    border-top: solid rgb(110,112,115) 1px;
+  }
+  .w_dialog_title {
+    font-size: 16px;
+    padding: 10px 8px;
+  }
+}
+@mixin btn ($cnbt, $cnbl, $cngf, $cngt, $cabt, $cabl, $cagf, $cagt) {
+  display: inline-block;
+  width: 100%;
+  border-top: solid $cnbt 1px;
+  border-left: solid $cnbl 1px;
+  @include bg-gradient-t2b($cngf,$cngt);
+  color: rgb(242,242,242);
+  font-size: 16px;
+  text-shadow: 1px 1px 0 #000000;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  &:hover,
+  &:active {
+    border-top: solid $cabt 1px;
+    border-left: solid $cabl 1px;
+    @include bg-gradient-t2b($cagf,$cagt);
+  }
+}
+.w_btn_default {
+  @include btn( rgb(74,76,77), rgb(61,62,64), rgb(56,57,59), rgb(38,38,39), rgb(115,117,120), rgb(89,90,92), rgb(85,88,92), rgb(60,61,63) );
+}
+.w_btn_cancel {
+  @include btn( rgb(222,124,124), rgb(209,92,92), rgb(213,88,88), rgb(192,56,56), rgb(227,141,141), rgb(214,109,109), rgb(219,109,109), rgb(199,80,80) );
+}
