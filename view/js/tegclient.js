@@ -2,222 +2,259 @@ var tc = tc || {};
 tc.client = new TEGClient();
 
 function TEGClient() {
-  "use strict";
-  var elementBoard = document.getElementById("board");
-  var svgPoint = elementBoard.createSVGPoint();
+    "use strict";
+    var elementBoard = document.getElementById("board"),
+        svgPoint = elementBoard.createSVGPoint(),
+        board = {},
+        Mouse = {};
 
-  // TODO: Use css for each map.
-  $("body").css("background-image", "url(map/bg_risk.png)");
-
-  // Init Socket
-
-  var socket = io.connect("http://127.0.0.1:8080",
-  {
-    reconnection: true,
-    forceNew: true
-  });
-  socket.on("connect", function() {
-    socket.emit('message', 'ok, connected');
-    socket.on("ts", function(trigger, data) {
-      if (trigger) {
-        fsm.trigger(trigger, data);
-      } else {
-        var jData = [];
-        jData.push(fsm.stateName);
-        jData.push(fsm.currentState);
-        socket.emit("receive", JSON.stringify(jData));
-      }
+    // Init Socket
+    var socket = io.connect("http://127.0.0.1:8080", {
+        reconnection: false,
+        forceNew: false
     });
-  });
 
-  // Init Board
+    socket.once("connect", function() {
+        socket.emit('authenticate', {
+            game: "mygameid",
+            player: "myplayername",
+            token: "mytoken"
+        });
 
-  /**
-   * [boardFieldClicked
-   *  This board event trigger the field click state]
-   * @param  {[type]} uid [unique field id]
-   */
-  var boardFieldClicked = function(uid) {
-    fsm.trigger("field_select", uid);
-  };
-
-  /**
-   * [onFieldHoverOver
-   * 	This board event give a visiual feedback]
-   * @param  {[type]} uid [unique field id]
-   */
-  var boardFieldHoverOver = function(uid) {
-    board.field[uid].image.attr({
-      "fill-opacity": ".5"
+        socket.on("message", function(msg) {
+            console.log(msg);
+        });
+        socket.on("ts", function(trigger, data) {
+            if (trigger) {
+                fsm.trigger(trigger, data);
+            } else {
+                var jData = [];
+                jData.push(fsm.stateName);
+                jData.push(fsm.currentState);
+                socket.emit("receive", JSON.stringify(jData));
+            }
+        });
     });
-  };
+    // INIT: Finit State Machine
+    var fsm = new EventStateMachine(
+        "ready", {
+            "ready": {
+                "start": "play",
+                "exit": "ready",
+                "client_version": "ready",
+                "set_game": "ready",
+                "options": "ready",
+                "error": "ready"
+            },
+            "play": {
+                "get_field": "play",
+                "field_select": "play",
+                "place": "place",
+                "attac": "attac",
+                "move": "move",
+                "card": "card",
+                "game_lose": "ready",
+                "game_won": "ready",
+                "game_surrender": "ready",
+                "save": "ready",
+                "end_turn": "play",
+                "error": "ready"
+            },
+            "card": {
+                "card_get": "card",
+                "card_trade": "card",
+                "card_done": "play",
+                "error": "play"
+            },
+            "place": {
+                "get_field": "place",
+                "field_select": "place",
+                "set_field": "place",
+                "place_done": "play",
+                "error": "place"
+            },
+            "attac": {
+                "get_field": "attac",
+                "field_select": "attac",
+                "attac": "attac",
+                "attac_repeating": "attac",
+                "attac_until": "attac",
+                "attac_lose": "attac",
+                "attac_won": "attac",
+                "attac_done": "play",
+                "set_owner": "attac",
+                "error": "attac"
+            },
+            "move": {
+                "get_field": "move",
+                "field_select": "move",
+                "move": "move",
+                "move_done": "play",
+                "error": "move"
+            }
+        }
+    );
 
-  /**
-   * [boardFieldHoverOut
-   * 	This board event give a visiual feedback]
-   * @param  {[type]} uid [unique field id]
-   */
-  var boardFieldHoverOut = function(uid) {
-    // give visiual feedback
-    board.field[uid].image.attr({
-      "fill-opacity": "1"
-    });
-  };
+    var setGame = function(jData) {
+        if (jData.path) {
+            console.log(jData);
+            $("body").css("background-image", "url("+ jData.path + "/background.png)");
 
-  /**
-   * [boardFieldMouseMove
-   * 	This board event show field informations]
-   *
-   * @param  {[type]} uid [unique field id]
-   */
-  var boardFieldMouseMove = function() {
-    // TODO: Write it.
-  };
+            /**
+             * [Board models a board]
+             *
+             * TODO:
+             * Add more options (board:area etc.).
+             * Get from server: map file and figures.
+             *
+             * @param {[json]} Board definition
+             * @param {[object]} HTML element
+             * @param {[string]} File
+             * @param {[string]} viewBox
+             * @param {[json]} Field definition
+             * @param {[string]} Array of figures
+             * @param {[json]} callbacks
+             * @param {[string]} clicked callback
+             * @param {[string]} hover over callback
+             * @param {[string]} hover out callback
+             * @param {[string]} mouse move (over field) callback
+             *
+             */
 
-  /**
-   * [Board models a board]
-   *
-   * TODO:
-   * Add more options (board:area etc.).
-   * Get from server: map file and figures.
-   *
-   * @param {[json]} Board definition
-   * @param {[object]} HTML element
-   * @param {[string]} File
-   * @param {[string]} viewBox
-   * @param {[json]} Field definition
-   * @param {[string]} Array of figures
-   * @param {[json]} callbacks
-   * @param {[string]} clicked callback
-   * @param {[string]} hover over callback
-   * @param {[string]} hover out callback
-   * @param {[string]} mouse move (over field) callback
-   *
-   */
-  var board = new Board({
-    element: document.getElementById("board"),
-    file: "../map/map_test.svg",
-    viewBox: "0 0 900 900",
-    field: {
-      figures: ["one", "five", "ten"],
-      callbacks: {
-        clicked: boardFieldClicked,
-        hoverover: boardFieldHoverOver,
-        hoverout: boardFieldHoverOut,
-        mousemove: boardFieldMouseMove
-      }
-    }
-  });
+            board = new Board({
+                element: document.getElementById("board"),
+                file: jData.path + "/board.svg",
+                viewBox: jData.viewBox,
+                field: {
+                    figures: jData.figures,
+                    callbacks: {
+                        clicked: eventFieldClicked,
+                        hoverover: eventFieldHoverOver,
+                        hoverout: eventFieldHoverOut,
+                        mousemove: eventFieldMouseMove
+                    }
+                }
+            });
+        }
+    };
+    /**
+     * [boardFieldClicked
+     *  This board event trigger the field click state]
+     * @param  {[type]} uid [unique field id]
+     */
+    var eventFieldClicked = function(fieldID) {
+        fsm.trigger("field_select", fieldID);
+    };
+    /**
+     * [onFieldHoverOver
+     * 	This board event give a visiual feedback]
+     * @param  {[type]} uid [unique field id]
+     */
+    var eventFieldHoverOver = function(fieldID) {
+        board.field[fieldID].image.attr({
+            "fill-opacity": ".5"
+        });
+    };
+    /**
+     * [boardFieldHoverOut
+     * 	This board event give a visiual feedback]
+     * @param  {[type]} uid [unique field id]
+     */
+    var eventFieldHoverOut = function(fieldID) {
+        // give visiual feedback
+        board.field[fieldID].image.attr({
+            "fill-opacity": "1"
+        });
+    };
+    /**
+     * [boardFieldMouseMove
+     * 	This board event show field informations]
+     *
+     * @param {[object]} Mouse event
+     * @param {[string]} fieldID [unique field id]
+     */
+    var eventFieldMouseMove = function(ev, fieldID) {
+        svgPoint.x = ev.clientX;
+        svgPoint.y = ev.clientY;
+        // Calculate Mouse.x and Mouse.y
+        Mouse = svgPoint.matrixTransform(board.surface.node.getScreenCTM().inverse());
+    };
+    /**
+     * [fieldSelect Server or Client trigger "field_select"]
+     *
+     * @param  {string} uid unique field id
+     * @return {json}       emit field data to server (echo)
+     */
+    var fieldSelect = function(fieldID) {
+        // Send field informations.
+        socket.emit("echo", JSON.stringify({
+            fieldID: board.field[fieldID].uID
+        }));
+        // TESTING START
+        //board.field[uid].image.addClass("arrowPointer");
 
-  // INIT: Finit State Machine
+        var myCircle = board.surface.circle(Mouse.x, Mouse.y, 10);
+        myCircle.attr({
+            fill: "red",
+            "pointer-events": "none"
+        });
 
-  var fsm = new EventStateMachine(
-    "ready", {
-      "ready": {
-        "start": "play",
-        "exit": "ready",
-        "client_version": "ready",
-        "type_of_game": "ready",
-        "options": "ready",
-        "error": "ready"
-      },
-      "play": {
-        "field_data": "play",
-        "field_select": "play",
-        "place": "place",
-        "attac": "attac",
-        "move": "move",
-        "card": "card",
-        "game_lose": "ready",
-        "game_won": "ready",
-        "game_surrender": "ready",
-        "save": "ready",
-        "end_turn": "play",
-        "error": "ready"
-      },
-      "card": {
-        "card_get": "card",
-        "card_trade": "card",
-        "card_done": "play",
-        "error": "play"
-      },
-      "place": {
-        "field_data": "place",
-        "field_select": "place",
-        "place": "place",
-        "place_done": "play",
-        "error": "place"
-      },
-      "attac": {
-        "field_data": "attac",
-        "field_select": "attac",
-        "attac": "attac",
-        "attac_repeating": "attac",
-        "attac_until": "attac",
-        "attac_lose": "attac",
-        "attac_won": "attac",
-        "attac_done": "play",
-        "error": "attac"
-      },
-      "move": {
-        "field_data": "move",
-        "field_select": "move",
-        "move": "move",
-        "move_done": "play",
-        "error": "move"
-      }
-    }
-  );
+        board.group.add(myCircle);
+        // TESTING END
+    };
+    /**
+     * [setField Sever trigger "set_field"]
+     *
+     * @param  {json} fieldID:id,
+     *         				figures:{NAME:value}
+     */
+    var setField = function(jData) {
+        if (jData.fieldID) {
+            // yep slow but he we have max 3 figures :)
+            Object.keys(jData.figures).forEach(function(key) {
+                // console.log(key, jData.figures[key]);
+                board.field[jData.fieldID].figure[key].owner = String(jData.owner[key]);
+                board.field[jData.fieldID].figure[key].amount += Number(jData.figures[key]);
+            });
+        }
 
-  /**
-   * [stateFieldSelect Called on state NAME]
-   *
-   * @param  {string} uid unique field id
-   * @return {json}       emit field data to server (echo)
-   */
-  var stateFieldSelect = function(uid) {
-    // Send field informations.
-    socket.emit("echo", JSON.stringify({
-      fieldID: board.field[uid].uID
-    }));
-  };
+    };
+    var placeDone = function(fieldID) {
+        if ($("#place").hasClass("w_show")) {
+            $("#place").addClass("w_hide");
+            $("#place").removeClass("w_show");
+        }
+    };
 
-  /**
-   * [statePlaceFigure	Called on state NAME]
-   *
-   * @param  {string} uid unique field id
-   */
-  var statePlaceFigure = function(uid) {
-    $("#place").addClass("foo");
-  };
+    /**
+     * [getField Sever trigger "get_field"]
+     *
+     * @param  {json} fieldID:id
+     * @return {json} emit field data to server (receive)
+     */
+    var getField = function(jData) {
+        if (jData.fieldID) {
+            var result = JSON.stringify({
+                id: board.field[jData.fieldID].uID,
+                boundary: board.field[jData.fieldID].boundary,
+                areaID: board.field[jData.fieldID].areaID,
+                figure: board.field[jData.fieldID].figure,
+                quality: board.field[jData.fieldID].quality,
+                selected: board.field[jData.fieldID].selected
+            });
+            socket.emit("receive", result);
+        } else {
+            socket.emit("tarzan", "country: need at least one ID");
+        }
+    };
 
-  /**
-   * [stateFieldData Sever trigger state NAME]
-   *
-   * @param  {string} uid unique field id
-   * @return {json}       emit field data to server (receive)
-   */
-  var stateFieldData = function(data) {
-    if (data.fieldID) {
-      var result = JSON.stringify({
-        id: board.field[data.fieldID].uID,
-        boundary: board.field[data.fieldID].boundary,
-        areaID: board.field[data.fieldID].areaID,
-        figure: board.field[data.fieldID].figure,
-        quality: board.field[data.fieldID].quality,
-        selected: board.field[data.fieldID].selected
-      });
-      socket.emit("receive", result);
-    } else {
-      socket.emit("tarzan", "country: need at least one ID");
-    }
-  };
+    // TESTING
+    fsm.log = true;
 
-  // Testing
-  fsm.log = true;
-
-  fsm.on("field_select", stateFieldSelect);
-  fsm.on("field_data", stateFieldData);
-  fsm.on("place_figure", statePlaceFigure);
-
+    // Bind trigger's on function
+    fsm.on("set_game", setGame);
+    fsm.on("field_select", fieldSelect);
+    fsm.on("get_field", getField);
+    fsm.on("set_field", setField);
+    fsm.on("place_done", placeDone);
 }
