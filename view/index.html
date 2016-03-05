@@ -12,24 +12,35 @@
     <div id="playfield">
       <svg id="board" </svg>
     </div>
-    <div id="dialog">
-      <div id="fieldinfo">Field information dialog (mouseover).</div>
-      <div id="cards">Cards dialog.</div>
-      <div id="attac">Attac dialog.</div>
-      <div id="place">
-        <input type="button">Place</button>
-        <input class="input-range" type="range" value="2" min="1" max="500">
-        <span class="range-value"></span>
+    <div id="widget">
+      <div id="cards" class="w_dialog w_hide" role="dialog">
+        <h1 class="w_dialog_title">Cards dialog.</h1>
+        <input type="range" min="0" max="100" step="1">
+        <ul>
+          <li><button class="w_btn_default">Done</button></li>
+          <li><button class="w_btn_cancel">Cancel</button></li>
+        </ul>
       </div>
-      <div id="move">Move dialog.</div>
+      <div id="attac" class="w_hide" role="dialog">Attac dialog.</div>
+      <div id="place" class="w_hide" role="dialog">
+        <h2>Dialog - Place</h2>
+        <div class="rannge_value">0</div>
+        <input type="range" value="10" min="1" max="10">
+        <ul>
+          <li><a class="w_btn_default" href="#">Done</a></li>
+          <li><a class="w_btn_cancel" href="#">Cancel</a></li>
+        </ul>
+      </div>
+      <div id="move" class="w_hide" role="dialog">Move dialog.</div>
     </div>
+  </div>
   </div>
 </body>
 
 <!-- lib -->
 <script src="js/jquery-2.1.3.min.js"></script>
 <script src="socket.io/socket.io.js"></script>
-<script src="js/snap.svg.js"></script>
+<script src="js/snap.svg-min.js"></script>
 <script src="js/fsm.js"></script>
 <!-- client -->
 <script src="js/board.js"></script>
