@@ -5,7 +5,7 @@ Tenes Emapandas Graciela (TEG) is a clone of 'Plan Táctico y Estratégico de la
 
 
 
-![Screenshot](https://github.com/wfx/W3TEG/blob/master/view/map/map_risk.png)
+![Screenshot](https://github.com/wfx/W3TEG/blob/master/view/game/risk/risk.png)
 
 
 
