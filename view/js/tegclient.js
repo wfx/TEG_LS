@@ -10,7 +10,7 @@ function TEGClient() {
 
     // Init Socket
     var socket = io.connect("http://127.0.0.1:8080", {
-        reconnection: false,
+        reconnection: true,
         forceNew: false
     });
 
@@ -95,10 +95,9 @@ function TEGClient() {
         }
     );
 
-    var setGame = function(jData) {
-        if (jData.path) {
-            console.log(jData);
-            $("body").css("background-image", "url("+ jData.path + "/background.png)");
+    var setGame = function(conf) {
+        if (conf.path) {
+            $("body").css("background-image", "url(" + conf.path + "/background.png)");
 
             /**
              * [Board models a board]
@@ -123,10 +122,10 @@ function TEGClient() {
 
             board = new Board({
                 element: document.getElementById("board"),
-                file: jData.path + "/board.svg",
-                viewBox: jData.viewBox,
+                file: conf.path + "/board.svg",
+                viewBox: conf.viewBox,
                 field: {
-                    figures: jData.figures,
+                    figures: conf.figures,
                     callbacks: {
                         clicked: eventFieldClicked,
                         hoverover: eventFieldHoverOver,
@@ -135,10 +134,11 @@ function TEGClient() {
                     }
                 }
             });
+            socket.emit("respond", true);
         }
     };
     /**
-     * [boardFieldClicked
+     * [eventFieldClicked
      *  This board event trigger the field click state]
      * @param  {[type]} uid [unique field id]
      */
@@ -146,7 +146,7 @@ function TEGClient() {
         fsm.trigger("field_select", fieldID);
     };
     /**
-     * [onFieldHoverOver
+     * [eventFieldHoverOver
      * 	This board event give a visiual feedback]
      * @param  {[type]} uid [unique field id]
      */
@@ -168,7 +168,7 @@ function TEGClient() {
     };
     /**
      * [boardFieldMouseMove
-     * 	This board event show field informations]
+     * 	This board event is used to get mouse x and y coordinates]
      *
      * @param {[object]} Mouse event
      * @param {[string]} fieldID [unique field id]
@@ -209,21 +209,45 @@ function TEGClient() {
      *         				figures:{NAME:value}
      */
     var setField = function(jData) {
-        if (jData.fieldID) {
+        console.log(jData);
+        if (jData.figure) {
             // yep slow but he we have max 3 figures :)
-            Object.keys(jData.figures).forEach(function(key) {
-                // console.log(key, jData.figures[key]);
-                board.field[jData.fieldID].figure[key].owner = String(jData.owner[key]);
-                board.field[jData.fieldID].figure[key].amount += Number(jData.figures[key]);
+            Object.keys(jData.figure).forEach(function(key) {
+                if (board.field[jData.fieldID].figure[key].owner) {
+                    board.field[jData.fieldID].figure[key].owner = String(jData.owner[key]);
+                }
+                if (board.field[jData.fieldID].figure[key].amount) {
+                    board.field[jData.fieldID].figure[key].amount += Number(jData.figure[key]);
+                }
             });
         }
+        if (jData.amount) {
+            var f = [],
+                remainder = 0,
+                r = 0,
+                a = jData.amount;
 
+            Object.keys(board.field[jData.fieldID].figure).forEach(function(key) {
+                f.push(board.field[jData.fieldID].figure[key].factor);
+            });
+            f = f.sort(function(a, b) {
+                return b - a;
+            });
+            for (var i = 0; i < f.length; i++) {
+                remainder = a % f[i];
+                r = a - ((a - remainder) / f[i]) * f[i];
+                console.log(a - r);
+            }
+        }
+        socket.emit("respond", true);
     };
+
     var placeDone = function(fieldID) {
         if ($("#place").hasClass("w_show")) {
             $("#place").addClass("w_hide");
             $("#place").removeClass("w_show");
         }
+        socket.emit("respond", true);
     };
 
     /**
@@ -233,19 +257,23 @@ function TEGClient() {
      * @return {json} emit field data to server (receive)
      */
     var getField = function(jData) {
+        jData = JSON.parse(jData);
         if (jData.fieldID) {
             var result = JSON.stringify({
                 id: board.field[jData.fieldID].uID,
                 boundary: board.field[jData.fieldID].boundary,
                 areaID: board.field[jData.fieldID].areaID,
-                figure: board.field[jData.fieldID].figure,
                 quality: board.field[jData.fieldID].quality,
                 selected: board.field[jData.fieldID].selected
             });
+            console.log(JSON.stringify(board.field[jData.fieldID].figures));
+            console.log(board.field[jData.fieldID]);
             socket.emit("receive", result);
         } else {
             socket.emit("tarzan", "country: need at least one ID");
+            socket.emit("respond", true);
         }
+        socket.emit("respond", true);
     };
 
     // TESTING

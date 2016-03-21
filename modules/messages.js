@@ -1,5 +1,6 @@
 var readline = require("readline"),
     exports = module.exports = {},
+    respondData = {},
     clients = {}; // store socket.id's
 
 exports.onConnection = function(socket) {
@@ -12,14 +13,29 @@ exports.onConnection = function(socket) {
     socket.on("receive", onReceive);
     socket.on("tarzan", onTarzan);
     socket.on("echo", onEcho);
+    socket.on("respond", onRespond);
 
     // Socket emissions
     socket.emit("message", "client id: " + socket.id);
+    socket.emit("message", "i take your brain to another dimension, pay close attention!");
+
+    var triggerState = function(trigger, data) {
+        socket.emit("ts", trigger, data);
+    };
 
     // TESTING GAME: teg (game folders)
     var gameID = "teg",
         conf = require("../view/game/" + gameID + "/config.json");
-    socket.emit("ts", "set_game", conf);
+
+    triggerState("set_game", conf);
+    triggerState("start");
+    triggerState("place");
+
+    var foo = JSON.stringify({
+        fieldID: "SouthAmericaPeru"
+    });
+    triggerState("get_field", foo);
+
     // TESTING END:
 };
 
@@ -43,6 +59,11 @@ var onTarzan = function(data) {
 
 var onEcho = function(data) {
     console.log("echo: " + data);
+};
+
+var onRespond = function(data) {
+    console.log("client respond");
+    respondData = data;
 };
 
 /* Process */
@@ -71,7 +92,7 @@ function initCommandLine(socket) {
             case "ts":
                 if (cmd[2]) {
                     /*
-                      We have a optional param (json string)
+                      Optional param (json string)
                       example: ts field_data {"fieldID":"SouthAmericaBrazil"}
                     */
                     socket.emit("ts", cmd[1], JSON.parse(cmd[2]));

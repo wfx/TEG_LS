@@ -1,19 +1,20 @@
-function Board(opt) {
+function Board(conf) {
     "use strict";
     var self = this,
         map = {},
-        viewbox = opt.viewbox;
+        viewbox = conf.viewbox;
 
-    self.area = [];
-    self.field = [];
-    self.surface = new Snap(opt.element);
+    self.area = {};
+    self.field = {};
+
+    self.surface = new Snap(conf.element);
     self.group = self.surface.group();
 
     // load the svg and fill up all board area's and field's
-    Snap.load(opt.file, function(map) {
+    Snap.load(conf.file, function(map) {
         // TODO: get it from the map?
         self.surface.attr({
-            viewBox: opt.viewBox
+            viewBox: conf.viewBox
         });
         var aid = "",
             fid = "";
@@ -27,7 +28,7 @@ function Board(opt) {
             }
             if (el.node.attributes["board:field"]) {
                 fid = self.area[aid].uID + el.node.attributes["board:field"].value.replace(/ /g, "");
-                self.field[fid] = new Field(opt.field);
+                self.field[fid] = new Field(conf.field);
                 self.area[aid].field = fid;
                 self.field[fid].uID = fid;
                 self.field[fid].name = el.node.attributes["board:field"].value;
@@ -55,28 +56,29 @@ function Area() {
     self.image = {};
 }
 
-function Field(opt) {
+function Field(conf) {
     "use strict";
     var self = this;
     self.uID = "";
     self.name = "";
     self.boundary = [];
     self.areaID = "";
-    self.figure = {};
+    self.figures = {};
+    // TODO: Same factors on each field ~42times(x3!)? :|
+    for (var i in conf.figures) {
+        self.figures[i] = {
+            owner: "",
+            amount: 0,
+            factor: conf.figures[i]
+        };
+    }
     self.quality = 0;
     self.image = {};
     self.selected = false;
-    var clicked = opt.callbacks.clicked,
-        hoverover = opt.callbacks.hoverover,
-        hoverout = opt.callbacks.hoverout,
-        mousemove = opt.callbacks.mousemove;
-
-    opt.figures.forEach(function(t) {
-        self.figure[t] = {
-            owner: "",
-            amount: 0
-        };
-    });
+    var clicked = conf.callbacks.clicked,
+        hoverover = conf.callbacks.hoverover,
+        hoverout = conf.callbacks.hoverout,
+        mousemove = conf.callbacks.mousemove;
 
     self.onClick = function() {
         clicked(self.uID);
