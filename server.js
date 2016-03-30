@@ -1,34 +1,60 @@
+/*
+Moving to Express 4:
+http://expressjs.com/en/guide/migrating-4.html
+Logger:
+https://github.com/expressjs/morgan
+ */
+
 var express = require("express"),
+    session = require('express-session'),
+    morgan = require('morgan'),
     http = require("http"),
     socketIO = require("socket.io"),
-    conf = require("./config.json"),
     msg = require("./modules/messages.js"),
-    MemoryStore = express.session.MemoryStore,
-    session_key = 'express.sid',
-    session_secret = 'for signed cookies',
-    session_store = new MemoryStore(),
-    cookieParser = express.cookieParser(session_secret);
+    cfg = require("./config.json");
 
 /* Init webserver */
 var app = express(),
     server = http.createServer(app),
-    io = socketIO.listen(server);
+    io = socketIO.listen(server),
+    sess = {};
 
-server.listen(conf.port);
+server.listen(cfg.port);
 
-app.use(cookieParser);
-app.use(express.session({
-  secret: session_secret,
-  store: session_store,
-  key: session_key
+io.set('log level',1);
+
+
+// request in the Apache combined format to STDOUT
+app.use(morgan('dev'));
+
+// Use the session middleware
+// https://github.com/expressjs/
+app.use(session({
+    secret: 'teg la secuela',
+    name: "teglr",
+    cookie: {
+        maxAge: 60000
+    },
+    resave: true,
+    saveUninitialized: true
 }));
 
+// Serve static html, js, css, and image files from the 'view' directory
 app.use(express.static(__dirname + "/view"));
 app.get('/', function(req, res) {
-    res.sendfile(__dirname + "/view/index.html");
+    sess = req.sessionID;
+    res.sendFile(__dirname + '/view/index.html');
+    console.log('respond main with session id: ' + sess);
 });
 
-console.log("Server run at http://127.0.0.1:" + conf.port + "/");
+app.get('/normal', function(req, res) {
+    sess = req.sessionID;
+    res.sendFile(__dirname + '/view/normal.html');
+    console.log('respond normal to: ' + sess);
+});
 
-/* Listen events */
-io.on('connection', msg.onConnection);
+console.log("Server run at http://127.0.0.1:" + cfg.port + "/");
+
+io.sockets.on('connection', function(socket) {
+    msg.initGame(io, socket);
+});

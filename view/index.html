@@ -1,39 +1,57 @@
+<!DOCTYPE html>
 <html>
 
 <head>
   <title>TEG</title>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+  <link rel=icon href=img/favicon.png type="image/png">
   <link rel="stylesheet" href="css/screen.css" type="text/css" media="all" />
 </head>
 
 <body>
-  <div id="boardgame">
-    <div id="navigation"></div>
-    <div id="playfield">
-      <svg id="board" </svg>
-    </div>
-    <div id="widget">
-      <div id="cards" class="w_dialog w_hide" role="dialog">
-        <h1 class="w_dialog_title">Cards dialog.</h1>
-        <input type="range" min="0" max="100" step="1">
+  <div id="game">
+
+    <div id="gameArea"></div>
+
+    <script id="Scene-Startup" type="text/template">
+      <div id="startup">
         <ul>
-          <li><button class="w_btn_default">Done</button></li>
-          <li><button class="w_btn_cancel">Cancel</button></li>
+          <li><a id="btnViewSceneHost" href="#">HOST</a></li>
+          <li><a id="btnViewSceneJoin" href="#">JOIN</a></li>
         </ul>
       </div>
-      <div id="attac" class="w_hide" role="dialog">Attac dialog.</div>
-      <div id="place" class="w_hide" role="dialog">
-        <h2>Dialog - Place</h2>
-        <div class="rannge_value">0</div>
-        <input type="range" value="10" min="1" max="10">
+    </script>
+
+    <script id="Scene-Host" type="text/template">
+      <div id="host">
         <ul>
-          <li><a class="w_btn_default" href="#">Done</a></li>
-          <li><a class="w_btn_cancel" href="#">Cancel</a></li>
+          <li><a id="btnViewScenePlay" href="#">PLAY</a></li>
         </ul>
       </div>
-      <div id="move" class="w_hide" role="dialog">Move dialog.</div>
-    </div>
-  </div>
+    </script>
+
+    <script id="Scene-Join" type="text/template">
+      <div id="join">
+        <ul>
+          <li><a id="btnViewScenePlay" href="#">PLAY</a></li>
+        </ul>
+      </div>
+    </script>
+
+    <script id="Scene-Play" type="text/template">
+      <div id="play">
+        <div id="navigation"></div>
+        <div id="playfield">
+          <svg id="board"></svg>
+        </div>
+        <div id="dialog-cards" class="w_dialog w_hide"></div>
+        <div id="dialog-attac" class="w_dialog w_hide"></div>
+        <div id="dialog-place" class="w_dialog w_hide"></div>
+        <div id="dialog-move" class="w_dialog w_hide"></div>
+      </div>
+    </script>
+
   </div>
 </body>
 

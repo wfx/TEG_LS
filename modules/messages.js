@@ -1,69 +1,78 @@
 var readline = require("readline"),
     exports = module.exports = {},
-    respondData = {},
-    clients = {}; // store socket.id's
+    game = {}; // store game settings/configuration
 
-exports.onConnection = function(socket) {
+exports.initGame = function(io, socket) {
+
+    console.log('init game...');
 
     initCommandLine(socket);
 
-    //Sockect receptions
-    socket.on('authenticate', onAuthenticate);
+    //Socket receptions
+    socket.on('hostCreateNewGame', hostCreateNewGame);
+
+    // Player Event
     socket.on('disconnect', onDisconnect);
-    socket.on("receive", onReceive);
-    socket.on("tarzan", onTarzan);
-    socket.on("echo", onEcho);
-    socket.on("respond", onRespond);
-
-    // Socket emissions
-    socket.emit("message", "client id: " + socket.id);
-    socket.emit("message", "i take your brain to another dimension, pay close attention!");
-
-    var triggerState = function(trigger, data) {
-        socket.emit("ts", trigger, data);
-    };
-
-    // TESTING GAME: teg (game folders)
-    var gameID = "teg",
-        conf = require("../view/game/" + gameID + "/config.json");
-
-    triggerState("set_game", conf);
-    triggerState("start");
-    triggerState("place");
-
-    var foo = JSON.stringify({
-        fieldID: "SouthAmericaPeru"
-    });
-    triggerState("get_field", foo);
-
-    // TESTING END:
+    socket.on("error", onTarzan);
+    socket.on("message", onMessage);
+    socket.on("advise", onAdvise);
 };
 
-/* Events */
-var onAuthenticate = function(data) {
-    console.log('Player ' + data.player + ' join ' + data.game);
-    // Check...
+var onAdvise = function(data) {
+    if(data.name == "state" && data.value == "ready") {
+      this.emit("ts", "viewSceneStartup");
+    }
+    if(data.name == "btnViewSceneHost" && data.value == "clicked") {
+      this.emit("ts", "viewSceneHost");
+    }
+    if(data.name == "btnViewSceneJoin" && data.value == "clicked") {
+      this.emit("ts", "viewSceneJoin");
+    }
+    if(data.name == "btnViewScenePlay" && data.value == "clicked") {
+      data = require("../view/game/teg/config.json");
+      this.emit("ts", "viewScenePlay", data);
+    }
+    if(data.name == "field_clicked") {
+      this.emit("ts", "field_clicked", data.value);
+    }
+};
+
+var hostCreateNewGame = function(data) {
+    console.log(data);
+    // TESTING: use teg boad (game folder)
+    game.cfg = require("../view/game/teg/config.json");
+
+    game.ID = data.gameID;
+    //game.ID = ( Math.floor(Date.now() / 1000) ); // timestap in seconds
+    game.socketID = this.id;
+    console.log(game.gameID);
+
+    this.emit('newGameCreated', {
+        gameID: game.ID,
+        socketID: game.socketID
+    });
+
+    // Join the Room and wait for the players (they have to use the right game.ID)
+    this.join(game.ID.toString());
+
+    console.log('host create game: ' + JSON.stringify(data));
+};
+
+var hostPrepareGame = function(data) {
+    io.sockets.in(data.gameID).emit('message', game);
+    console.log('host start game with id: ' + data.gameID);
 };
 
 var onDisconnect = function() {
-    console.log('client disconnected.');
-};
-
-var onReceive = function(data) {
-    console.log("receive data:\n" + data);
+    console.log("Client disconnected.");
 };
 
 var onTarzan = function(data) {
-    console.log("tarzan: " + data);
+    console.log("Client Tarzan!: " + data);
 };
 
-var onEcho = function(data) {
-    console.log("echo: " + data);
-};
-
-var onRespond = function(data) {
-    console.log("client respond");
-    respondData = data;
+var onMessage = function(data) {
+    console.log("Client Message: " + data);
 };
 
 /* Process */
@@ -93,9 +102,9 @@ function initCommandLine(socket) {
                 if (cmd[2]) {
                     /*
                       Optional param (json string)
-                      example: ts field_data {"fieldID":"SouthAmericaBrazil"}
+                      example: ts field_data {fieldID:"SouthAmericaBrazil"}
                     */
-                    socket.emit("ts", cmd[1], JSON.parse(cmd[2]));
+                    socket.emit("ts", cmd[1], cmd[2]);
                 } else {
                     socket.emit("ts", cmd[1], false);
                 }

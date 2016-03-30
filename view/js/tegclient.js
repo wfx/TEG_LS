@@ -1,288 +1,198 @@
-var tc = tc || {};
-tc.client = new TEGClient();
+jQuery(function($) {
+    'use strict';
 
-function TEGClient() {
-    "use strict";
-    var elementBoard = document.getElementById("board"),
-        svgPoint = elementBoard.createSVGPoint(),
-        board = {},
-        Mouse = {};
+    var IO = {
 
-    // Init Socket
-    var socket = io.connect("http://127.0.0.1:8080", {
-        reconnection: true,
-        forceNew: false
-    });
+        init: function() {
+            IO.socket = io.connect();
+            IO.bindEvents();
+        },
 
-    socket.once("connect", function() {
-        socket.emit('authenticate', {
-            game: "mygameid",
-            player: "myplayername",
-            token: "mytoken"
-        });
+        bindEvents: function() {
+            IO.socket.on('connected', IO.onConnected);
+            IO.socket.on('ts', IO.onTriggerState);
+            IO.socket.on('message', IO.onMessage);
+            IO.socket.on('error', IO.onGameError);
+        },
 
-        socket.on("message", function(msg) {
-            console.log(msg);
-        });
-        socket.on("ts", function(trigger, data) {
+        onConnected: function() {
+            App.sessionId = IO.socket.sessionid;
+            console.log('Client connected with id: ' + App.sessionId);
+        },
+
+        onTriggerState: function(trigger, data) {
+            console.log('Server: trigger ' + trigger);
             if (trigger) {
-                fsm.trigger(trigger, data);
+                FSM.trigger(trigger, data);
             } else {
                 var jData = [];
-                jData.push(fsm.stateName);
-                jData.push(fsm.currentState);
-                socket.emit("receive", JSON.stringify(jData));
+                jData.push(FSM.stateName);
+                jData.push(FSM.currentState);
+                IO.socket.emit("receive", JSON.stringify(jData));
             }
-        });
-    });
-    // INIT: Finit State Machine
-    var fsm = new EventStateMachine(
-        "ready", {
-            "ready": {
-                "start": "play",
-                "exit": "ready",
-                "client_version": "ready",
-                "set_game": "ready",
-                "options": "ready",
-                "error": "ready"
-            },
-            "play": {
-                "get_field": "play",
-                "field_select": "play",
-                "place": "place",
-                "attac": "attac",
-                "move": "move",
-                "card": "card",
-                "game_lose": "ready",
-                "game_won": "ready",
-                "game_surrender": "ready",
-                "save": "ready",
-                "end_turn": "play",
-                "error": "ready"
-            },
-            "card": {
-                "card_get": "card",
-                "card_trade": "card",
-                "card_done": "play",
-                "error": "play"
-            },
-            "place": {
-                "get_field": "place",
-                "field_select": "place",
-                "set_field": "place",
-                "place_done": "play",
-                "error": "place"
-            },
-            "attac": {
-                "get_field": "attac",
-                "field_select": "attac",
-                "attac": "attac",
-                "attac_repeating": "attac",
-                "attac_until": "attac",
-                "attac_lose": "attac",
-                "attac_won": "attac",
-                "attac_done": "play",
-                "set_owner": "attac",
-                "error": "attac"
-            },
-            "move": {
-                "get_field": "move",
-                "field_select": "move",
-                "move": "move",
-                "move_done": "play",
-                "error": "move"
-            }
+        },
+
+        onMessage: function(data) {
+            console.log('Message: ' + data);
+        },
+
+        onGameError: function(data) {
+            console.log('Tarzan! Error: ' + data);
         }
-    );
+    };
 
-    var setGame = function(conf) {
-        if (conf.path) {
-            $("body").css("background-image", "url(" + conf.path + "/background.png)");
+    var App = {
 
-            /**
-             * [Board models a board]
-             *
-             * TODO:
-             * Add more options (board:area etc.).
-             * Get from server: map file and figures.
-             *
-             * @param {[json]} Board definition
-             * @param {[object]} HTML element
-             * @param {[string]} File
-             * @param {[string]} viewBox
-             * @param {[json]} Field definition
-             * @param {[string]} Array of figures
-             * @param {[json]} callbacks
-             * @param {[string]} clicked callback
-             * @param {[string]} hover over callback
-             * @param {[string]} hover out callback
-             * @param {[string]} mouse move (over field) callback
-             *
-             */
+        gameId: 0,
+        sessionId: '',
 
-            board = new Board({
-                element: document.getElementById("board"),
-                file: conf.path + "/board.svg",
-                viewBox: conf.viewBox,
-                field: {
-                    figures: conf.figures,
-                    callbacks: {
-                        clicked: eventFieldClicked,
-                        hoverover: eventFieldHoverOver,
-                        hoverout: eventFieldHoverOut,
-                        mousemove: eventFieldMouseMove
+        init: function() {
+            App.cacheElements();
+            App.bindEvents();
+            App.bindState();
+            IO.socket.emit("advise", {
+                name: "state",
+                value: "ready"
+            });
+        },
+
+        cacheElements: function() {
+            App.$doc = $(document);
+            // The place to View scene's.
+            App.$gameArea = $('#gameArea');
+            // View scene's.
+            App.$templateSceneStartup = $('#Scene-Startup').html();
+            App.$templateSceneHost = $('#Scene-Host').html();
+            App.$templateSceneJoin = $('#Scene-Join').html();
+            App.$templateScenePlay = $('#Scene-Play').html();
+        },
+
+        bindEvents: function() {
+            // Html clickable stuff
+            App.$doc.on('click', '#btnViewSceneHost', App.onViewSceneHostClick);
+            App.$doc.on('click', '#btnViewSceneJoin', App.onViewSceneJoinClick);
+            App.$doc.on('click', '#btnViewScenePlay', App.onViewScenePlayClick);
+        },
+
+        bindState: function() {
+            // Everythink is controlled on server side (ts, whatever, json data)
+            FSM.on('viewSceneStartup', App.ViewSceneStartup);
+            FSM.on('viewSceneHost', App.ViewSceneHost);
+            FSM.on('viewSceneJoin', App.ViewSceneJoin);
+            FSM.on('viewScenePlay', App.ViewScenePlay);
+            //
+            FSM.on('field_select', App.fieldClicked);
+        },
+
+        ViewSceneStartup: function(data) {
+            App.$gameArea.html(App.$templateSceneStartup);
+            // return true;
+        },
+
+        ViewSceneHost: function(data) {
+            App.$gameArea.html(App.$templateSceneHost);
+            // return true;
+        },
+
+        ViewSceneJoin: function(data) {
+            App.$gameArea.html(App.$templateSceneJoin);
+            // return true;
+        },
+
+        ViewScenePlay: function(data) {
+            App.$gameArea.html(App.$templateScenePlay);
+            App.Board.init(data);
+            // return true;
+        },
+
+        // Advising the server:
+        // ====================
+        onViewSceneHostClick: function() {
+            IO.socket.emit('hostCreateNewGame', {
+                gameID: (Math.floor(Date.now() / 1000))
+            });
+            IO.socket.emit("advise", {
+                name: "btnViewSceneHost",
+                value: "clicked"
+            });
+        },
+        onViewSceneJoinClick: function() {
+            IO.socket.emit("advise", {
+                name: "btnViewSceneJoin",
+                value: "clicked"
+            });
+        },
+        onViewScenePlayClick: function() {
+            IO.socket.emit("advise", {
+                name: "btnViewScenePlay",
+                value: "clicked"
+            });
+        },
+
+        /*
+            DRAW THE BOAD and inform the server on field event's
+            Event: fieldClicked
+        */
+        Board: {
+            init: function(data) {
+                var map = {},
+                    mouse = {},
+                    svgPoint = {};
+
+                $("body").css("background-image", "url(" + data.path + "/background.png)");
+                App.Board.map = new Board({
+                    element: document.getElementById("board"),
+                    file: data.path + "/board.svg",
+                    viewBox: data.viewBox,
+                    field: {
+                        figures: data.figures,
+                        callbacks: {
+                            clicked: App.Board.fieldClicked,
+                            hoverover: App.Board.fieldHoverOver,
+                            hoverout: App.Board.fieldHoverOut,
+                            mousemove: App.Board.fieldMouseMove
+                        }
                     }
-                }
-            });
-            socket.emit("respond", true);
-        }
-    };
-    /**
-     * [eventFieldClicked
-     *  This board event trigger the field click state]
-     * @param  {[type]} uid [unique field id]
-     */
-    var eventFieldClicked = function(fieldID) {
-        fsm.trigger("field_select", fieldID);
-    };
-    /**
-     * [eventFieldHoverOver
-     * 	This board event give a visiual feedback]
-     * @param  {[type]} uid [unique field id]
-     */
-    var eventFieldHoverOver = function(fieldID) {
-        board.field[fieldID].image.attr({
-            "fill-opacity": ".5"
-        });
-    };
-    /**
-     * [boardFieldHoverOut
-     * 	This board event give a visiual feedback]
-     * @param  {[type]} uid [unique field id]
-     */
-    var eventFieldHoverOut = function(fieldID) {
-        // give visiual feedback
-        board.field[fieldID].image.attr({
-            "fill-opacity": "1"
-        });
-    };
-    /**
-     * [boardFieldMouseMove
-     * 	This board event is used to get mouse x and y coordinates]
-     *
-     * @param {[object]} Mouse event
-     * @param {[string]} fieldID [unique field id]
-     */
-    var eventFieldMouseMove = function(ev, fieldID) {
-        svgPoint.x = ev.clientX;
-        svgPoint.y = ev.clientY;
-        // Calculate Mouse.x and Mouse.y
-        Mouse = svgPoint.matrixTransform(board.surface.node.getScreenCTM().inverse());
-    };
-    /**
-     * [fieldSelect Server or Client trigger "field_select"]
-     *
-     * @param  {string} uid unique field id
-     * @return {json}       emit field data to server (echo)
-     */
-    var fieldSelect = function(fieldID) {
-        // Send field informations.
-        socket.emit("echo", JSON.stringify({
-            fieldID: board.field[fieldID].uID
-        }));
-        // TESTING START
-        //board.field[uid].image.addClass("arrowPointer");
-
-        var myCircle = board.surface.circle(Mouse.x, Mouse.y, 10);
-        myCircle.attr({
-            fill: "red",
-            "pointer-events": "none"
-        });
-
-        board.group.add(myCircle);
-        // TESTING END
-    };
-    /**
-     * [setField Sever trigger "set_field"]
-     *
-     * @param  {json} fieldID:id,
-     *         				figures:{NAME:value}
-     */
-    var setField = function(jData) {
-        console.log(jData);
-        if (jData.figure) {
-            // yep slow but he we have max 3 figures :)
-            Object.keys(jData.figure).forEach(function(key) {
-                if (board.field[jData.fieldID].figure[key].owner) {
-                    board.field[jData.fieldID].figure[key].owner = String(jData.owner[key]);
-                }
-                if (board.field[jData.fieldID].figure[key].amount) {
-                    board.field[jData.fieldID].figure[key].amount += Number(jData.figure[key]);
-                }
-            });
-        }
-        if (jData.amount) {
-            var f = [],
-                remainder = 0,
-                r = 0,
-                a = jData.amount;
-
-            Object.keys(board.field[jData.fieldID].figure).forEach(function(key) {
-                f.push(board.field[jData.fieldID].figure[key].factor);
-            });
-            f = f.sort(function(a, b) {
-                return b - a;
-            });
-            for (var i = 0; i < f.length; i++) {
-                remainder = a % f[i];
-                r = a - ((a - remainder) / f[i]) * f[i];
-                console.log(a - r);
+                });
+                App.Board.svgPoint = App.Board.map.surface.node.createSVGPoint();
+            },
+            fieldClicked: function(fieldID) {
+                IO.socket.emit("advise", {
+                    name: "field_clicked",
+                    value: fieldID
+                });
+                console.log(App.Board.svgPoint);
+            },
+            fieldHoverOver: function(fieldID) {
+                // give visual feedback
+                App.Board.map.field[fieldID].image.attr({
+                    "fill-opacity": ".5"
+                });
+            },
+            fieldHoverOut: function(fieldID) {
+                // give visual feedback
+                App.Board.map.field[fieldID].image.attr({
+                    "fill-opacity": "1"
+                });
+            },
+            fieldMouseMove: function(ev, fieldID) {
+                App.Board.svgPoint.x = ev.clientX;
+                App.Board.svgPoint.y = ev.clientY;
+                // Calculate Mouse.x and Mouse.y
+                App.Board.mouse = App.Board.svgPoint.matrixTransform(App.Board.map.surface.node.getScreenCTM().inverse());
             }
+        },
+
+        Player: {
+            // TODO: all... :)
         }
-        socket.emit("respond", true);
     };
 
-    var placeDone = function(fieldID) {
-        if ($("#place").hasClass("w_show")) {
-            $("#place").addClass("w_hide");
-            $("#place").removeClass("w_show");
-        }
-        socket.emit("respond", true);
-    };
+    var FSM = {};
+    $.getJSON("js/tegclient.json", function(json) {
+        FSM = new EventStateMachine(json.start, json.transitions);
+        IO.init();
+        App.init();
+    });
 
-    /**
-     * [getField Sever trigger "get_field"]
-     *
-     * @param  {json} fieldID:id
-     * @return {json} emit field data to server (receive)
-     */
-    var getField = function(jData) {
-        jData = JSON.parse(jData);
-        if (jData.fieldID) {
-            var result = JSON.stringify({
-                id: board.field[jData.fieldID].uID,
-                boundary: board.field[jData.fieldID].boundary,
-                areaID: board.field[jData.fieldID].areaID,
-                quality: board.field[jData.fieldID].quality,
-                selected: board.field[jData.fieldID].selected
-            });
-            console.log(JSON.stringify(board.field[jData.fieldID].figures));
-            console.log(board.field[jData.fieldID]);
-            socket.emit("receive", result);
-        } else {
-            socket.emit("tarzan", "country: need at least one ID");
-            socket.emit("respond", true);
-        }
-        socket.emit("respond", true);
-    };
-
-    // TESTING
-    fsm.log = true;
-
-    // Bind trigger's on function
-    fsm.on("set_game", setGame);
-    fsm.on("field_select", fieldSelect);
-    fsm.on("get_field", getField);
-    fsm.on("set_field", setField);
-    fsm.on("place_done", placeDone);
-}
+}($));

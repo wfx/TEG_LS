@@ -1,6 +1,5 @@
 var EventStateMachine = function(stateName, transitions) {
     "use strict";
-    // transition is a array
     this.stateName = stateName;
     this.transitions = transitions;
     this.currentState = this.transitions[this.stateName];
@@ -11,13 +10,13 @@ var EventStateMachine = function(stateName, transitions) {
         if (this.currentState[eventName]) {
             this.stateName = this.currentState[eventName];
             if (this.log) {
-                console.log("event: " + eventName + " change state to: " + this.stateName);
+                console.log("FSM Event: " + eventName + ". New state is: " + this.stateName);
             }
             this.currentState = this.transitions[this.stateName];
             this.cb(eventName, data);
         } else {
             if (this.log) {
-                console.log("event: " + eventName + " not allowed on state " + this.stateName);
+                console.log("FSM Event: Trigger " + eventName + " is not available on state " + this.stateName);
             }
             return false;
         }

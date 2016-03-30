@@ -9,18 +9,14 @@
   font-weight: 100;
   font-style: normal;
 }
-
 body {
-  background-color: $col_body_bg;
-  color: $col_text;
-  font-family: 'Roboto';
+  background-color: #5984ac;
+  color: #000;
+  font-family: 'LiberationMono';
   font-weight: 100;
   font-size: 100%;
   height: 100vh;
   width: 100vw;
-  background-color: #fff;
-  background-repeat: no-repeat;
-  background-size: cover;
 }
 .clearfix:after {
   content: " ";
@@ -29,30 +25,46 @@ body {
   visibility: hidden;
   height: 0;
 }
-#playfield {
-  > #board {
+#game {
+  width: 100%;
+  height: 100%;
+  #gameArea {
+    width: 100%;
     height: 100%;
-    width: 100%;
-  }
-}
-// Widget ( short w_ )
-#widget {}
-#cards {
-  ul {
-    position: absolute;
-    bottom: 0;
-    width: 100%;
-    display: table;
-    table-layout: fixed;
-    /* optional */
-    border-top: solid rgb(18,18,18) 1px;
-    li {
-      display: table-cell;
-      width: auto;
+    #startup {
+      width: 100%;
+      height: 100%;
+      background-color: #5984ac;
+      background-image: url("../img/sceneStart.png");
+      background-repeat: no-repeat;
+      background-size: cover;
+      > ul {
+        padding-top: 30%;
+        padding-left: 30%;
+        display: block;
+        li {
+          padding-bottom: 1em;
+        }
+        a {
+          color: #000;
+          text-decoration: none;
+        }
+        a:hover {
+          color: #22f;
+        }
+      }
+    }
+    #play {
+      #playfield {
+        > #board {
+          height: 100%;
+          width: 100%;
+        }
+      }
     }
   }
 }
+#cards {}
 #attac {}
-#place {
-}
+#place {}
 #move {}

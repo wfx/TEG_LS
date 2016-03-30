@@ -65,6 +65,11 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   position: fixed;
 }
 
+.w_center {
+  margin-left: auto;
+  margin-right: auto;
+}
+
 .w_dialog {
   width: 422px;
   height: 156px;
@@ -148,16 +153,13 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   font-style: normal;
 }
 body {
-  background-color: #333;
-  color: #00000b;
-  font-family: 'Roboto';
+  background-color: #5984ac;
+  color: #000;
+  font-family: 'LiberationMono';
   font-weight: 100;
   font-size: 100%;
   height: 100vh;
   width: 100vw;
-  background-color: #fff;
-  background-repeat: no-repeat;
-  background-size: cover;
 }
 
 .clearfix:after {
@@ -168,21 +170,38 @@ body {
   height: 0;
 }
 
-#playfield > #board {
+#game {
+  width: 100%;
+  height: 100%;
+}
+#game #gameArea {
+  width: 100%;
+  height: 100%;
+}
+#game #gameArea #startup {
+  width: 100%;
+  height: 100%;
+  background-color: #5984ac;
+  background-image: url("../img/sceneStart.png");
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+#game #gameArea #startup > ul {
+  padding-top: 30%;
+  padding-left: 30%;
+  display: block;
+}
+#game #gameArea #startup > ul li {
+  padding-bottom: 1em;
+}
+#game #gameArea #startup > ul a {
+  color: #000;
+  text-decoration: none;
+}
+#game #gameArea #startup > ul a:hover {
+  color: #22f;
+}
+#game #gameArea #play #playfield > #board {
   height: 100%;
   width: 100%;
-}
-
-#cards ul {
-  position: absolute;
-  bottom: 0;
-  width: 100%;
-  display: table;
-  table-layout: fixed;
-  /* optional */
-  border-top: solid #121212 1px;
-}
-#cards ul li {
-  display: table-cell;
-  width: auto;
 }

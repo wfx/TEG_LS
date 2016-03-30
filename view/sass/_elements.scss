@@ -8,9 +8,13 @@ $w_dialog_height: 156px;
   position: fixed;
 }
 .w_show {
-  z-index: $dialog_z;
+  z-index: $w_dialog_z;
   display: inline-block;
   position: fixed;
+}
+.w_center {
+  margin-left: auto;
+  margin-right: auto;
 }
 .w_dialog {
   width: $w_dialog_width;

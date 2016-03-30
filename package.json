@@ -1,10 +1,11 @@
 {
     "name": "teg",
     "version": "0.0.1",
-    "description": "Rewrite for the web",
+    "description": "Tenes Empanadas Gracielas La Secuela. is a sequel and redevelopment of TEG.",
     "main": "server.js",
     "scripts": {
-      "start": "node server.js"
+      "start": "node server.js",
+      "test": "echo \"Error: no test specified\" && exit 1"
     },
     "repository": {
       "type": "git",
@@ -18,8 +19,11 @@
         "email": "wolfgang.morawetz@gmail.com",
         "url": "https://github.com/wfx/"
     },
+    "license": "GPL-3.0",
     "dependencies" : {
-        "express": "3.x",
-        "socket.io": "*"
+        "express": "^4.8.7",
+        "express-session": "^1.7.6",
+        "socket.io": "*",
+        "morgan": "*"
     }
 }
