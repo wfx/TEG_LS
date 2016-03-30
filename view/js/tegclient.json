@@ -1,0 +1,71 @@
+{
+    "start": "ready",
+    "transitions": {
+        "ready": {
+            "viewSceneStartup": "startup"
+        },
+        "startup": {
+            "viewSceneHost": "hostgame",
+            "viewSceneJoin": "joingame",
+            "exit": "ready",
+            "client_version": "startup",
+            "set_game": "startup",
+            "options": "startup",
+            "error": "startup"
+        },
+        "hostgame": {
+            "viewSceneStartup": "startup",
+            "viewScenePlay": "play"
+        },
+        "joingame": {
+            "viewSceneStartup": "startup",
+            "viewScenePlay": "play"
+        },
+        "play": {
+            "get_field": "play",
+            "field_clicked": "play",
+            "place": "place",
+            "attac": "attac",
+            "move": "move",
+            "card": "card",
+            "game_lose": "ready",
+            "game_won": "ready",
+            "game_surrender": "ready",
+            "save": "ready",
+            "end_turn": "play",
+            "error": "ready"
+        },
+        "card": {
+            "card_get": "card",
+            "card_trade": "card",
+            "card_done": "play",
+            "error": "play"
+        },
+        "place": {
+            "get_field": "place",
+            "field_clicked": "place",
+            "set_field": "place",
+            "place_done": "play",
+            "error": "place"
+        },
+        "attac": {
+            "get_field": "attac",
+            "field_clicked": "attac",
+            "attac": "attac",
+            "attac_repeating": "attac",
+            "attac_until": "attac",
+            "attac_lose": "attac",
+            "attac_won": "attac",
+            "attac_done": "play",
+            "set_owner": "attac",
+            "error": "attac"
+        },
+        "move": {
+            "get_field": "move",
+            "field_select": "move",
+            "move": "move",
+            "move_done": "play",
+            "error": "move"
+        }
+    }
+}
