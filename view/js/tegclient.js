@@ -6,19 +6,30 @@ jQuery(function($) {
         IO.socket = io.connect();
         IO.bindEvents();
       },
-
+      /**
+       * [Bind socket event's]
+       * @return {[bool]} [Not yet implemented]
+       */
       bindEvents: function() {
         IO.socket.on('connected', IO.onConnected);
         IO.socket.on('ts', IO.onTriggerState);
         IO.socket.on('message', IO.onMessage);
         IO.socket.on('error', IO.onGameError);
       },
-
+      /**
+       * [Called on connection]
+       * @return {[bool]} [Not yet implemented]
+       */
       onConnected: function() {
         App.sessionId = IO.socket.sessionid;
         console.log('Client connected with id: ' + App.sessionId);
       },
-
+      /**
+       * [Server can trigger states, if none given then we return some actualy state informations]
+       * @param  {[string]} trigger [Any trigger see tegclient.json]
+       * @param  {[json]}   data    [optional json formated data]
+       * @return {[bool]}           [Not yet implemented]
+       */
       onTriggerState: function(trigger, data) {
         console.log('Server: trigger ' + trigger);
         if (trigger) {
@@ -30,41 +41,46 @@ jQuery(function($) {
           IO.socket.emit("receive", JSON.stringify(jData));
         }
       },
-
+      /**
+       * [Socket for chating messages, not yet implemented]
+       * @param  {[json]} data [Json formated data]
+       * @return {[bool]}      [No yet implemented]
+       */
       onMessage: function(data) {
         console.log('Message: ' + data);
       },
-
+      /**
+       * [Socket for any error (tarzan is an inside jocke)]
+       * @param  {[json]} data [Json formated data]
+       * @return {[bool]}      [No yet implemented]
+       */
       onGameError: function(data) {
         console.log('Tarzan! Error: ' + data);
       }
     },
 
     App = {
-
       gameId: 0,
       sessionId: '',
-
       init: function() {
         App.bindState();
       },
-
-      /*  =======================================
-          Server can call with: "ts command data"
-          =======================================
+      /**
+       * [Bind callback functions for each trigger.
+       * The server can call it with: "ts trigger-name json-data"]
+       * @return {[bool]} [Not yet implemented]
        */
       bindState: function() {
-        FSM.on('viewSceneStartup', UI.Scene.ViewSceneStartup);
-        FSM.on('viewSceneHost', UI.Scene.ViewSceneHost);
-        FSM.on('viewSceneJoin', UI.Scene.ViewSceneJoin);
-        FSM.on('viewScenePlay', UI.Scene.ViewScenePlay);
+        FSM.on('viewSceneStartup', UI.Scene.viewSceneStartup);
+        FSM.on('viewSceneHost', UI.Scene.viewSceneHost);
+        FSM.on('viewSceneJoin', UI.Scene.viewSceneJoin);
+        FSM.on('viewScenePlay', UI.Scene.viewScenePlay);
         //
         FSM.on('field_select', UI.boardFieldClicked);
       },
-
-      /*  ==================================
-          Is needed then advising the server
-          ==================================
+      /**
+       * [Advise server: view the "Host" scene]
+       * @return {[bool]} [Not yet implemented]
        */
       btnViewSceneHostClick: function() {
         IO.socket.emit('hostCreateNewGame', {
@@ -75,47 +91,71 @@ jQuery(function($) {
           value: "clicked"
         });
       },
-
+      /**
+       * [Advise server: view the "Join" scene]
+       * @return {[bool]} [Not yet implemented]
+       */
       btnViewSceneJoinClick: function() {
         IO.socket.emit("advise", {
           name: "btnViewSceneJoin",
           value: "clicked"
         });
       },
-
+      /**
+       * [Advise server: view the "Play" scene]
+       * @return {[bool]} [Not yet implemented]
+       */
       btnViewScenePlayClick: function() {
         IO.socket.emit("advise", {
           name: "btnViewScenePlay",
           value: "clicked"
         });
       },
-
+      /**
+       * [Advise server: field click]
+       * @param  {[string]} fieldID [Field ID]
+       * @return {[bool]} [Not yet implemented]
+       */
       boardFieldClicked: function(fieldID) {
         IO.socket.emit("advise", {
           name: "field_clicked",
           value: fieldID
         });
-        console.log(UI.Board.svgPoint);
+        // INFO: Debug log.
+        console.log("Field: " + fieldID + " at: " + UI.Board.svgPoint);
       },
+      /**
+       * [Give a visible feedback on mouse hover over]
+       * @param  {[string]} fieldID [Field ID]
+       * @return {[bool]} [Not yet implemented]
+       */
       boardFieldHoverOver: function(fieldID) {
-        // give visual feedback
         UI.Board.map.field[fieldID].image.attr({
           "fill-opacity": ".5"
         });
       },
+      /**
+       * [Give a visible feedback on mouse hover out]
+       * @param  {[type]} fieldID [Field ID]
+       * @return {[bool]} [Not yet implemented]
+       */
       boardFieldHoverOut: function(fieldID) {
-        // give visual feedback
         UI.Board.map.field[fieldID].image.attr({
           "fill-opacity": "1"
         });
       },
+      /**
+       * [To give information about the field where you have youre pointer]
+       * @param  {[object]} ev      [Mouse event]
+       * @param  {[string]} fieldID [Field ID]
+       * @return {[bool]}           [Not yet implemented]
+       */
       boardFieldMouseMove: function(ev, fieldID) {
         UI.Board.svgPoint.x = ev.clientX;
         UI.Board.svgPoint.y = ev.clientY;
         // Calculate Mouse.x and Mouse.y
         UI.Board.mouse = UI.Board.svgPoint.matrixTransform(UI.Board.map.surface.node.getScreenCTM().inverse());
       }
-
     },
 
     UI = {
@@ -124,9 +164,11 @@ jQuery(function($) {
         UI.Scene.cacheElements();
         UI.Scene.bindEvents();
       },
-
       Scene: {
-
+        /**
+         * [Cache HTML elements that we use for scene view's]
+         * @return {[bool]} [Not yet implemented]
+         */
         cacheElements: function() {
           UI.$doc = $(document);
           // The place to View scene's.
@@ -137,45 +179,55 @@ jQuery(function($) {
           UI.$templateSceneJoin = $('#Scene-Join').html();
           UI.$templateScenePlay = $('#Scene-Play').html();
         },
-
+        /**
+         * [Bind clickable HTML elements (button's etc.)]
+         * @return {[bool]} [Not yet implemented]
+         * TODO: Menu and Dialog's
+         */
         bindEvents: function() {
-          // Html clickable stuff
           UI.$doc.on('click', '.btnViewSceneHost', App.btnViewSceneHostClick);
           UI.$doc.on('click', '.btnViewSceneJoin', App.btnViewSceneJoinClick);
           UI.$doc.on('click', '.btnViewScenePlay', App.btnViewScenePlayClick);
-          // TODO: Menu and Dialog's
         },
-
-        ViewSceneStartup: function(data) {
+        /**
+         * [View scene Startup: The starting scene]
+         * @return {[bool]} [Not yet implemented]
+         */
+        viewSceneStartup: function() {
           UI.$gameArea.html(UI.$templateSceneStartup);
-          // return true;
         },
-
-        ViewSceneHost: function(data) {
+        /**
+         * [View scene Host: Scene to setup and host a game]
+         * @return {[bool]} [Not yet implemented]
+         */
+        viewSceneHost: function(data) {
           UI.$gameArea.html(UI.$templateSceneHost);
-          // return true;
         },
-
-        ViewSceneJoin: function(data) {
+        /**
+         * [View scene Join: Scene to join a game]
+         * @return {[bool]} [Not yet implemented]
+         */
+        viewSceneJoin: function(data) {
           UI.$gameArea.html(UI.$templateSceneJoin);
-          // return true;
         },
-
-        ViewScenePlay: function(data) {
+        /**
+         * [View scene Play: The Scene to playing a game]
+         * @return {[bool]} [Not yet implemented]
+         */
+        viewScenePlay: function(data) {
           UI.$gameArea.html(UI.$templateScenePlay);
           $("playfield").css("background-image", "url(" + data.path + "/background.png)");
-          // TODO: Menu..
           UI.Board.init(data);
-          // return true;
         },
-
       },
-
       Menu: {},
-
       Dialog: {},
-
       Board: {
+        /**
+         * [Load the game board]
+         * @param  {[json]} data [configuration for the board (teg is view/game/teg/config.json)]
+         * @return {[bool]}      [Not yet implemented]
+         */
         init: function(data) {
           var map = {},
             mouse = {},
@@ -198,15 +250,16 @@ jQuery(function($) {
           UI.Board.svgPoint = UI.Board.map.surface.node.createSVGPoint();
         },
       },
-
-      Player: {
-        // TODO: all... :)
-      }
     },
-
+    Player = {
+      // TODO: all... :)
+    },
     FSM = {};
-
-  // run
+  /**
+   * [Initalize the client]
+   * @param  {[json]} "js/tegclient.json" [load client configuration, init the client and inform the server]
+   * @return {[bool]}                     [Not yet implemented]
+   */
   $.getJSON("js/tegclient.json", function(json) {
     FSM = new EventStateMachine(json.start, json.transitions);
     IO.init();
@@ -217,5 +270,4 @@ jQuery(function($) {
       value: "ready"
     });
   });
-
 }($));
