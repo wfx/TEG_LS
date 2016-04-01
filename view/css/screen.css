@@ -68,6 +68,8 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
 .w_center {
   margin-left: auto;
   margin-right: auto;
+  margin-top: auto;
+  margin-bottom: auto;
 }
 
 .w_dialog {
@@ -146,6 +148,40 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   background: linear-gradient(to bottom, #db6d6d 0%, #c75050 100%);
 }
 
+.btn_w1 {
+  width: 12em;
+  height: 6em;
+}
+
+.btn_w2 {
+  width: 24em;
+  height: 6em;
+}
+
+.btn {
+  display: inline-block;
+  position: relative;
+  overflow: hidden;
+  margin: 1em;
+  padding: 1em 3em;
+  border: 3px solid #fff;
+  border-radius: 50px;
+  background: none;
+  cursor: pointer;
+  font-size: 1em;
+  color: #fff;
+  -webkit-transition: all 0.3s;
+  -moz-transition: all 0.3s;
+  transition: all 0.3s;
+}
+.btn:active {
+  border-color: #649cff;
+  color: rgba(100, 156, 255, 0.5);
+}
+.btn:hover {
+  background: rgba(100, 156, 255, 0.5);
+}
+
 @font-face {
   font-family: Gothic;
   src: url("fonts/LiberationMono-Regular.ttf") format("truetype");
@@ -183,25 +219,32 @@ body {
   height: 100%;
   background-color: #5984ac;
   background-image: url("../img/sceneStart.png");
-  background-repeat: no-repeat;
   background-size: cover;
+  background-repeat: no-repeat;
 }
-#game #gameArea #startup > ul {
-  padding-top: 30%;
-  padding-left: 30%;
-  display: block;
+#game #gameArea #startup section {
+  position: absolute;
+  top: calc(50% - 3em);
+  left: calc(50% - 12em);
 }
-#game #gameArea #startup > ul li {
-  padding-bottom: 1em;
+#game #gameArea #host section {
+  position: absolute;
+  top: calc(50% - 3em);
+  left: calc(50% - 6em);
 }
-#game #gameArea #startup > ul a {
-  color: #000;
-  text-decoration: none;
+#game #gameArea #join section {
+  position: absolute;
+  top: calc(50% - 3em);
+  left: calc(50% - 6em);
 }
-#game #gameArea #startup > ul a:hover {
-  color: #22f;
+#game #gameArea #play {
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-repeat: no-repeat;
 }
 #game #gameArea #play #playfield > #board {
-  height: 100%;
-  width: 100%;
+  width: 100vw;
+  max-height: 100vh;
+  margin-right: auto;
 }
