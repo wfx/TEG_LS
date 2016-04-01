@@ -3,11 +3,16 @@ Moving to Express 4:
 http://expressjs.com/en/guide/migrating-4.html
 Logger:
 https://github.com/expressjs/morgan
+Debug:
+https://www.npmjs.com/package/debug
+
+Run in Terminal DEBUG=* node server.js
  */
 
 var express = require("express"),
     session = require('express-session'),
     morgan = require('morgan'),
+    debug = require('debug'),
     http = require("http"),
     socketIO = require("socket.io"),
     msg = require("./modules/messages.js"),
@@ -20,9 +25,6 @@ var app = express(),
     sess = {};
 
 server.listen(cfg.port);
-
-io.set('log level',1);
-
 
 // request in the Apache combined format to STDOUT
 app.use(morgan('dev'));
