@@ -36,29 +36,38 @@ body {
       height: 100%;
       background-color: #5984ac;
       background-image: url("../img/sceneStart.png");
-      background-repeat: no-repeat;
       background-size: cover;
-      > ul {
-        padding-top: 30%;
-        padding-left: 30%;
-        display: block;
-        li {
-          padding-bottom: 1em;
-        }
-        a {
-          color: #000;
-          text-decoration: none;
-        }
-        a:hover {
-          color: #22f;
-        }
+      background-repeat: no-repeat;
+      section {
+        position: absolute;
+        top: calc(50% - 3em);
+        left: calc(50% - 12em);
+      }
+    }
+    #host {
+      section {
+        position: absolute;
+        top: calc(50% - 3em);
+        left: calc(50% - 6em);
+      }
+    }
+    #join {
+      section {
+        position: absolute;
+        top: calc(50% - 3em);
+        left: calc(50% - 6em);
       }
     }
     #play {
+      width: 100%;
+      height: 100%;
+      background-size: cover;
+      background-repeat: no-repeat;
       #playfield {
         > #board {
-          height: 100%;
-          width: 100%;
+          width: 100vw;
+          max-height: 100vh;
+          margin-right: auto;
         }
       }
     }
