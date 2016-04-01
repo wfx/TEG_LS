@@ -6,6 +6,8 @@ exports.initGame = function(io, socket) {
 
     console.log('init game...');
 
+    socket.emit("connected");
+
     initCommandLine(socket);
 
     //Socket receptions
