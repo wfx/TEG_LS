@@ -122,7 +122,7 @@ jQuery(function($) {
           value: fieldID
         });
         // INFO: Debug log.
-        console.log("Field: " + fieldID + " at: " + UI.Board.svgPoint);
+        console.log("Field: " + fieldID + " at: " + UI.Board.svgPoint.x + "/" + UI.Board.svgPoint.y);
       },
       /**
        * [Give a visible feedback on mouse hover over]
