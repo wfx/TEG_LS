@@ -1,45 +1,65 @@
-var EventStateMachine = function(stateName, transitions) {
-    "use strict";
-    this.stateName = stateName;
-    this.transitions = transitions;
-    this.currentState = this.transitions[this.stateName];
-    this.events = {};
-    this.log = true;
+var FSM = {
+  /**
+   * [Init FSM]
+   * @param  {[string]} startName [Set the initial starting state]
+   * @param  {[json]} transitions [The transitions, see tegclient.json]
+   */
+  init: function(startName, transitions) {
+    FSM.stateName = startName;
+    FSM.transitions = transitions;
+    FSM.currentState = FSM.transitions[startName];
+    FSM.callbacks = {};
+    FSM.log = true;
+  },
 
-    this.trigger = function(eventName, data) {
-        if (this.currentState[eventName]) {
-            this.stateName = this.currentState[eventName];
-            if (this.log) {
-                console.log("FSM Event: " + eventName + ". New state is: " + this.stateName);
-            }
-            this.currentState = this.transitions[this.stateName];
-            this.cb(eventName, data);
-        } else {
-            if (this.log) {
-                console.log("FSM Event: Trigger " + eventName + " is not available on state " + this.stateName);
-            }
-            return false;
-        }
-    };
+  /**
+   * [Change to a state and call the every trigger binded callback's]
+   * @param  {[string]} triggerName [The trigger name]
+   * @param  {[json]} data          [Optional data passed to the callback function]
+   * @return {[bool]}               [False if trigger not possible]
+   */
+  trigger: function(triggerName, data) {
+    if (FSM.currentState[triggerName]) {
+      FSM.stateName = FSM.currentState[triggerName];
+      if (FSM.log) {
+        console.log("FSM Trigger: " + triggerName + ". state is now: " + FSM.stateName);
+      }
+      FSM.currentState = FSM.transitions[FSM.stateName];
+      FSM.cb(triggerName, data);
+    } else {
+      if (FSM.log) {
+        console.log("FSM Trigger " + triggerName + " is not available on state " + FSM.stateName);
+      }
+      return false;
+    }
+  },
 
-    this.on = function(eventName, callback) {
-        if (!this.events[eventName]) {
-            // array of callback's
-            this.events[eventName] = [];
-        }
-        this.events[eventName].push(callback);
-    };
+  /**
+   * [function description]
+   * @param  {[string]} triggerName [The trigger name]
+   * @param  {[json]} data          [Optional data passed data]
+   * @return {[bool]}               [False on wrong callback function name]
+   */
+  cb: function(triggerName, data) {
+    if (FSM.callbacks[triggerName]) {
+      for (var i = 0; i < FSM.callbacks[triggerName].length; i++) {
+        FSM.callbacks[triggerName][i](data);
+      }
+    } else {
+      return false;
+    }
+    return true;
+  },
 
-    this.cb = function(eventName, data) {
-        if (this.events[eventName]) {
-            // call every event callback's
-            for (var i = 0; i < this.events[eventName].length; i++) {
-                this.events[eventName][i](data);
-            }
-        } else {
-            return false;
-        }
-        return true;
-    };
-
+  /**
+   * [atach callback function to trigger]
+   * @param  {[string]} triggerName [Name of the trigger]
+   * @param  {Function} callback    [Callback function]
+   */
+  on: function(triggerName, callback) {
+    if (!FSM.callbacks[triggerName]) {
+      FSM.callbacks[triggerName] = [];
+    }
+    FSM.callbacks[triggerName].push(callback);
+  }
 };
