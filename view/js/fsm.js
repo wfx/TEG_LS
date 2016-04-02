@@ -1,65 +1,73 @@
-var FSM = {
-  /**
-   * [Init FSM]
-   * @param  {[string]} startName [Set the initial starting state]
-   * @param  {[json]} transitions [The transitions, see tegclient.json]
-   */
-  init: function(startName, transitions) {
-    FSM.stateName = startName;
-    FSM.transitions = transitions;
-    FSM.currentState = FSM.transitions[startName];
-    FSM.callbacks = {};
-    FSM.log = true;
-  },
+(function(window) {
+  'use strict';
+  var FSM = {
+    /**
+     * [Init FSM]
+     * @param  {[string]} startName [Set the initial starting state]
+     * @param  {[json]} transitions [The transitions, see tegclient.json]
+     */
+    init: function(startName, transitions) {
+      FSM.stateName = startName;
+      FSM.transitions = transitions;
+      FSM.currentState = FSM.transitions[startName];
+      FSM.callbacks = {};
+      FSM.log = true;
+    },
 
-  /**
-   * [Change to a state and call the every trigger binded callback's]
-   * @param  {[string]} triggerName [The trigger name]
-   * @param  {[json]} data          [Optional data passed to the callback function]
-   * @return {[bool]}               [False if trigger not possible]
-   */
-  trigger: function(triggerName, data) {
-    if (FSM.currentState[triggerName]) {
-      FSM.stateName = FSM.currentState[triggerName];
-      if (FSM.log) {
-        console.log("FSM Trigger: " + triggerName + ". state is now: " + FSM.stateName);
+    /**
+     * [Change to a state and call the every trigger binded callback's]
+     * @param  {[string]} triggerName [The trigger name]
+     * @param  {[json]} data          [Optional data passed to the callback function]
+     * @return {[bool]}               [False if trigger not possible]
+     */
+    trigger: function(triggerName, data) {
+      if (FSM.currentState[triggerName]) {
+        FSM.stateName = FSM.currentState[triggerName];
+        if (FSM.log) {
+          console.log("FSM Trigger: " + triggerName + ". state is now: " + FSM.stateName);
+        }
+        FSM.currentState = FSM.transitions[FSM.stateName];
+        FSM.cb(triggerName, data);
+      } else {
+        if (FSM.log) {
+          console.log("FSM Trigger " + triggerName + " is not available on state " + FSM.stateName);
+        }
+        return false;
       }
-      FSM.currentState = FSM.transitions[FSM.stateName];
-      FSM.cb(triggerName, data);
-    } else {
-      if (FSM.log) {
-        console.log("FSM Trigger " + triggerName + " is not available on state " + FSM.stateName);
-      }
-      return false;
-    }
-  },
+    },
 
-  /**
-   * [function description]
-   * @param  {[string]} triggerName [The trigger name]
-   * @param  {[json]} data          [Optional data passed data]
-   * @return {[bool]}               [False on wrong callback function name]
-   */
-  cb: function(triggerName, data) {
-    if (FSM.callbacks[triggerName]) {
-      for (var i = 0; i < FSM.callbacks[triggerName].length; i++) {
-        FSM.callbacks[triggerName][i](data);
+    /**
+     * [function description]
+     * @param  {[string]} triggerName [The trigger name]
+     * @param  {[json]} data          [Optional data passed data]
+     * @return {[bool]}               [False on wrong callback function name]
+     */
+    cb: function(triggerName, data) {
+      if (FSM.callbacks[triggerName]) {
+        for (var i = 0; i < FSM.callbacks[triggerName].length; i++) {
+          FSM.callbacks[triggerName][i](data);
+        }
+      } else {
+        return false;
       }
-    } else {
-      return false;
-    }
-    return true;
-  },
+      return true;
+    },
 
-  /**
-   * [atach callback function to trigger]
-   * @param  {[string]} triggerName [Name of the trigger]
-   * @param  {Function} callback    [Callback function]
-   */
-  on: function(triggerName, callback) {
-    if (!FSM.callbacks[triggerName]) {
-      FSM.callbacks[triggerName] = [];
+    /**
+     * [atach callback function to trigger]
+     * @param  {[string]} triggerName [Name of the trigger]
+     * @param  {Function} callback    [Callback function]
+     */
+    on: function(triggerName, callback) {
+      if (!FSM.callbacks[triggerName]) {
+        FSM.callbacks[triggerName] = [];
+      }
+      FSM.callbacks[triggerName].push(callback);
     }
-    FSM.callbacks[triggerName].push(callback);
+  };
+
+  if (typeof window === "object" && typeof window.document === "object") {
+    window.FSM = FSM;
   }
-};
+  return FSM;
+})(window);
