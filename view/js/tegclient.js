@@ -19,7 +19,7 @@ jQuery(function($) {
       },
 
       /**
-       * [Called on connection]
+       * [Called on server connection]
        */
       onConnected: function() {
         App.sessionId = IO.socket.sessionid;
@@ -236,20 +236,22 @@ jQuery(function($) {
             mouse = {},
             svgPoint = {};
 
-          UI.Board.map = new Board({
+          UI.Board.map = Board;
+          UI.Board.map.init({
             element: document.getElementById("board"),
             file: data.path + "/board.svg",
             viewBox: data.viewBox,
             field: {
-              figures: data.figures,
-              callbacks: {
-                clicked: App.boardFieldClicked,
-                hoverover: App.boardFieldHoverOver,
-                hoverout: App.boardFieldHoverOut,
-                mousemove: App.boardFieldMouseMove
+              figure: data.figures,
+              callback: {
+                mouseClicked: App.boardFieldClicked,
+                mouseHoverOver: App.boardFieldHoverOver,
+                mouseHoverOut: App.boardFieldHoverOut,
+                mouseMove: App.boardFieldMouseMove
               }
             }
           });
+          console.log(UI.Board.map);
           UI.Board.svgPoint = UI.Board.map.surface.node.createSVGPoint();
         },
       },

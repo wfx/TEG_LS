@@ -1,98 +1,119 @@
-function Board(conf) {
-    "use strict";
-    var self = this,
-        map = {},
-        viewbox = conf.viewbox;
+var Board = {
+    /**
+     * [Generate the board from an SVG artwork]
+     * @param  {[type]} cfg [Configuration:
+     *                       cfg.viewbox: The SVG viewport,
+     *                       cfg.callback.mouseClicked:   callback mouse clicked,
+     *                       cfg.callback.mouseHoverOver: callback mouse hover over,
+     *                       cfg.callback.mouseHoverOut:  callback hover out,
+     *                       cfg.callback.mouseMove:      callback mouse move (over field),
+     *                       cfg.callback.keyPressed:     callback key pressed]
+     */
+    init: function(cfg) {
+      //Board.map = {}; Not used?
+      //Board.vb = cfg.viewbox;
+      Board.surface = new Snap(cfg.element);
+      Board.group = Board.surface.group();
+      Board.area = {};
+      Board.field = {};
+      Board.surface.attr({
+        viewBox: cfg.viewBox
+      });
+      Board.loadSVG(cfg);
 
-    self.area = {};
-    self.field = {};
-
-    self.surface = new Snap(conf.element);
-    self.group = self.surface.group();
-
-    // load the svg and fill up all board area's and field's
-    Snap.load(conf.file, function(map) {
-        // TODO: get it from the map?
-        self.surface.attr({
-            viewBox: conf.viewBox
-        });
+    },
+    loadSVG: function(cfg) {
+      Snap.load(cfg.file, function(playfield) {
         var aid = "",
-            fid = "";
-        map.selectAll("g").forEach(function(el) {
-            if (el.node.attributes["board:area"]) {
-                aid = el.node.attributes["board:area"].value.replace(/ /g, "");
-                self.area[aid] = new Area();
-                self.area[aid].uID = aid;
-                self.area[aid].name = el.node.attributes["board:area"].value;
-                self.area[aid].quality = el.node.attributes["board:quality"].value;
-            }
-            if (el.node.attributes["board:field"]) {
-                fid = self.area[aid].uID + el.node.attributes["board:field"].value.replace(/ /g, "");
-                self.field[fid] = new Field(conf.field);
-                self.area[aid].field = fid;
-                self.field[fid].uID = fid;
-                self.field[fid].name = el.node.attributes["board:field"].value;
-                self.field[fid].boundary = el.node.attributes["board:boundary"].value.split(",");
-                self.field[fid].areaID = self.area[aid].uID;
-                el.selectAll("path").forEach(function(el) {
-                    self.field[fid].image = el;
-                    self.field[fid].image.hover(self.field[fid].onHoverOver, self.field[fid].onHoverOut);
-                    self.field[fid].image.click(self.field[fid].onClick);
-                    self.field[fid].image.mousemove(self.field[fid].onMouseMove);
-                });
-            }
+          fid = "";
+
+        playfield.selectAll('g').forEach(function(el) {
+          if (el.node.attributes["board:area"]) {
+            aid = el.node.attributes["board:area"].value.replace(/ /g, "");
+            Board.area[aid] = {
+              id: aid,
+              name: el.node.attributes["board:area"].value,
+              quality: el.node.attributes["board:quality"].value,
+              fieldID: []
+            };
+          }
+          if (el.node.attributes["board:field"]) {
+            fid = aid + el.node.attributes["board:field"].value.replace(/ /g, "");
+            cfg.field.areaID = aid;
+            cfg.field.fieldID = fid;
+            cfg.field.name = el.node.attributes["board:field"].value;
+            cfg.field.boundary = el.node.attributes["board:boundary"].value.split(",");
+            cfg.field.element = [];
+            el.selectAll("path").forEach(function(el) {
+              cfg.field.element.push(el);
+            });
+            Board.area[aid].fieldID.push(fid);
+            Board.field[fid] = new Field(cfg.field);
+          }
         });
-        self.group.add(map);
-    });
-}
-
-function Area() {
-    "use strict";
-    var self = this;
-    self.uID = "";
-    self.name = "";
-    self.quality = 0;
-    self.field = [];
-    self.image = {};
-}
-
-function Field(conf) {
-    "use strict";
-    var self = this;
-    self.uID = "";
-    self.name = "";
-    self.boundary = [];
-    self.areaID = "";
-    self.figures = {};
-    // TODO: Same factors on each field ~42times(x3!)? :|
-    for (var i in conf.figures) {
-        self.figures[i] = {
-            owner: "",
-            amount: 0,
-            factor: conf.figures[i]
-        };
+        //console.log(Board);
+        Board.group.add(playfield);
+      });
     }
-    self.quality = 0;
-    self.image = {};
-    self.selected = false;
-    var clicked = conf.callbacks.clicked,
-        hoverover = conf.callbacks.hoverover,
-        hoverout = conf.callbacks.hoverout,
-        mousemove = conf.callbacks.mousemove;
-
-    self.onClick = function() {
-        clicked(self.uID);
+  },
+  Field = function(cfg) {
+    "use strict";
+    var obj = {
+      uID: cfg.fieldID,
+      name: cfg.name,
+      boundary: cfg.boundary,
+      areaID: cfg.areaID,
+      figure: {},
+      quality: 0,
+      image: {},
+      selected: false,
+      cbMouseClick: cfg.callback.mouseClicked,
+      cbMouseHoverOver: cfg.callback.mouseHoverOver,
+      cbMouseHoverOut: cfg.callback.mouseHoverOut,
+      cbMouseMove: cfg.callback.mouseMove,
+      cbKeyPressed: cfg.callback.keyPressed,
+      onMouseClick: function() {
+        obj.cbMouseClick(obj.uID);
+      },
+      onMouseHoverOver: function() {
+        obj.cbMouseHoverOver(obj.uID);
+      },
+      onMouseHoverOut: function() {
+        obj.cbMouseHoverOut(obj.uID);
+      },
+      onMouseMove: function(ev) {
+        obj.cbMouseMove(ev, obj.uID);
+      },
+      onKeyPressed: function(ev) {
+        obj.cbKeyPressed(ev, obj.uID);
+      }
     };
 
-    self.onHoverOver = function() {
-        hoverover(self.uID);
-    };
+    var i = 0,
+      len = 0;
 
-    self.onHoverOut = function() {
-        hoverout(self.uID);
-    };
+    console.log(cfg.figure);
 
-    self.onMouseMove = function(ev) {
-        mousemove(ev, self.uID);
-    };
-}
+    for (i in cfg.figure) {
+      if (cfg.figure.hasOwnProperty(i)) {
+        obj.figure[i] = {
+          owner: "",
+          amount: 0,
+          factor: cfg.figure[i]
+        };
+      }
+    }
+
+    //console.log(obj);
+
+    for (i = 0, len = cfg.element.length; i < len; i++) {
+      obj.image = cfg.element[i];
+      obj.image.click(obj.onMouseClick);
+      obj.image.hover(obj.onMouseHoverOver, obj.onMouseHoverOut);
+      obj.image.mousemove(obj.onMouseMove);
+      //obj.image.keypressdown(obj.onKeyPressed);
+    }
+
+    return obj;
+
+  };
