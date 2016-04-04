@@ -73,6 +73,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
 }
 
 .w_dialog {
+  position: fixed;
   width: 422px;
   height: 156px;
   top: calc(50% - 156px / 2);
@@ -170,6 +171,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   cursor: pointer;
   font-size: 1em;
   color: #fff;
+  cursor: pointer;
   -webkit-transition: all 0.3s;
   -moz-transition: all 0.3s;
   transition: all 0.3s;
@@ -240,7 +242,14 @@ body {
 #game #gameArea #play {
   width: 100%;
   height: 100%;
-  background-size: cover;
+}
+#game #gameArea #play #navigation {
+  position: fixed;
+  top: 0;
+  left: 0;
+}
+#game #gameArea #play #playfield {
+  background-size: 100% 100%;
   background-repeat: no-repeat;
 }
 #game #gameArea #play #playfield > #board {
