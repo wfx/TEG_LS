@@ -22,6 +22,7 @@
             "viewScenePlay": "play"
         },
         "play": {
+            "dialogFieldInfoDisplay": "play",
             "get_field": "play",
             "field_clicked": "play",
             "place": "place",
