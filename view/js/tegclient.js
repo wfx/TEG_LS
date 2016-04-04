@@ -78,7 +78,10 @@ jQuery(function($) {
         FSM.on('viewScenePlay', UI.Scene.viewScenePlay);
         //
         FSM.on('field_select', UI.boardFieldClicked);
+        //
+        FSM.on('dialogFieldInfoDisplay', UI.Dialog.fieldInfo.display);
       },
+
 
       /**
        * [Advise server: view the "Host" scene]
@@ -134,6 +137,9 @@ jQuery(function($) {
         UI.Board.map.field[fieldID].image.attr({
           "fill-opacity": ".5"
         });
+        FSM.trigger("dialogFieldInfoDisplay", {
+          value: true
+        });
       },
 
       /**
@@ -143,6 +149,9 @@ jQuery(function($) {
       boardFieldHoverOut: function(fieldID) {
         UI.Board.map.field[fieldID].image.attr({
           "fill-opacity": "1"
+        });
+        FSM.trigger("dialogFieldInfoDisplay", {
+          value: false
         });
       },
 
@@ -156,6 +165,9 @@ jQuery(function($) {
         UI.Board.svgPoint.y = ev.clientY;
         // Calculate Mouse.x and Mouse.y
         UI.Board.mouse = UI.Board.svgPoint.matrixTransform(UI.Board.map.surface.node.getScreenCTM().inverse());
+        UI.Subject.update({
+          fieldID: fieldID
+        });
       }
     },
 
@@ -164,11 +176,13 @@ jQuery(function($) {
       init: function() {
         UI.Scene.cacheElements();
         UI.Scene.bindEvents();
+        UI.Subject = Subject;
+        UI.Subject.init();
       },
 
       Scene: {
         /**
-         * [Cache HTML elements that we use for scene view's]
+         * [Cache HTML elements that we use for and in scene view's]
          */
         cacheElements: function() {
           UI.$doc = $(document);
@@ -217,14 +231,50 @@ jQuery(function($) {
          */
         viewScenePlay: function(data) {
           UI.$gameArea.html(UI.$templateScenePlay);
-          $("playfield").css("background-image", "url(" + data.path + "/background.png)");
+          $("#playfield").css("background-image", "url(" + data.path + "/background.png)");
           UI.Board.init(data);
+
+          // Dialog: Field info:
+          UI.Dialog.init();
         },
       },
 
       Menu: {},
 
-      Dialog: {},
+      Dialog: {
+        init: function() {
+          UI.Dialog.cacheElements();
+        },
+
+        cacheElements: function() {
+          UI.$dialogFieldInfo = $('#dialog-fieldinfo');
+        },
+
+        fieldInfo: {
+
+          display: function(data) {
+            if (data.value) {
+              $("#playfield").css("cursor", "pointer");
+              UI.Subject.attach(UI.Dialog.fieldInfo);
+              UI.$dialogFieldInfo.addClass('w_show');
+              UI.$dialogFieldInfo.removeClass('w_hide');
+            } else {
+              $("#playfield").css("cursor", "auto");
+              UI.Subject.detach(UI.Dialog.fieldInfo);
+              UI.$dialogFieldInfo.addClass('w_hide');
+              UI.$dialogFieldInfo.removeClass('w_show');
+            }
+          },
+
+          update: function(data) {
+            UI.$dialogFieldInfo.css({
+              'top': UI.Board.svgPoint.y - 10,
+              'left': UI.Board.svgPoint.x + 10,
+            });
+            UI.$dialogFieldInfo.html(data.fieldID);
+          },
+        }
+      },
 
       Board: {
         /**
@@ -262,7 +312,9 @@ jQuery(function($) {
     };
 
   /**
-   * [Initalize the client]
+   * [IO comunicate with the server.
+   * 	The UI have only functionality.
+   * 	The App controll all depending on the game state.]
    * @param  {[json]} "js/tegclient.json" [load client configuration, init the client and inform the server]
    */
   $.getJSON("js/tegclient.json", function(json) {
@@ -274,5 +326,6 @@ jQuery(function($) {
       name: "state",
       value: "ready"
     });
+
   });
 }($));
