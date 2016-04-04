@@ -1,11 +1,12 @@
-WWW TEG
+TEG - La Secuela ("the sequel")
 ===
 
-Tenes Emapandas Graciela (TEG) is a clone of 'Plan Táctico y Estratégico de la Guerra', which is a pseudo-clone of Risk, a multiplayer turn-based strategy game. Some rules are different.
+i a sequel and redevelopment of the original
+Tenes Emapandas Graciela, short TEG,
+the version of Risk that is the most popular game of Argentina.
 
 
-
-![Screenshot](https://github.com/wfx/W3TEG/blob/master/view/game/risk/preview.png)
+![Screenshot](https://github.com/wfx/W3TEG/blob/master/view/img/preview.png)
 
 
 
