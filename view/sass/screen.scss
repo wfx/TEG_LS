@@ -61,9 +61,14 @@ body {
     #play {
       width: 100%;
       height: 100%;
-      background-size: cover;
-      background-repeat: no-repeat;
+      #navigation {
+        position: fixed;
+        top: 0;
+        left: 0;
+      }
       #playfield {
+        background-size: 100% 100%;
+        background-repeat: no-repeat;
         > #board {
           width: 100vw;
           max-height: 100vh;
