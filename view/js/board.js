@@ -10,7 +10,6 @@ var Board = {
      *                       cfg.callback.keyPressed:     callback key pressed]
      */
     init: function(cfg) {
-      //Board.map = {}; Not used?
       //Board.vb = cfg.viewbox;
       Board.surface = new Snap(cfg.element);
       Board.group = Board.surface.group();
@@ -92,8 +91,6 @@ var Board = {
     var i = 0,
       len = 0;
 
-    console.log(cfg.figure);
-
     for (i in cfg.figure) {
       if (cfg.figure.hasOwnProperty(i)) {
         obj.figure[i] = {
@@ -103,8 +100,6 @@ var Board = {
         };
       }
     }
-
-    //console.log(obj);
 
     for (i = 0, len = cfg.element.length; i < len; i++) {
       obj.image = cfg.element[i];
