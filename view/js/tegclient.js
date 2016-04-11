@@ -82,7 +82,6 @@ jQuery(function($) {
         FSM.on('dialogFieldInfoDisplay', UI.Dialog.fieldInfo.display);
       },
 
-
       /**
        * [Advise server: view the "Host" scene]
        */
@@ -125,8 +124,6 @@ jQuery(function($) {
           name: "field_clicked",
           value: fieldID
         });
-        // INFO: Debug log.
-        console.log("Field: " + fieldID + " at: " + UI.Board.svgPoint.x + "/" + UI.Board.svgPoint.y);
       },
 
       /**
@@ -182,7 +179,7 @@ jQuery(function($) {
 
       Scene: {
         /**
-         * [Cache HTML elements that we use for and in scene view's]
+         * [Cache Scenes]
          */
         cacheElements: function() {
           UI.$doc = $(document);
@@ -258,11 +255,23 @@ jQuery(function($) {
               UI.Subject.attach(UI.Dialog.fieldInfo);
               UI.$dialogFieldInfo.addClass('w_show');
               UI.$dialogFieldInfo.removeClass('w_hide');
+
+              UI.Board.foo.attr({
+                "display": "inline-block",
+                "z-index": "9"
+              });
+
             } else {
               $("#playfield").css("cursor", "auto");
               UI.Subject.detach(UI.Dialog.fieldInfo);
               UI.$dialogFieldInfo.addClass('w_hide');
               UI.$dialogFieldInfo.removeClass('w_show');
+
+              console.log(UI.Board);
+              UI.Board.foo.attr({
+                "display": "none"
+              });
+
             }
           },
 
@@ -271,7 +280,7 @@ jQuery(function($) {
               'top': UI.Board.svgPoint.y - 10,
               'left': UI.Board.svgPoint.x + 10,
             });
-            UI.$dialogFieldInfo.html(data.fieldID);
+            UI.$dialogFieldInfo.html(UI.Board.map.field[data.fieldID].name);
           },
         }
       },
@@ -282,7 +291,9 @@ jQuery(function($) {
          * @param  {[json]} data [configuration for the board (teg is view/game/teg/config.json)]
          */
         init: function(data) {
-          var map = {},
+          var
+            map = {},
+            foo = {},
             mouse = {},
             svgPoint = {};
 
@@ -303,6 +314,13 @@ jQuery(function($) {
           });
           console.log(UI.Board.map);
           UI.Board.svgPoint = UI.Board.map.surface.node.createSVGPoint();
+
+          // Testing: Fieldinfo with svg image... not working. 
+          Snap.load("img/landmark.svg", function(svgFile) {
+            UI.Board.foo = svgFile;
+            UI.Board.map.group.add(UI.Board.foo);
+          });
+
         },
       },
     },
