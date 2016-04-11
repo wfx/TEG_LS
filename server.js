@@ -46,13 +46,7 @@ app.use(express.static(__dirname + "/view"));
 app.get('/', function(req, res) {
     sess = req.sessionID;
     res.sendFile(__dirname + '/view/index.html');
-    console.log('respond main with session id: ' + sess);
-});
-
-app.get('/normal', function(req, res) {
-    sess = req.sessionID;
-    res.sendFile(__dirname + '/view/normal.html');
-    console.log('respond normal to: ' + sess);
+    console.log('respond client with session id: ' + sess);
 });
 
 console.log("Server run at http://127.0.0.1:" + cfg.port + "/");
