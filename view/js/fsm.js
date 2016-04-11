@@ -1,5 +1,6 @@
-(function(window) {
+var FinitStateMachine = (function(window, undefined) {
   'use strict';
+  
   var FSM = {
     /**
      * [Init FSM]
@@ -15,6 +16,15 @@
     },
 
     /**
+     * [Print out any data]
+     * @param  {[string]} data [holds the printed data]
+     */
+    cout: function(data) {
+      if (FSM.log) {
+        console.log(data);
+      }
+    },
+    /**
      * [Change to a state and call the every trigger binded callback's]
      * @param  {[string]} triggerName [The trigger name]
      * @param  {[json]} data          [Optional data passed to the callback function]
@@ -23,15 +33,13 @@
     trigger: function(triggerName, data) {
       if (FSM.currentState[triggerName]) {
         FSM.stateName = FSM.currentState[triggerName];
-        if (FSM.log) {
-          console.log("FSM Trigger: " + triggerName + ". state is now: " + FSM.stateName);
-        }
+        // log
+        FSM.cout("FSM Trigger: " + triggerName + ". state is now: " + FSM.stateName);
         FSM.currentState = FSM.transitions[FSM.stateName];
         FSM.cb(triggerName, data);
       } else {
-        if (FSM.log) {
-          console.log("FSM Trigger " + triggerName + " is not available on state " + FSM.stateName);
-        }
+        // log
+        FSM.cout("FSM Trigger " + triggerName + " is not available on state " + FSM.stateName);
         return false;
       }
     },
@@ -66,8 +74,6 @@
     }
   };
 
-  if (typeof window === "object" && typeof window.document === "object") {
-    window.FSM = FSM;
-  }
   return FSM;
+
 })(window);
