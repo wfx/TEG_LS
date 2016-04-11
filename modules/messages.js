@@ -36,6 +36,7 @@ var onAdvise = function(data) {
     }
     if(data.name == "field_clicked") {
       this.emit("ts", "field_clicked", data.value);
+      console.log(data);
     }
 };
 
@@ -92,12 +93,12 @@ function initCommandLine(socket) {
             case "help":
                 console.log(
                     "help : show this \n" +
-                    "quit : will kill youre kitty\n" +
-                    "ts [STATE] [JSON STRING]: trigger a state\n"
+                    "quit : close the server\n" +
+                    "ts [TRIGGER] [JSON STRING]: trigger a state\n"
                 );
                 break;
             case "quit":
-                console.log("...going to kill youre kitty!");
+                console.log("cu later!");
                 process.exit(0);
                 break;
             case "ts":
@@ -118,7 +119,7 @@ function initCommandLine(socket) {
         rl.prompt();
     }).on("close", function() {
         // ctr+c
-        console.log("have a nice day!");
+        console.log("Have a nice day!");
         process.exit(0);
     });
 }
