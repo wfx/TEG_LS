@@ -60,6 +60,8 @@ jQuery(function($) {
       }
     },
 
+    FSM = FinitStateMachine,
+
     App = {
       gameId: 0,
       sessionId: '',
@@ -162,7 +164,7 @@ jQuery(function($) {
         UI.Board.svgPoint.y = ev.clientY;
         // Calculate Mouse.x and Mouse.y
         UI.Board.mouse = UI.Board.svgPoint.matrixTransform(UI.Board.map.surface.node.getScreenCTM().inverse());
-        UI.Subject.update({
+        UI.Observer.update({
           fieldID: fieldID
         });
       }
@@ -173,8 +175,8 @@ jQuery(function($) {
       init: function() {
         UI.Scene.cacheElements();
         UI.Scene.bindEvents();
-        UI.Subject = Subject;
-        UI.Subject.init();
+        UI.Observer = Observer;
+        UI.Observer.init();
       },
 
       Scene: {
@@ -252,7 +254,7 @@ jQuery(function($) {
           display: function(data) {
             if (data.value) {
               $("#playfield").css("cursor", "pointer");
-              UI.Subject.attach(UI.Dialog.fieldInfo);
+              UI.Observer.attach(UI.Dialog.fieldInfo);
               UI.$dialogFieldInfo.addClass('w_show');
               UI.$dialogFieldInfo.removeClass('w_hide');
 
@@ -263,7 +265,7 @@ jQuery(function($) {
 
             } else {
               $("#playfield").css("cursor", "auto");
-              UI.Subject.detach(UI.Dialog.fieldInfo);
+              UI.Observer.detach(UI.Dialog.fieldInfo);
               UI.$dialogFieldInfo.addClass('w_hide');
               UI.$dialogFieldInfo.removeClass('w_show');
 
@@ -315,7 +317,7 @@ jQuery(function($) {
           console.log(UI.Board.map);
           UI.Board.svgPoint = UI.Board.map.surface.node.createSVGPoint();
 
-          // Testing: Fieldinfo with svg image... not working. 
+          // Testing: Fieldinfo with svg image... not working.
           Snap.load("img/landmark.svg", function(svgFile) {
             UI.Board.foo = svgFile;
             UI.Board.map.group.add(UI.Board.foo);
@@ -337,9 +339,13 @@ jQuery(function($) {
    */
   $.getJSON("js/tegclient.json", function(json) {
     FSM.init(json.start, json.transitions);
+
     IO.init();
+
     App.init();
+
     UI.init();
+
     IO.socket.emit("advise", {
       name: "state",
       value: "ready"
