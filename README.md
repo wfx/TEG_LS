@@ -1,7 +1,7 @@
 TEG - La Secuela ("the sequel")
 ===
 
-i a sequel and redevelopment of the original
+Is a sequel and redevelopment of the original
 Tenes Emapandas Graciela, short TEG,
 the version of Risk that is the most popular game of Argentina.
 
