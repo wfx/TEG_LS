@@ -1,21 +1,21 @@
-var Subject = (function(window, undefined) {
+var Observer = (function(window, undefined) {
   "use strict";
 
-  var Subject = {
+  var Observer = {
     /**
      * [init: Is log true then cout print out some log's]
      */
     init: function() {
-      Subject.log = true;
-      Subject.list = [];
+      Observer.log = true;
+      Observer.list = [];
     },
 
     /**
      * [Print out any data]
      * @param  {[string]} data [holds the printed data]
      */
-    cout: function (data) {
-      if(Subject.log){
+    cout: function(data) {
+      if (Observer.log) {
         console.log(data);
       }
     },
@@ -26,20 +26,20 @@ var Subject = (function(window, undefined) {
      * @return {[bool]}       [attach processes true or false]
      */
     attach: function(obj) {
-      if (Subject.list.indexOf(obj) < 0) {
-        Subject.cout('attach observer');
-        Subject.list.push(obj);
+      if (Observer.list.indexOf(obj) < 0) {
+        Observer.cout('attach observer');
+        Observer.list.push(obj);
         return true;
       }
-      Subject.cout('object allready on list');
+      Observer.cout('object allready on list');
       return false;
     },
 
     detach: function(obj) {
-      for (var i = 0, len = Subject.list.length; i < len; i++) {
-        if (Subject.list[i] === obj) {
-          Subject.cout('detach observer');
-          Subject.list.splice(i, 1);
+      for (var i = 0, len = Observer.list.length; i < len; i++) {
+        if (Observer.list[i] === obj) {
+          Observer.cout('detach observer');
+          Observer.list.splice(i, 1);
           return true;
         }
       }
@@ -47,14 +47,14 @@ var Subject = (function(window, undefined) {
     },
 
     update: function(data) {
-      for (var i = 0, len = Subject.list.length; i < len; i++) {
-        Subject.cout('update subject' + i);
-        Subject.list[i].update(data);
+      for (var i = 0, len = Observer.list.length; i < len; i++) {
+        Observer.cout('update subject' + i);
+        Observer.list[i].update(data);
       }
     }
 
   };
 
-  return Subject;
+  return Observer;
 
 })(window);
