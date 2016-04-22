@@ -12,7 +12,7 @@ var Board = {
     init: function(cfg) {
       //Board.vb = cfg.viewbox;
       Board.surface = new Snap(cfg.element);
-      Board.group = Board.surface.group();
+      //Board.group = Board.surface.group();
       Board.area = {};
       Board.field = {};
       Board.surface.attr({
@@ -23,7 +23,8 @@ var Board = {
     },
     loadSVG: function(cfg) {
       Snap.load(cfg.file, function(playfield) {
-        var aid = "",
+        var
+          aid = "",
           fid = "";
 
         playfield.selectAll('g').forEach(function(el) {
@@ -51,7 +52,9 @@ var Board = {
           }
         });
         //console.log(Board);
-        Board.group.add(playfield);
+        //Board.group.append(playfield);
+        Board.surface.append(playfield.selectAll('defs'));
+        Board.surface.append(playfield.selectAll('g'));
       });
     }
   },
@@ -66,6 +69,7 @@ var Board = {
       quality: 0,
       image: {},
       selected: false,
+      owner: '',
       cbMouseClick: cfg.callback.mouseClicked,
       cbMouseHoverOver: cfg.callback.mouseHoverOver,
       cbMouseHoverOut: cfg.callback.mouseHoverOut,
