@@ -33,10 +33,22 @@ var onAdvise = function(data) {
     if(data.name == "btnViewScenePlay" && data.value == "clicked") {
       data = require("../view/game/teg/config.json");
       this.emit("ts", "viewScenePlay", data);
+      // TESTING
+      this.emit("ts", "prepare_done", data);
+      this.emit("ts", "move", data);
     }
     if(data.name == "field_clicked") {
       this.emit("ts", "field_clicked", data.value);
+    }
+    if(data.name == "place") {
+      this.emit("ts", "place", data.value);
+    }
+    if(data.name == "transfer") {
+      this.emit("ts", "transfer", data.value);
+    }
+    if(data.name == "attack") {
       console.log(data);
+      this.emit("ts", "attack", data.value);
     }
 };
 

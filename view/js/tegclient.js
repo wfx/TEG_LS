@@ -39,7 +39,7 @@ jQuery(function($) {
           var jData = [];
           jData.push(FSM.stateName);
           jData.push(FSM.currentState);
-          IO.socket.emit("receive", JSON.stringify(jData));
+          IO.socket.emit("message", JSON.stringify(jData));
         }
       },
 
@@ -65,6 +65,7 @@ jQuery(function($) {
     App = {
       gameId: 0,
       sessionId: '',
+
       init: function() {
         App.bindState();
       },
@@ -79,7 +80,7 @@ jQuery(function($) {
         FSM.on('viewSceneJoin', UI.Scene.viewSceneJoin);
         FSM.on('viewScenePlay', UI.Scene.viewScenePlay);
         //
-        FSM.on('field_select', UI.boardFieldClicked);
+        //FSM.on('field_select', UI.boardFieldClicked);
         //
         FSM.on('dialogFieldInfoDisplay', UI.Dialog.fieldInfo.display);
       },
@@ -122,10 +123,49 @@ jQuery(function($) {
        * @param  {[string]} fieldID [Field ID]
        */
       boardFieldClicked: function(fieldID) {
-        IO.socket.emit("advise", {
-          name: "field_clicked",
-          value: fieldID
-        });
+        if (UI.Board.map.field[fieldID].selected) {
+          UI.Board.map.field[fieldID].selected = false;
+        } else {
+          UI.Board.map.field[fieldID].selected = true;
+          if (UI.Board.selectedField == fieldID);
+          UI.Board.selectedField = fieldID;
+        }
+        console.log("Selected Field: " + UI.Board.selectedField);
+        // Identify player action:
+        if (UI.Board.fieldA === '') {
+          UI.Board.fieldA = fieldID;
+          UI.Board.map.field[UI.Board.fieldA].selected = true;
+          // Player want to place some figures.
+          if (Player.figuresToPlace > 0) {
+            IO.socket.emit("advise", {
+              name: "place",
+              fieldA: UI.Board.fieldA
+            });
+          }
+        } else {
+          if (UI.Board.fieldA === fieldID) {
+            UI.Board.fieldA = '';
+            UI.Board.map.field[fieldID].selected = false;
+          } else {
+            UI.Board.fieldB = fieldID;
+            UI.Board.map.field[UI.Board.fieldB].selected = true;
+            // Player want to transfer some figures.
+            if (UI.Board.map.field[UI.Board.fieldB].owner === Player.id) {
+              IO.socket.emit("advise", {
+                name: "transfer",
+                fieldA: UI.Board.fieldA,
+                fieldB: UI.Board.fieldB
+              });
+            } else {
+              // Player want to attac some opponent.
+              IO.socket.emit("advise", {
+                name: "attack",
+                fieldA: UI.Board.fieldA,
+                fieldB: UI.Board.fieldB
+              });
+            }
+          }
+        }
       },
 
       /**
@@ -258,10 +298,7 @@ jQuery(function($) {
               UI.$dialogFieldInfo.addClass('w_show');
               UI.$dialogFieldInfo.removeClass('w_hide');
 
-              UI.Board.foo.attr({
-                "display": "inline-block",
-                "z-index": "9"
-              });
+              //UI.Board.map.surface.before(UI.Board.foo);
 
             } else {
               $("#playfield").css("cursor", "auto");
@@ -269,10 +306,7 @@ jQuery(function($) {
               UI.$dialogFieldInfo.addClass('w_hide');
               UI.$dialogFieldInfo.removeClass('w_show');
 
-              console.log(UI.Board);
-              UI.Board.foo.attr({
-                "display": "none"
-              });
+              //UI.Board.map.surface.after(UI.Board.foo);
 
             }
           },
@@ -288,17 +322,16 @@ jQuery(function($) {
       },
 
       Board: {
+        selectedField: '',
         /**
          * [Load the game board]
          * @param  {[json]} data [configuration for the board (teg is view/game/teg/config.json)]
          */
         init: function(data) {
-          var
-            map = {},
-            foo = {},
-            mouse = {},
-            svgPoint = {};
 
+          UI.Board.foo = {};
+          UI.Board.fieldA = '';
+          UI.Board.fieldB = '';
           UI.Board.map = Board;
           UI.Board.map.init({
             element: document.getElementById("board"),
@@ -314,21 +347,24 @@ jQuery(function($) {
               }
             }
           });
-          console.log(UI.Board.map);
           UI.Board.svgPoint = UI.Board.map.surface.node.createSVGPoint();
 
           // Testing: Fieldinfo with svg image... not working.
-          Snap.load("img/landmark.svg", function(svgFile) {
-            UI.Board.foo = svgFile;
-            UI.Board.map.group.add(UI.Board.foo);
+          Snap.load("img/landmark.svg", function(f) {
+            UI.Board.foo = f;
+            console.log(UI.Board);
+            UI.Board.map.surface.append(UI.Board.foo);
           });
-
         },
       },
     },
 
     Player = {
-      // TODO: all... :)
+      init: function() {
+        Player.name = "Anonymous";
+        Player.id = 0;
+        Player.figuresToPlace = 0;
+      }
     };
 
   /**
