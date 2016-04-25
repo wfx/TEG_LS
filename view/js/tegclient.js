@@ -360,7 +360,7 @@ jQuery(function($) {
           });
         },
         getAreas: function(cb){
-          console.log(JSON.stringify(UI.Board.map.areaUI.Board.map.area));
+          console.log(JSON.stringify(UI.Board.map.area));
           cb("UI.Board.map.area");
         },
       },
