@@ -17,6 +17,7 @@
       "viewScenePlay": "prepare"
     },
     "prepare": {
+      "board_get_areas": "prepare",
       "field_set_figure": "prepare",
       "card_deal": "prepare",
       "prepare_done": "wait"

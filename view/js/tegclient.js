@@ -31,10 +31,10 @@ jQuery(function($) {
        * @param  {[string]} trigger [Any trigger see tegclient.json]
        * @param  {[json]}   data    [optional json formated data]
        */
-      onTriggerState: function(trigger, data) {
+      onTriggerState: function(trigger, data, callback) {
         console.log('Server: trigger ' + trigger);
         if (trigger) {
-          FSM.trigger(trigger, data);
+          FSM.trigger(trigger, data, callback);
         } else {
           var jData = [];
           jData.push(FSM.stateName);
@@ -83,6 +83,9 @@ jQuery(function($) {
         //FSM.on('field_select', UI.boardFieldClicked);
         //
         FSM.on('dialogFieldInfoDisplay', UI.Dialog.fieldInfo.display);
+
+        FSM.on('board_get_areas', UI.Board.getAreas);
+
       },
 
       /**
@@ -356,13 +359,18 @@ jQuery(function($) {
             UI.Board.map.surface.append(UI.Board.foo);
           });
         },
+        getAreas: function(cb){
+          console.log(JSON.stringify(UI.Board.map.areaUI.Board.map.area));
+          cb("UI.Board.map.area");
+        },
       },
     },
 
     Player = {
       init: function() {
+        // TESTING
         Player.name = "Anonymous";
-        Player.id = 0;
+        Player.id = 1;
         Player.figuresToPlace = 0;
       }
     };

@@ -1,6 +1,6 @@
 var FinitStateMachine = (function(window, undefined) {
   'use strict';
-  
+
   var FSM = {
     /**
      * [Init FSM]
