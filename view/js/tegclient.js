@@ -1,6 +1,31 @@
 jQuery(function($) {
   'use strict';
 
+  /**
+   * Startup (entry point):
+   * 	Client call over socket "advise" -> "ready".
+   * 	Server answer over socket "ts" (trigger state) -> "viewSceneStartup" to show the startup screen.
+   * 	User have the choice to select "Host" to host a game or "Join" to join a game.
+   * 	The selection call the allowed "startup" triggers and use (as mostly allways) the socket "advise" to inform the server
+   * 	of the user choice.
+   * 	...
+   *
+   * Communication:
+   * 	Server -> Client;
+   * 	Use socket connection "ts" (trigger state).
+   * 	The available triggers/state are defined in tegclient.json.
+   *
+   *  Client -> Server;
+   *  Use FSM and via the FSM.on defined callback's use the socket connections.
+   *  Client change nothing and ask allways the sever over socket "advise" and the
+   *  server check the advise (allow/disallow) and do the changes.
+   *
+   * 	Client -> Client;
+   * 	All not game realted events are done client side (hover effect's etc.).
+   * 	Use FSM and run the defined callback functions.
+   *
+   */
+
   var IO = {
       init: function() {
         IO.socket = io.connect();
@@ -9,7 +34,6 @@ jQuery(function($) {
 
       /**
        * [Bind socket event's]
-       * @return {[bool]} [Not yet implemented]
        */
       bindEvents: function() {
         IO.socket.on('connected', IO.onConnected);
@@ -23,7 +47,7 @@ jQuery(function($) {
        */
       onConnected: function() {
         App.sessionId = IO.socket.sessionid;
-        console.log('Client connected with id: ' + App.sessionId);
+        console.log('Client: Client connected with id: ' + App.sessionId);
       },
 
       /**
@@ -31,10 +55,10 @@ jQuery(function($) {
        * @param  {[string]} trigger [Any trigger see tegclient.json]
        * @param  {[json]}   data    [optional json formated data]
        */
-      onTriggerState: function(trigger, data, callback) {
+      onTriggerState: function(trigger, data) {
         console.log('Server: trigger ' + trigger);
         if (trigger) {
-          FSM.trigger(trigger, data, callback);
+          App.onTriggerState(trigger, data);
         } else {
           var jData = [];
           jData.push(FSM.stateName);
@@ -63,22 +87,21 @@ jQuery(function($) {
     FSM = FinitStateMachine,
 
     App = {
-      gameId: 0,
-      sessionId: '',
 
       init: function() {
         App.bindState();
+        App.gameId = 0;
+        App.sessionId = '';
       },
-
       /**
        * [Bind callback functions for each trigger.
        * The server can call it with: "ts trigger-name json-data"]
        */
       bindState: function() {
-        FSM.on('viewSceneStartup', UI.Scene.viewSceneStartup);
-        FSM.on('viewSceneHost', UI.Scene.viewSceneHost);
-        FSM.on('viewSceneJoin', UI.Scene.viewSceneJoin);
-        FSM.on('viewScenePlay', UI.Scene.viewScenePlay);
+        FSM.on('viewSceneStartup', UI.Scene.viewStartup);
+        FSM.on('viewSceneHost', UI.Scene.viewHost);
+        FSM.on('viewSceneJoin', UI.Scene.viewJoin);
+        FSM.on('viewScenePlay', UI.Scene.viewPlay);
         //
         //FSM.on('field_select', UI.boardFieldClicked);
         //
@@ -87,16 +110,33 @@ jQuery(function($) {
         FSM.on('board_get_areas', UI.Board.getAreas);
 
       },
-
+      /**
+       * [Trigger any FSM state (server side called over IO.onTriggerState) ]
+       * @param  {[type]} trigger [description]
+       * @param  {[type]} data    [description]
+       * @return {[type]}         [description]
+       */
+      onTriggerState: function(trigger, data) {
+        FSM.trigger(trigger, data);
+      },
+      /**
+       * [Advise server: view the "Startup" scene]
+       */
+      viewSceneStartup: function() {
+        IO.socket.emit("advise", {
+          name: "viewSceneStartup",
+          value: "clicked"
+        });
+      },
       /**
        * [Advise server: view the "Host" scene]
        */
-      btnViewSceneHostClick: function() {
+      viewSceneHost: function() {
         IO.socket.emit('hostCreateNewGame', {
           gameID: (Math.floor(Date.now() / 1000))
         });
         IO.socket.emit("advise", {
-          name: "btnViewSceneHost",
+          name: "viewSceneHost",
           value: "clicked"
         });
       },
@@ -104,9 +144,9 @@ jQuery(function($) {
       /**
        * [Advise server: view the "Join" scene]
        */
-      btnViewSceneJoinClick: function() {
+      viewSceneJoin: function() {
         IO.socket.emit("advise", {
-          name: "btnViewSceneJoin",
+          name: "viewSceneJoin",
           value: "clicked"
         });
       },
@@ -114,9 +154,9 @@ jQuery(function($) {
       /**
        * [Advise server: view the "Play" scene]
        */
-      btnViewScenePlayClick: function() {
+      viewScenePlay: function() {
         IO.socket.emit("advise", {
-          name: "btnViewScenePlay",
+          name: "viewScenePlay",
           value: "clicked"
         });
       },
@@ -170,7 +210,6 @@ jQuery(function($) {
           }
         }
       },
-
       /**
        * [Give a visible feedback on mouse hover over]
        * @param  {[string]} fieldID [Field ID]
@@ -242,36 +281,37 @@ jQuery(function($) {
          * TODO: Menu and Dialog's
          */
         bindEvents: function() {
-          UI.$doc.on('click', '.btnViewSceneHost', App.btnViewSceneHostClick);
-          UI.$doc.on('click', '.btnViewSceneJoin', App.btnViewSceneJoinClick);
-          UI.$doc.on('click', '.btnViewScenePlay', App.btnViewScenePlayClick);
+          UI.$doc.on('click', 'button[value="viewSceneStartup"]', App.viewSceneStartup);
+          UI.$doc.on('click', 'button[value="viewSceneHost"]', App.viewSceneHost);
+          UI.$doc.on('click', 'button[value="viewSceneJoin"]', App.viewSceneJoin);
+          UI.$doc.on('click', 'button[value="viewScenePlay"]', App.viewScenePlay);
         },
 
         /**
          * [View scene Startup: The starting scene]
          */
-        viewSceneStartup: function() {
+        viewStartup: function() {
           UI.$gameArea.html(UI.$templateSceneStartup);
         },
 
         /**
          * [View scene Host: Scene to setup and host a game]
          */
-        viewSceneHost: function(data) {
+        viewHost: function(data) {
           UI.$gameArea.html(UI.$templateSceneHost);
         },
 
         /**
          * [View scene Join: Scene to join a game]
          */
-        viewSceneJoin: function(data) {
+        viewJoin: function(data) {
           UI.$gameArea.html(UI.$templateSceneJoin);
         },
 
         /**
          * [View scene Play: The Scene to playing a game]
          */
-        viewScenePlay: function(data) {
+        viewPlay: function(data) {
           UI.$gameArea.html(UI.$templateScenePlay);
           $("#playfield").css("background-image", "url(" + data.path + "/background.png)");
           UI.Board.init(data);
@@ -298,16 +338,16 @@ jQuery(function($) {
             if (data.value) {
               $("#playfield").css("cursor", "pointer");
               UI.Observer.attach(UI.Dialog.fieldInfo);
-              UI.$dialogFieldInfo.addClass('w_show');
-              UI.$dialogFieldInfo.removeClass('w_hide');
+              UI.$dialogFieldInfo.addClass('show');
+              UI.$dialogFieldInfo.removeClass('hide');
 
               //UI.Board.map.surface.before(UI.Board.foo);
 
             } else {
               $("#playfield").css("cursor", "auto");
               UI.Observer.detach(UI.Dialog.fieldInfo);
-              UI.$dialogFieldInfo.addClass('w_hide');
-              UI.$dialogFieldInfo.removeClass('w_show');
+              UI.$dialogFieldInfo.addClass('hide');
+              UI.$dialogFieldInfo.removeClass('show');
 
               //UI.Board.map.surface.after(UI.Board.foo);
 
@@ -325,14 +365,11 @@ jQuery(function($) {
       },
 
       Board: {
-        selectedField: '',
         /**
          * [Load the game board]
          * @param  {[json]} data [configuration for the board (teg is view/game/teg/config.json)]
          */
         init: function(data) {
-
-          UI.Board.foo = {};
           UI.Board.fieldA = '';
           UI.Board.fieldB = '';
           UI.Board.map = Board;
@@ -351,17 +388,19 @@ jQuery(function($) {
             }
           });
           UI.Board.svgPoint = UI.Board.map.surface.node.createSVGPoint();
-
-          // Testing: Fieldinfo with svg image... not working.
-          Snap.load("img/landmark.svg", function(f) {
-            UI.Board.foo = f;
-            console.log(UI.Board);
-            UI.Board.map.surface.append(UI.Board.foo);
-          });
         },
-        getAreas: function(cb){
-          console.log(JSON.stringify(UI.Board.map.area));
-          cb("UI.Board.map.area");
+        getAreas: function(cb) {
+          // TODO: Spank Spank
+          // we send only JSON data!!!
+          var obj = UI.Board.map;
+
+          Object.keys(obj).forEach(function(prop) {
+            if (obj.hasOwnProperty(prop)) {
+              console.log(obj[prop]);
+            }
+          });
+
+          cb(UI.Board.map.field);
         },
       },
     },
@@ -376,9 +415,9 @@ jQuery(function($) {
     };
 
   /**
-   * [IO comunicate with the server.
+   * [IO configure the comunicate with the server.
    * 	The UI have only functionality.
-   * 	The App controll all depending on the game state.]
+   * 	The App controll all depending on the game state and talk with the server.]
    * @param  {[json]} "js/tegclient.json" [load client configuration, init the client and inform the server]
    */
   $.getJSON("js/tegclient.json", function(json) {
