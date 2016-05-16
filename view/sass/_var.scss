@@ -1,1 +1,10 @@
-// TODO: define colors.
+/**
+ * UI
+ */
+$z_index        : 9;
+$ui_font_color: rgb(256,256,256);
+$ui_font_size: 1em;
+
+$button_normal_color   : ( default: transparent, active: rgba(100,156,256, .5), hover: rgba(100,156,256, .5));
+$button_cancel_color   : ( default: transparent, active: rgba(255, 142, 100, 0.5), hover: rgba(255, 142, 100, 0.5));
+$button_shadow : 0px 1px 8px rgba(256,256,256,.8);
