@@ -1,74 +1,84 @@
 <!DOCTYPE html>
 <html>
 
-<head>
-  <title>TEG</title>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
-  <link rel=icon href=img/favicon.png type="image/png">
-  <link rel="stylesheet" href="css/screen.css" type="text/css" media="all" />
-</head>
+  <head>
+    <title>TEG</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <link rel=icon href=img/favicon.png type="image/png">
+    <link rel="stylesheet" href="css/screen.css" type="text/css" media="all" />
+  </head>
 
-<body>
-  <div id="game">
+  <body>
+    <div id="game">
 
-    <div id="gameArea"></div>
+      <div id="gameArea"></div>
 
-    <script id="Scene-Startup" type="text/template">
-      <div id="startup">
-        <section class="btn_w2">
-          <p>
-            <button class="btn btnViewSceneHost">HOST</button>
-            <button class="btn btnViewSceneJoin">JOIN</button>
-          </p>
-        </section>
-      </div>
-    </script>
-
-    <script id="Scene-Host" type="text/template">
-      <div id="host">
-        <section class="btn_w1">
-          <p>
-            <button class="btn btnViewScenePlay">PLAY</button>
-          </p>
-        </section>
-      </div>
-    </script>
-
-    <script id="Scene-Join" type="text/template">
-      <div id="join">
-        <section class="btn_w1">
-          <p>
-            <button class="btn btnViewScenePlay">PLAY</button>
-          </p>
-        </section>
-    </script>
-
-    <script id="Scene-Play" type="text/template">
-      <div id="play">
-        <div id="navigation"></div>
-        <div id="playfield">
-          <svg id="board"></svg>
+      <script id="Scene-Startup" type="text/template">
+        <div id="startup">
+          <section>
+            <button class="ui button normal" value="viewSceneHost">HOST</button>
+            <button class="ui button normal" value="viewSceneJoin">JOIN</button>
+          </section>
         </div>
-        <div id="dialog-cards" class="w_dialog w_hide"></div>
-        <div id="dialog-attac" class="w_dialog w_hide"></div>
-        <div id="dialog-place" class="w_dialog w_hide"></div>
-        <div id="dialog-move" class="w_dialog w_hide"></div>
-        <div id="dialog-fieldinfo" class="w_info w_hide"><div>
+      </script>
+
+      <script id="Scene-Host" type="text/template">
+        <div id="host">
+          <section>
+            <p class="ui label">Game Rule</p>
+            <ul class="ui radio">
+              <li>
+                <input type="radio" name="rule" id="radio_teg" value="teg" checked="checked" />
+                <label for="radio_teg">TEG</label>
+              </li>
+              <li>
+                <input type="radio" name="rule" id="radio_teg_lr" value="teg_lr" />
+                <label for="radio_teg_lr">TEG La Revenga</label>
+              </li>
+              <li>
+                <input type="radio" name="rule" id="radio_risk" value="risk" />
+                <label for="radio_risk">Risk</label>
+              </li>
+            </ul>
+            <button class="ui button normal" value="viewScenePlay">PLAY</button>
+            <button class="ui button cancel" value="viewSceneStartup">BACK</button>
+          </section>
+        </div>
+      </script>
+
+      <script id="Scene-Join" type="text/template">
+        <div id="join">
+          <section class="w_btn_w2">
+            <button class="ui button normal" value="viewScenePlay">PLAY</button>
+            <button class="ui button cancel" value="viewSceneStartup">BACK</button>
+          </section>
+      </script>
+
+      <script id="Scene-Play" type="text/template">
+        <div id="play">
+          <div id="navigation"></div>
+          <div id="playfield">
+            <svg id="board"></svg>
+          </div>
+          <div id="dialog-cards" class="ui hide"></div>
+          <div id="dialog-attac" class="ui hide"></div>
+          <div id="dialog-place" class="ui hide"></div>
+          <div id="dialog-move" class="ui hide"></div>
+          <div id="dialog-fieldinfo" class="ui hide"></div>
+      </script>
+
       </div>
-    </script>
+  </body>
 
-  </div>
-</body>
-
-<!-- lib -->
-<script src="js/jquery-2.1.3.min.js"></script>
-<script src="socket.io/socket.io.js"></script>
-<script src="js/snap.svg-min.js"></script>
-<!-- client -->
-<script src="js/fsm.js"></script>
-<script src="js/observer.js"></script>
-<script src="js/board.js"></script>
-<script src="js/tegclient.js"></script>
+  <!-- lib -->
+  <script src="js/jquery-2.1.3.min.js"></script>
+  <script src="socket.io/socket.io.js"></script>
+  <script src="js/snap.svg-min.js"></script>
+  <!-- client -->
+  <script src="js/fsm.js"></script>
+  <script src="js/observer.js"></script>
+  <script src="js/board.js"></script>
+  <script src="js/tegclient.js"></script>
 
 </html>
