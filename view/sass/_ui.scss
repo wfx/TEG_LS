@@ -1,0 +1,71 @@
+.ui {
+  @include mix_appreance(none);
+  color    : $ui_font_color;
+  font-size: $ui_font_size;
+  &.hide {
+    display : none;
+    position: fixed;
+  }
+  &.show {
+    z-index : $z_index;
+    display : inline-block;
+    position: fixed;
+  }
+  &.label {
+    padding-bottom: 1em;
+  }
+  &.button {
+    cursor       : pointer;
+    padding      : 0.75em 2em;
+    margin-right : 1em;
+    border-style : solid;
+    border-color : #fff;
+    border-radius: 0.75em;
+    border-bottom: 2px solid #fff;
+    &.normal {
+      background-color: map_get($button_normal_color, default);
+      @include mix_transition(all 0.5s);
+      &:active,
+      &:hover {
+        @include mix_box_shadow($button_shadow);
+        background-color: map_get($button_normal_color, hover);
+      }
+    }
+    &.cancel {
+      background-color: map_get($button_cancel_color, default);
+      @include mix_transition( all 0.5s);
+      &:active,
+      &:hover {
+        @include mix_box_shadow($button_shadow);
+        background-color: map_get($button_cancel_color, hover);
+      }
+    }
+  }
+  &.radio {
+    label {
+      position     : relative;
+      display      : inline-block;
+      cursor       : pointer;
+      padding-left : 2em;
+      margin-bottom: 1em;
+    }
+    input[type=radio] + label:before {
+      content      : "";
+      position     : absolute;
+      display      : inline-block;
+      left         : 0;
+      bottom       : 0;
+      width        : 1em;
+      height       : 1em;
+      border       : 1px solid #fff;
+      border-radius: 1em;
+    }
+    input[type=radio] {
+      display: none;
+    }
+    input[type=radio]:checked + label:before {
+      @include mix_box_shadow($button_shadow);
+      background-color: map_get($button_normal_color, hover);
+    }
+  }
+}
