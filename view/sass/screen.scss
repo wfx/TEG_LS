@@ -2,7 +2,7 @@
 @import "compass/reset";
 @import "var";
 @import "mixin";
-@import "elements";
+@import "ui";
 @font-face {
   font-family: Gothic;
   src: url("fonts/LiberationMono-Regular.ttf") format('truetype');
@@ -48,14 +48,14 @@ body {
       section {
         position: absolute;
         top: calc(50% - 3em);
-        left: calc(50% - 6em);
+        left: calc(50% - 12em);
       }
     }
     #join {
       section {
         position: absolute;
         top: calc(50% - 3em);
-        left: calc(50% - 6em);
+        left: calc(50% - 12em);
       }
     }
     #play {
