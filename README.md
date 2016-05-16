@@ -6,8 +6,7 @@ Tenes Emapandas Graciela, short TEG,
 the version of Risk that is the most popular game of Argentina.
 
 
-![Screenshot](https://raw.githubusercontent.com/wfx/W3TEG/wfx/view/img/preview.png)
-
+![Screenshot](https://raw.githubusercontent.com/wfx/W3TEG/master/view/img/preview.png)
 
 
 ## License ##
