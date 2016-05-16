@@ -24,18 +24,21 @@ var onAdvise = function(data, cb) {
   if (data.name == "state" && data.value == "ready") {
     this.emit("ts", "viewSceneStartup");
   }
-  if (data.name == "btnViewSceneHost" && data.value == "clicked") {
+  if (data.name == "viewSceneStartup" && data.value == "clicked") {
+    this.emit("ts", "viewSceneStartup");
+  }
+  if (data.name == "viewSceneHost" && data.value == "clicked") {
     this.emit("ts", "viewSceneHost");
   }
-  if (data.name == "btnViewSceneJoin" && data.value == "clicked") {
+  if (data.name == "viewSceneJoin" && data.value == "clicked") {
     this.emit("ts", "viewSceneJoin");
   }
-  if (data.name == "btnViewScenePlay" && data.value == "clicked") {
+  if (data.name == "viewScenePlay" && data.value == "clicked") {
     data = require("../view/game/teg/config.json");
     this.emit("ts", "viewScenePlay", data);
-    // TESTING
     // Prepare
     this.emit('ts', 'board_get_areas', function(data) {
+      // ! Client call this function :) !
       console.log(data);
     });
 
