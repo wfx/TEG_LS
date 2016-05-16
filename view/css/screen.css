@@ -54,134 +54,87 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   display: block;
 }
 
-.w_hide {
+/**
+ * UI
+ */
+.ui {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  color: white;
+  font-size: 1em;
+}
+.ui.hide {
   display: none;
   position: fixed;
 }
-
-.w_show {
+.ui.show {
   z-index: 9;
   display: inline-block;
   position: fixed;
 }
-
-.w_center {
-  margin-left: auto;
-  margin-right: auto;
-  margin-top: auto;
-  margin-bottom: auto;
+.ui.label {
+  padding-bottom: 1em;
 }
-
-.w_dialog {
-  position: fixed;
-  width: 422px;
-  height: 156px;
-  top: calc(50% - 156px / 2);
-  left: calc(50% - 422px / 2);
-  border-top: solid #070809 1px;
-  border-left: solid #080a0a 1px;
-  border-bottom: solid #0a0b0c 1px;
-  border-right: solid #080a0a 1px;
-  border-radius: 2px;
-  background: -moz-linear-gradient(top, #494b4f 0%, #404142 100%);
-  background: -webkit-linear-gradient(top, #494b4f 0%, #404142 100%);
-  background: linear-gradient(to bottom, #494b4f 0%, #404142 100%);
-  -moz-box-shadow: 2px 2px 5px 0 rbga(0, 0, 0, 0.75);
-  -webkit-box-shadow: 2px 2px 5px 0 rbga(0, 0, 0, 0.75);
-  box-shadow: 2px 2px 5px 0 rbga(0, 0, 0, 0.75);
-  color: #f2f2f2;
-  text-shadow: 1px 1px 0 #000000;
+.ui.button {
+  cursor: pointer;
+  padding: 0.75em 2em;
+  margin-right: 1em;
+  border-style: solid;
+  border-color: #fff;
+  border-radius: 0.75em;
+  border-bottom: 2px solid #fff;
 }
-.w_dialog::after {
+.ui.button.normal {
+  background-color: transparent;
+  -webkit-transition: all 0.5s;
+  -moz-transition: all 0.5s;
+  transition: all 0.5s;
+}
+.ui.button.normal:active, .ui.button.normal:hover {
+  -moz-box-shadow: 0px 1px 8px rgba(255, 255, 255, 0.8);
+  -webkit-box-shadow: 0px 1px 8px rgba(255, 255, 255, 0.8);
+  box-shadow: 0px 1px 8px rgba(255, 255, 255, 0.8);
+  background-color: rgba(100, 156, 255, 0.5);
+}
+.ui.button.cancel {
+  background-color: transparent;
+  -webkit-transition: all 0.5s;
+  -moz-transition: all 0.5s;
+  transition: all 0.5s;
+}
+.ui.button.cancel:active, .ui.button.cancel:hover {
+  -moz-box-shadow: 0px 1px 8px rgba(255, 255, 255, 0.8);
+  -webkit-box-shadow: 0px 1px 8px rgba(255, 255, 255, 0.8);
+  box-shadow: 0px 1px 8px rgba(255, 255, 255, 0.8);
+  background-color: rgba(255, 142, 100, 0.5);
+}
+.ui.radio label {
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+  padding-left: 2em;
+  margin-bottom: 1em;
+}
+.ui.radio input[type=radio] + label:before {
   content: "";
   position: absolute;
-  top: 1px;
-  left: 1px;
-  right: 1px;
-  border-top: solid #6e7073 1px;
-}
-.w_dialog .w_dialog_title {
-  font-size: 16px;
-  padding: 10px 8px;
-}
-
-.w_btn_default {
   display: inline-block;
-  width: 100%;
-  border-top: solid #4a4c4d 1px;
-  border-left: solid #3d3e40 1px;
-  background: -moz-linear-gradient(top, #38393b 0%, #262627 100%);
-  background: -webkit-linear-gradient(top, #38393b 0%, #262627 100%);
-  background: linear-gradient(to bottom, #38393b 0%, #262627 100%);
-  color: #f2f2f2;
-  font-size: 16px;
-  text-shadow: 1px 1px 0 #000000;
-  padding-top: 8px;
-  padding-bottom: 8px;
+  left: 0;
+  bottom: 0;
+  width: 1em;
+  height: 1em;
+  border: 1px solid #fff;
+  border-radius: 1em;
 }
-.w_btn_default:hover, .w_btn_default:active {
-  border-top: solid #737578 1px;
-  border-left: solid #595a5c 1px;
-  background: -moz-linear-gradient(top, #55585c 0%, #3c3d3f 100%);
-  background: -webkit-linear-gradient(top, #55585c 0%, #3c3d3f 100%);
-  background: linear-gradient(to bottom, #55585c 0%, #3c3d3f 100%);
+.ui.radio input[type=radio] {
+  display: none;
 }
-
-.w_btn_cancel {
-  display: inline-block;
-  width: 100%;
-  border-top: solid #de7c7c 1px;
-  border-left: solid #d15c5c 1px;
-  background: -moz-linear-gradient(top, #d55858 0%, #c03838 100%);
-  background: -webkit-linear-gradient(top, #d55858 0%, #c03838 100%);
-  background: linear-gradient(to bottom, #d55858 0%, #c03838 100%);
-  color: #f2f2f2;
-  font-size: 16px;
-  text-shadow: 1px 1px 0 #000000;
-  padding-top: 8px;
-  padding-bottom: 8px;
-}
-.w_btn_cancel:hover, .w_btn_cancel:active {
-  border-top: solid #e38d8d 1px;
-  border-left: solid #d66d6d 1px;
-  background: -moz-linear-gradient(top, #db6d6d 0%, #c75050 100%);
-  background: -webkit-linear-gradient(top, #db6d6d 0%, #c75050 100%);
-  background: linear-gradient(to bottom, #db6d6d 0%, #c75050 100%);
-}
-
-.btn_w1 {
-  width: 12em;
-  height: 6em;
-}
-
-.btn_w2 {
-  width: 24em;
-  height: 6em;
-}
-
-.btn {
-  display: inline-block;
-  position: relative;
-  overflow: hidden;
-  margin: 1em;
-  padding: 1em 3em;
-  border: 3px solid #fff;
-  border-radius: 9px;
-  background: none;
-  cursor: pointer;
-  font-size: 1em;
-  color: #fff;
-  cursor: pointer;
-  -webkit-transition: all 0.3s;
-  -moz-transition: all 0.3s;
-  transition: all 0.3s;
-}
-.btn:active {
-  border-color: #649cff;
-  color: rgba(100, 156, 255, 0.5);
-}
-.btn:hover {
-  background: rgba(100, 156, 255, 0.5);
+.ui.radio input[type=radio]:checked + label:before {
+  -moz-box-shadow: 0px 1px 8px rgba(255, 255, 255, 0.8);
+  -webkit-box-shadow: 0px 1px 8px rgba(255, 255, 255, 0.8);
+  box-shadow: 0px 1px 8px rgba(255, 255, 255, 0.8);
+  background-color: rgba(100, 156, 255, 0.5);
 }
 
 @font-face {
@@ -232,12 +185,12 @@ body {
 #game #gameArea #host section {
   position: absolute;
   top: calc(50% - 3em);
-  left: calc(50% - 6em);
+  left: calc(50% - 12em);
 }
 #game #gameArea #join section {
   position: absolute;
   top: calc(50% - 3em);
-  left: calc(50% - 6em);
+  left: calc(50% - 12em);
 }
 #game #gameArea #play {
   width: 100%;
