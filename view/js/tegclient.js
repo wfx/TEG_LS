@@ -2,21 +2,20 @@ jQuery(function($) {
   'use strict';
 
   /**
-   * Startup (entry point):
-   * 	Client call over socket "advise" -> "ready".
-   * 	Server answer over socket "ts" (trigger state) -> "viewSceneStartup" to show the startup screen.
-   * 	User have the choice to select "Host" to host a game or "Join" to join a game.
-   * 	The selection call the allowed "startup" triggers and use (as mostly allways) the socket "advise" to inform the server
-   * 	of the user choice.
+   * Entry point:
+   * 	Client send (socket) "advise" -> "ready".
+   * 	Server trigger state -> "viewSceneStartup".
+   * 	User hase now the choice to "Host" or "Join" a game.
    * 	...
    *
    * Communication:
    * 	Server -> Client;
    * 	Use socket connection "ts" (trigger state).
    * 	The available triggers/state are defined in tegclient.json.
+   * 	TODO: Rename tegcient.json
    *
    *  Client -> Server;
-   *  Use FSM and via the FSM.on defined callback's use the socket connections.
+   *  Use FSM and via the FSM.on defined callback's it use the socket connections.
    *  Client change nothing and ask allways the sever over socket "advise" and the
    *  server check the advise (allow/disallow) and do the changes.
    *
@@ -51,7 +50,7 @@ jQuery(function($) {
       },
 
       /**
-       * [Server can trigger states, if none given then we return some actualy state informations]
+       * [Server can trigger states, if none given then return actualy state and triggers]
        * @param  {[string]} trigger [Any trigger see tegclient.json]
        * @param  {[json]}   data    [optional json formated data]
        */
@@ -102,9 +101,6 @@ jQuery(function($) {
         FSM.on('viewSceneHost', UI.Scene.viewHost);
         FSM.on('viewSceneJoin', UI.Scene.viewJoin);
         FSM.on('viewScenePlay', UI.Scene.viewPlay);
-        //
-        //FSM.on('field_select', UI.boardFieldClicked);
-        //
         FSM.on('dialogFieldInfoDisplay', UI.Dialog.fieldInfo.display);
 
         FSM.on('board_get_areas', UI.Board.getAreas);
@@ -162,10 +158,11 @@ jQuery(function($) {
       },
 
       /**
-       * [Advise server: field click]
-       * @param  {[string]} fieldID [Field ID]
+       * [Identify player action: Place, Transfer or Attack]
+       * @param  {[type]} fieldID [field ID]
        */
       boardFieldClicked: function(fieldID) {
+        // select or deselect field
         if (UI.Board.map.field[fieldID].selected) {
           UI.Board.map.field[fieldID].selected = false;
         } else {
@@ -173,8 +170,7 @@ jQuery(function($) {
           if (UI.Board.selectedField == fieldID);
           UI.Board.selectedField = fieldID;
         }
-        console.log("Selected Field: " + UI.Board.selectedField);
-        // Identify player action:
+        // player action:
         if (UI.Board.fieldA === '') {
           UI.Board.fieldA = fieldID;
           UI.Board.map.field[UI.Board.fieldA].selected = true;
@@ -216,7 +212,7 @@ jQuery(function($) {
        */
       boardFieldHoverOver: function(fieldID) {
         UI.Board.map.field[fieldID].image.attr({
-          "fill-opacity": ".5"
+          "fill-opacity": ".25"
         });
         FSM.trigger("dialogFieldInfoDisplay", {
           value: true
@@ -228,9 +224,11 @@ jQuery(function($) {
        * @param  {[type]} fieldID [Field ID]
        */
       boardFieldHoverOut: function(fieldID) {
-        UI.Board.map.field[fieldID].image.attr({
-          "fill-opacity": "1"
-        });
+        if (UI.Board.map.field[fieldID].selected === false) {
+          UI.Board.map.field[fieldID].image.attr({
+            "fill-opacity": "1"
+          });
+        }
         FSM.trigger("dialogFieldInfoDisplay", {
           value: false
         });
@@ -390,8 +388,7 @@ jQuery(function($) {
           UI.Board.svgPoint = UI.Board.map.surface.node.createSVGPoint();
         },
         getAreas: function(cb) {
-          // TODO: Spank Spank
-          // we send only JSON data!!!
+          // TODO: send JSON data!!!
           var obj = UI.Board.map;
 
           Object.keys(obj).forEach(function(prop) {
