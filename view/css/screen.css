@@ -139,14 +139,27 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
 
 @font-face {
   font-family: Gothic;
-  src: url("fonts/LiberationMono-Regular.ttf") format("truetype");
+  src: url("../fonts/LiberationMono-Regular.ttf") format("truetype");
   font-weight: 100;
   font-style: normal;
 }
+@font-face {
+  font-family: "game";
+  src: url("../fonts/game.eot");
+  src: url("../fonts/game.eot?#iefix") format("embedded-opentype"), url("../fonts/game.woff") format("woff"), url("../fonts/game.ttf") format("truetype"), url("../fonts/game.svg#game") format("svg");
+  font-weight: normal;
+  font-style: normal;
+}
+.font_icon {
+  font-family: "game";
+  font-style: normal;
+  font-weight: normal;
+}
+
 body {
   background-color: #5984ac;
   color: #000;
-  font-family: 'LiberationMono';
+  font-family: "LiberationMono";
   font-weight: 100;
   font-size: 100%;
   height: 100vh;
@@ -162,52 +175,73 @@ body {
 }
 
 #game {
-  width: 100%;
-  height: 100%;
+  width: 100vw;
+  height: 100vh;
 }
 #game #gameArea {
-  width: 100%;
-  height: 100%;
+  width: 100vw;
+  height: 100vh;
 }
 #game #gameArea #startup {
-  width: 100%;
-  height: 100%;
+  width: 100vw;
+  height: 100vh;
   background-color: #5984ac;
   background-image: url("../img/sceneStart.png");
   background-size: cover;
   background-repeat: no-repeat;
+  display: -webkit-box;
+  display: -moz-box;
+  display: -ms-flexbox;
+  display: -webkit-flex;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
-#game #gameArea #startup section {
-  position: absolute;
-  top: calc(50% - 3em);
-  left: calc(50% - 12em);
+#game #gameArea #host {
+  width: 100vw;
+  height: 100vh;
+  display: -webkit-box;
+  display: -moz-box;
+  display: -ms-flexbox;
+  display: -webkit-flex;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
-#game #gameArea #host section {
-  position: absolute;
-  top: calc(50% - 3em);
-  left: calc(50% - 12em);
-}
-#game #gameArea #join section {
-  position: absolute;
-  top: calc(50% - 3em);
-  left: calc(50% - 12em);
+#game #gameArea #join {
+  width: 100vw;
+  height: 100vh;
+  display: -webkit-box;
+  display: -moz-box;
+  display: -ms-flexbox;
+  display: -webkit-flex;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 #game #gameArea #play {
-  width: 100%;
-  height: 100%;
+  width: 100vw;
+  height: 100vh;
 }
 #game #gameArea #play #navigation {
   position: fixed;
   top: 0;
   left: 0;
+  width: 100vw;
+  padding-top: 0.25em;
+  padding-bottom: 0.25em;
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 1.5em;
+  background-color: rgba(0, 0, 0, 0.5);
 }
 #game #gameArea #play #playfield {
   background-color: black;
-  background-size: 100% 100%;
+  background-size: cover;
   background-repeat: no-repeat;
 }
-#game #gameArea #play #playfield > #board {
+#game #gameArea #play #playfield #board {
   width: 100vw;
   max-height: 100vh;
+  margin-left: auto;
   margin-right: auto;
 }
