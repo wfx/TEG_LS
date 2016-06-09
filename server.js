@@ -24,7 +24,7 @@ var app = express(),
     io = socketIO.listen(server),
     sess = {};
 
-server.listen(cfg.port);
+server.listen(cfg.port, cfg.ip);
 
 // request in the Apache combined format to STDOUT
 app.use(morgan('dev'));
