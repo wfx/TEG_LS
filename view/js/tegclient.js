@@ -45,7 +45,7 @@ jQuery(function($) {
        * [Called on server connection]
        */
       onConnected: function() {
-        App.sessionId = IO.socket.sessionid;
+        App.sessionId = IO.socket.io.engine.id;
         console.log('Client: Client connected with id: ' + App.sessionId);
       },
 

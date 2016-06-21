@@ -61,22 +61,19 @@ var onAdvise = function(data, cb) {
 };
 
 var hostCreateNewGame = function(data) {
-  console.log(data);
-  // TESTING: use teg boad (game folder)
+  // TESTING: use teg board (game folder)
   game.cfg = require("../view/game/teg/config.json");
 
-  game.ID = data.gameID;
-  //game.ID = ( Math.floor(Date.now() / 1000) ); // timestap in seconds
+  game.gameID = data.gameID;
   game.socketID = this.id;
-  console.log(game.gameID);
 
   this.emit('newGameCreated', {
-    gameID: game.ID,
+    gameID: game.gameID,
     socketID: game.socketID
   });
 
   // Join the Room and wait for the players (they have to use the right game.ID)
-  this.join(game.ID.toString());
+  this.join(game.gameID.toString());
 
   console.log('host create game: ' + JSON.stringify(data));
 };
