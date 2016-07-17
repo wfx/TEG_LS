@@ -316,6 +316,16 @@ jQuery(function($) {
 
           // Dialog: Field info:
           UI.Dialog.init();
+
+          // Not the right place ... just playing
+          // TODO: Write a update player status function
+          // Example:
+          //  Player is a bot and have the color red.
+          $(".player_type").html("[BOT]");
+          $(".player_name").html("RED");
+          $(".player_name").css({"color":"red"});
+          $(".player_info").html("Waiting for action...");
+
         },
       },
 

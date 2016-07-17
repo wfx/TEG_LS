@@ -4,9 +4,9 @@
 @import "mixin";
 @import "ui";
 @font-face {
-  font-family: Gothic;
+  font-family: "Liberation Mono";
   src        : url("../fonts/LiberationMono-Regular.ttf") format('truetype');
-  font-weight: 100;
+  font-weight: normal;
   font-style : normal;
 }
 @font-face {
@@ -18,15 +18,14 @@
 }
 .font_icon {
   font-family: "game";
-  font-style : normal;
   font-weight: normal;
+  font-style : normal;
+  vertical-align: middle;
 }
 body {
   background-color: #5984ac;
   color           : #000;
-  font-family     : "LiberationMono";
-  font-weight     : 100;
-  font-size       : 100%;
+  font-family     : "Liberation Mono";
   height          : 100vh;
   width           : 100vw;
 }

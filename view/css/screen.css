@@ -81,9 +81,9 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   padding: 0.75em 2em;
   margin-right: 1em;
   border-style: solid;
+  border-width: 1px;
   border-color: #fff;
-  border-radius: 0.75em;
-  border-bottom: 2px solid #fff;
+  border-radius: 0.45em;
 }
 .ui.button.normal {
   background-color: transparent;
@@ -138,9 +138,9 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
 }
 
 @font-face {
-  font-family: Gothic;
+  font-family: "Liberation Mono";
   src: url("../fonts/LiberationMono-Regular.ttf") format("truetype");
-  font-weight: 100;
+  font-weight: normal;
   font-style: normal;
 }
 @font-face {
@@ -152,16 +152,15 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
 }
 .font_icon {
   font-family: "game";
-  font-style: normal;
   font-weight: normal;
+  font-style: normal;
+  vertical-align: middle;
 }
 
 body {
   background-color: #5984ac;
   color: #000;
-  font-family: "LiberationMono";
-  font-weight: 100;
-  font-size: 100%;
+  font-family: "Liberation Mono";
   height: 100vh;
   width: 100vw;
 }

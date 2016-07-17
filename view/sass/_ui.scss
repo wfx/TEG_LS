@@ -15,13 +15,14 @@
     padding-bottom: 1em;
   }
   &.button {
-    cursor        : pointer;
-    padding       : 0.75em 2em;
-    margin-right  : 1em;
-    border-style  : solid;
-    border-color  : #fff;
-    border-radius : 0.75em;
-    border-bottom : 2px solid #fff;
+    cursor       : pointer;
+    padding      : 0.75em 2em;
+    margin-right : 1em;
+    border-style : solid;
+    border-width : 1px;
+    border-color : #fff;
+    border-radius: 0.45em;
+    // border-bottom: 2px solid #fff;
     &.normal {
       background-color: map_get($button_normal_color, default);
       @include mix_transition(all 0.5s);
