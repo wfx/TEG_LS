@@ -1,10 +1,10 @@
 {
-    "path": "/game/teg",
-    "rule": "teg",
-    "viewBox": "0 0 900 900",
-    "figures": {
-        "I": 1,
-        "V": 5,
-        "X": 10
-    }
+  "path": "/game/teg",
+  "rule": "teg",
+  "viewBox": "0 0 900 900",
+  "figures": {
+    "I": 1,
+    "V": 5,
+    "X": 10
+  }
 }
