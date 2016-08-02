@@ -1,4 +1,3 @@
 .sass-cache/
+foo/
 node_modules
-view/img/texture
-view/img/*.blend*
