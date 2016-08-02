@@ -85,14 +85,21 @@
     </div>
   </body>
 
-  <!-- lib -->
-  <script src="js/jquery-2.1.3.min.js"></script>
-  <script src="socket.io/socket.io.js"></script>
-  <script src="js/snap.svg-min.js"></script>
+  <!-- libs -->
+  <script src="js/lib/jquery-2.1.3.min.js"></script>
+  <script src="js/lib/snap.svg-min.js"></script>
+  <script src="socket.io/socket.io.js"></script>  <!-- served by node (socket.io) -->
+
+  <!-- module -->
+  <script src="js/mod/init.js"></script>
+  <script src="js/mod/fsm.js"></script>
+  <script src="js/mod/observer.js"></script>
+  <script src="js/mod/board.js"></script>
+  <script src="js/mod/io.js"></script>
+  <script src="js/mod/app.js"></script>
+  <script src="js/mod/ui.js"></script>
+
   <!-- client -->
-  <script src="js/fsm.js"></script>
-  <script src="js/observer.js"></script>
-  <script src="js/board.js"></script>
   <script src="js/tegclient.js"></script>
 
 </html>
