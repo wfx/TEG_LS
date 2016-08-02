@@ -1,6 +1,6 @@
 var readline = require("readline"),
   exports = module.exports = {},
-  game = {}; // store game settings/configuration
+  cfg = {}; // stores game configuration
 
 exports.initGame = function(io, socket) {
 
@@ -62,25 +62,21 @@ var onAdvise = function(data, cb) {
 
 var hostCreateNewGame = function(data) {
   // TESTING: use teg board (game folder)
-  game.cfg = require("../view/game/teg/config.json");
+  cfg = require("../view/game/teg/config.json");
+  cfg.gameID = data.gameID;
+  cfg.socketID = this.id;
 
-  game.gameID = data.gameID;
-  game.socketID = this.id;
-
-  this.emit('newGameCreated', {
-    gameID: game.gameID,
-    socketID: game.socketID
-  });
+  //this.emit('newGameCreated', cfg);
 
   // Join the Room and wait for the players (they have to use the right game.ID)
-  this.join(game.gameID.toString());
+  this.join(cfg.gameID.toString());
 
-  console.log('host create game: ' + JSON.stringify(data));
+  console.log('host create game: ' + JSON.stringify(cfg));
 };
 
 var hostPrepareGame = function(data) {
-  io.sockets.in(data.gameID).emit('message', game);
-  console.log('host start game with id: ' + data.gameID);
+  io.sockets.in(data.gameID).emit('message', cfg);
+  console.log('host start game with id: ' + cfg.gameID);
 };
 
 var onDisconnect = function() {
