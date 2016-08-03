@@ -1,3 +1,8 @@
+/**
+ * [description]
+ * @param  {[object]} function(TC, undefined     [TC is the namespace (object)]
+ * @return {[object]} [FSM]
+ */
 TC.FSM = (function(TC, undefined) {
   'use strict';
 

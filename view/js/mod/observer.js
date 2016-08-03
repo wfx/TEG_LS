@@ -1,3 +1,8 @@
+/**
+ * [description]
+ * @param  {[object]} function(TC, undefined     [TC is the namespace (object)]
+ * @return {[object]} [Observer]
+ */
 TC.Observer = (function(TC, undefined) {
   "use strict";
 
@@ -56,5 +61,5 @@ TC.Observer = (function(TC, undefined) {
   };
 
   return Observer;
-  
+
 }(TC));

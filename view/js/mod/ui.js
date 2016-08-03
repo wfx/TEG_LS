@@ -1,3 +1,8 @@
+/**
+ * [description]
+ * @param  {[object]} function(TC, undefined     [TC is the namespace (object)]
+ * @return {[object]} [UI]
+ */
 TC.UI = (function(TC, undefined) {
   'use strict';
 

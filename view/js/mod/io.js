@@ -1,3 +1,8 @@
+/**
+ * [description]
+ * @param  {[object]} function(TC, undefined     [TC is the namespace (object)]
+ * @return {[object]} [IO]
+ */
 TC.IO = (function(TC, undefined) {
   'use strict';
 

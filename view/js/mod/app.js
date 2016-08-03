@@ -1,3 +1,8 @@
+/**
+ * [description]
+ * @param  {[object]} function(TC, undefined     [TC is the namespace (object)]
+ * @return {[object]} [App]
+ */
 TC.App = (function(TC, undefined) {
   'use strict';
 

@@ -1,4 +1,4 @@
 /**
- * [Declair Namespace]
+ * [Init Namespace]
  */
 var TC = TC || {};
