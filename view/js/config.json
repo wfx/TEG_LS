@@ -48,19 +48,19 @@
       "card_error": "move"
     },
     "place": {
-      "field_set_figure": "place",
+      "place_figure": "place",
       "place_done": "move",
       "place_error": "place"
     },
     "attack": {
-      "field_set_figure": "attack",
+      "attack_opponent": "attack",
       "attack_lose": "attack",
       "attack_won": "attack",
       "attack_done": "move",
       "attack_error": "attack"
     },
     "transfer": {
-      "field_set_figure": "transfer",
+      "ftransfer_figure": "transfer",
       "transfer_done": "move",
       "transfer_error": "transfer"
     }
