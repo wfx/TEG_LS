@@ -1,5 +1,5 @@
 {
-  "name": "RISK",
+  "name": "Risk",
   "short": "risk",
   "version": "0.1",
   "author": "Wolfgang Morawetz",
@@ -13,8 +13,9 @@
   },
   "file": {
     "preview": "preview.png",
-    "board": "map_teg.svg",
-    "cards": "card.svg"
+    "board": "map_risk.svg",
+    "cards": "card.svg",
+    "figures": "figures"
   },
   "figures": {
     "I": {
@@ -38,8 +39,8 @@
       "member": [
         {
           "name": "Argentinia",
-          "id": "Country-South_America-Argentina",
-          "boundary": ["Country-South_America-Peru", "Country-South_America-Brazil"],
+          "id": "layer5",
+          "boundary": ["SouthAmericaPeru", "SouthAmericaBrazil"],
           "card": {
             "id": "used element id in file -> cards",
             "type": "0"
@@ -47,8 +48,8 @@
         },
         {
           "name": "Brazil",
-          "id": "Country-South_America-Brazil",
-          "boundary": ["Country-South_America-Argentina", "Country-South_America-Peru", "Country-South_America-Venezuela"],
+          "id": "layer4",
+          "boundary": ["SouthAmericaArgentinia", "SouthAmericaPeru", "SouthAmericaVenezuela"],
           "card": {
             "id": "used element id in file -> cards",
             "type": "0"
@@ -56,8 +57,8 @@
         },
         {
           "name": "Peru",
-          "id": "Country-South_America-Peru",
-          "boundary": ["Country-South_America-Venezuela", "Country-South_America-Brazil", "Country-South_America-Argentina"],
+          "id": "layer2",
+          "boundary": ["SouthAmericaVenezuela", "SouthAmericaBrazil", "SouthAmericaArgentinia"],
           "card": {
             "id": "used element id in file -> cards",
             "type": "0"
@@ -65,8 +66,8 @@
         },
         {
           "name": "Venezuela",
-          "id": "Country-South_America-Venezuela",
-          "boundary": ["Country-South_America-Peru", "Country-South_America-Brazil"],
+          "id": "layer1",
+          "boundary": ["SouthAmericaPeru", "SouthAmericaBrazil"],
           "card": {
             "id": "used element id in file -> cards",
             "type": "0"

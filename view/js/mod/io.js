@@ -1,3 +1,21 @@
+// COPYRIGHT (c) 2016 Wolfgang Morawetz
+//
+// GNU GENERAL PUBLIC LICENSE
+//    Version 3, 29 June 2007
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 /**
  * [description]
  * @param  {[object]} function(TC, undefined     [TC is the namespace (object)]
@@ -27,6 +45,9 @@ TC.IO = (function(TC, undefined) {
      * @param  {[json]}   data []
      */
     emit: function(name, data){
+      console.log("Client emit " + name + ". Data:");
+      console.log(data);
+      console.log("... ...");
       IO.socket.emit(name,data);
     },
 
@@ -48,13 +69,13 @@ TC.IO = (function(TC, undefined) {
       if (trigger) {
         TC.App.onTriggerState(trigger, data);
       } else {
-        TC.App.getTriggerState();
-        /*
+        //TC.App.getTriggerState();
+
         var jData = [];
         jData.push(FSM.stateName);
         jData.push(FSM.currentState);
         IO.socket.emit("message", JSON.stringify(jData));
-        */
+
       }
     },
 

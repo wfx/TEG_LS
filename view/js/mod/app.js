@@ -1,3 +1,21 @@
+// COPYRIGHT (c) 2016 Wolfgang Morawetz
+//
+// GNU GENERAL PUBLIC LICENSE
+//    Version 3, 29 June 2007
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 /**
  * [description]
  * @param  {[object]} function(TC, undefined     [TC is the namespace (object)]
@@ -12,6 +30,7 @@ TC.App = (function(TC, undefined) {
       App.bindState();
       App.gameId = 0;
       App.sessionId = '';
+      App.activePlayer = 0;
     },
     /**
      * [Bind callback functions for each trigger.
@@ -74,27 +93,35 @@ TC.App = (function(TC, undefined) {
     viewScenePlay: function() {
       TC.IO.emit("advise", {
         name: "viewScenePlay",
-        value: "clicked"
+        opt: {
+          game: $('input[name=game]:checked').val()
+        }
       });
     },
 
     /**
      * [Identify player action: Place, Transfer or Attack]
-     * @param  {[type]} fieldID [field ID]
+     * @param  {[string]} id [field ID]
+     *
+     * fieldA = selectedID &&
+     * fieldB = selectedID
+     *
+     *
      */
-    boardFieldClicked: function(fieldID) {
-      // select or deselect field
-      if (TC.UI.Board.map.field[fieldID].selected) {
-        TC.UI.Board.map.field[fieldID].selected = false;
+    boardFieldClicked: function(id) {
+      // select, deselect field
+      // (true = !true : false / false = !false : true)
+      TC.UI.Board.field[id].selected = !TC.UI.Board.field[id].selected;
+
+      if (TC.UI.Board.field[id].selected) {
+        console.log("field :" + TC.UI.Board.field[id].name + " is selected");
       } else {
-        TC.UI.Board.map.field[fieldID].selected = true;
-        if (TC.UI.Board.selectedField == fieldID);
-        TC.UI.Board.selectedField = fieldID;
+        console.log("field :" + TC.UI.Board.field[id].name + " is not selected");
       }
-      // player action:
+
+      // spot player action:
       if (TC.UI.Board.fieldA === '') {
-        TC.UI.Board.fieldA = fieldID;
-        TC.UI.Board.map.field[TC.UI.Board.fieldA].selected = true;
+        TC.UI.Board.fieldA = id;
         // Player want to place some figures.
         if (Player.figuresToPlace > 0) {
           TC.IO.socket.emit("advise", {
@@ -103,22 +130,20 @@ TC.App = (function(TC, undefined) {
           });
         }
       } else {
-        if (TC.UI.Board.fieldA === fieldID) {
+        if (TC.UI.Board.fieldA === id) {
           TC.UI.Board.fieldA = '';
-          TC.UI.Board.map.field[fieldID].selected = false;
         } else {
-          TC.UI.Board.fieldB = fieldID;
-          TC.UI.Board.map.field[TC.UI.Board.fieldB].selected = true;
+          TC.UI.Board.fieldB = id;
           // Player want to transfer some figures.
-          if (TC.UI.Board.map.field[TC.UI.Board.fieldB].owner === Player.id) {
-            TC.IO.socket.emit("advise", {
+          if (TC.UI.Board.field[TC.UI.Board.fieldB].owner === TC.Player[TC.App.activePlayer].id) {
+            TC.IO.emit("advise", {
               name: "transfer",
               fieldA: App.UI.Board.fieldA,
               fieldB: App.UI.Board.fieldB
             });
           } else {
             // Player want to attac some opponent.
-            TC.IO.socket.emit("advise", {
+            TC.IO.emit("advise", {
               name: "attack",
               fieldA: TC.UI.Board.fieldA,
               fieldB: TC.UI.Board.fieldB
@@ -131,8 +156,8 @@ TC.App = (function(TC, undefined) {
      * [Give a visible feedback on mouse hover over]
      * @param  {[string]} fieldID [Field ID]
      */
-    boardFieldHoverOver: function(fieldID) {
-      TC.UI.Board.map.field[fieldID].image.attr({
+    boardFieldHoverOver: function(id) {
+      TC.UI.Board.field[id].img.attr({
         "fill-opacity": ".25"
       });
       TC.FSM.trigger("dialogFieldInfoDisplay", {
@@ -144,9 +169,9 @@ TC.App = (function(TC, undefined) {
      * [Give a visible feedback on mouse hover out]
      * @param  {[type]} fieldID [Field ID]
      */
-    boardFieldHoverOut: function(fieldID) {
-      if (TC.UI.Board.map.field[fieldID].selected === false) {
-        TC.UI.Board.map.field[fieldID].image.attr({
+    boardFieldHoverOut: function(id) {
+      if (TC.UI.Board.field[id].selected === false) {
+        TC.UI.Board.field[id].img.attr({
           "fill-opacity": "1"
         });
       }
@@ -160,13 +185,15 @@ TC.App = (function(TC, undefined) {
      * @param  {[object]} ev      [Mouse event]
      * @param  {[string]} fieldID [Field ID]
      */
-    boardFieldMouseMove: function(ev, fieldID) {
+    boardFieldMouseMove: function(ev, id) {
+      console.log(TC.UI.Board.field[id].name + ", Selected: " + TC.UI.Board.field[id].selected);
       TC.UI.Board.svgPoint.x = ev.clientX;
       TC.UI.Board.svgPoint.y = ev.clientY;
       // Calculate Mouse.x and Mouse.y
-      TC.UI.Board.mouse = TC.UI.Board.svgPoint.matrixTransform(TC.UI.Board.map.surface.node.getScreenCTM().inverse());
+      TC.UI.Board.mouse = TC.UI.Board.svgPoint.matrixTransform(TC.UI.Board.field[id].img.node.getScreenCTM().inverse());
+      // TODO: Check if we allways send good named data (to find bugs).
       TC.UI.Observer.update({
-        fieldID: fieldID
+        fieldID: id
       });
     },
   };

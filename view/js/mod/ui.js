@@ -1,3 +1,21 @@
+// COPYRIGHT (c) 2016 Wolfgang Morawetz
+//
+// GNU GENERAL PUBLIC LICENSE
+//    Version 3, 29 June 2007
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 /**
  * [description]
  * @param  {[object]} function(TC, undefined     [TC is the namespace (object)]
@@ -10,8 +28,8 @@ TC.UI = (function(TC, undefined) {
     init: function() {
       UI.Scene.cacheElements();
       UI.Scene.bindEvents();
-      UI.Observer = TC.Observer;
-      UI.Observer.init();
+      UI.Observer = new Observer();
+      UI.Dialog.init();
     },
 
     Scene: {
@@ -64,30 +82,28 @@ TC.UI = (function(TC, undefined) {
       /**
        * [View scene Play: The Scene to playing a game]
        */
-      viewPlay: function(data) {
+      viewPlay: function(cfg) {
         UI.$gameArea.html(UI.$templateScenePlay);
-        $("#playfield").css("background-image", "url(" + data.path + "/background.png)");
-        UI.Board.init(data);
+        $("#playfield").css("background-image", "url(" + cfg.file.path + "background.png)");
+        UI.Board.init(cfg);
 
         // Dialog: Field info:
         UI.Dialog.init();
-
-        UI.Infobar.player.update({
-          "name": "[BOT]"
-        });
+        UI.Infobar.player.update();
       }
     },
 
     Infobar: {
       player: {
-        update: function(p) {
-          console.log(p.name);
-          $(".player_type").html(p.type);
-          $(".player_name").html(p.name);
+        update: function() {
+          if (TC.Player[TC.App.activePlayer].human) {
+            $(".player_type").html('');
+          }
+          $(".player_name").html(TC.Player[TC.App.activePlayer].name);
           $(".player_name").css({
-            "color": p.color
+            "color": TC.Player[TC.App.activePlayer].color
           });
-          $(".player_info").html(p.info);
+          $(".player_info").html('');
         }
       }
     },
@@ -109,17 +125,11 @@ TC.UI = (function(TC, undefined) {
             UI.Observer.attach(UI.Dialog.fieldInfo);
             UI.$dialogFieldInfo.addClass('show');
             UI.$dialogFieldInfo.removeClass('hide');
-
-            //UI.Board.map.surface.before(UI.Board.foo);
-
           } else {
             $("#playfield").css("cursor", "auto");
             UI.Observer.detach(UI.Dialog.fieldInfo);
             UI.$dialogFieldInfo.addClass('hide');
             UI.$dialogFieldInfo.removeClass('show');
-
-            //UI.Board.map.surface.after(UI.Board.foo);
-
           }
         },
 
@@ -128,7 +138,7 @@ TC.UI = (function(TC, undefined) {
             'top': UI.Board.svgPoint.y - 10,
             'left': UI.Board.svgPoint.x + 10,
           });
-          UI.$dialogFieldInfo.html(UI.Board.map.field[data.fieldID].name);
+          UI.$dialogFieldInfo.html(UI.Board.field[data.fieldID].name);
         },
       }
     },
@@ -138,37 +148,46 @@ TC.UI = (function(TC, undefined) {
        * [Load the game board]
        * @param  {[json]} data [configuration for the board (teg is view/game/teg/config.json)]
        */
-      init: function(data) {
-        UI.Board.fieldA = '';
-        UI.Board.fieldB = '';
-        UI.Board.map = Board;
-        UI.Board.map.init({
-          element: document.getElementById("board"),
-          file: data.path + "/board.svg",
-          viewBox: data.viewBox,
-          field: {
-            figure: data.figures,
-            callback: {
-              mouseClicked: TC.App.boardFieldClicked,
-              mouseHoverOver: TC.App.boardFieldHoverOver,
-              mouseHoverOut: TC.App.boardFieldHoverOut,
-              mouseMove: TC.App.boardFieldMouseMove
+      init: function(cfg) {
+        UI.Board.field = {};
+        UI.Board.load(cfg);
+      },
+      load: function(cfg) {
+        UI.Board.surface = new Snap('#board');
+        //var dom,
+        //  filename = cfg.file.path + cfg.file.board;
+
+        Snap.load(cfg.file.path + cfg.file.board, function(f) {
+          // TODO: get viewBox from file.
+          UI.Board.surface.attr({
+            viewBox: "0 0 900 900",
+            width: "100%",
+            height: "100%"
+          });
+          for (var g in cfg.group) {
+            for (var m in cfg.group[g].member) {
+              UI.Board.field[cfg.group[g].member[m].id] = new Field({
+                id: cfg.group[g].member[m].id,
+                name: cfg.group[g].member[m].name,
+                img: f.select('#' + cfg.group[g].member[m].id),
+                cbMouseClick: TC.App.boardFieldClicked,
+                cbMouseHoverOver: TC.App.boardFieldHoverOver,
+                cbMouseHoverOut: TC.App.boardFieldHoverOut,
+                cbMouseMove: TC.App.boardFieldMouseMove
+              });
             }
           }
-        });
-        UI.Board.svgPoint = UI.Board.map.surface.node.createSVGPoint();
-      },
-      getAreas: function(cb) {
-        // TODO: send JSON data!!!
-        var obj = UI.Board.map;
 
-        Object.keys(obj).forEach(function(prop) {
-          if (obj.hasOwnProperty(prop)) {
-            console.log(obj[prop]);
-          }
+          UI.Board.surface.append(f);
+          UI.Board.svgPoint = UI.Board.surface.node.createSVGPoint();
+          console.log(UI.Board.svgPoint);
+
         });
-        cb(UI.Board.map.field);
-      },
+      }
+    },
+    getAreas: function(cb) {
+      // TODO: send as JSON!
+      cb(UI.Board.field);
     },
   };
 

@@ -26,19 +26,19 @@
       <script id="Scene-Host" type="text/template">
         <div id="host">
           <section>
-            <p class="ui label">Game Rule</p>
+            <p class="ui label">Game</p>
             <ul class="ui radio">
               <li>
-                <input type="radio" name="rule" id="radio_teg" value="teg" checked="checked" />
+                <input type="radio" name="game" id="radio_teg" value="teg" checked="checked" />
                 <label for="radio_teg">TEG</label>
               </li>
               <li>
-                <input type="radio" name="rule" id="radio_teg_lr" value="teg_lr" />
-                <label for="radio_teg_lr">TEG La Revenga</label>
+                <input type="radio" name="game" id="radio_teg_lr" value="tegls" />
+                <label for="radio_teg_lr">TEG La Secuela</label>
               </li>
               <li>
-                <input type="radio" name="rule" id="radio_risk" value="risk" />
-                <label for="radio_risk">Risk</label>
+                <input type="radio" name="game" id="radio_risk" value="risk" />
+                <label for="radio_risk">RISK</label>
               </li>
             </ul>
             <button class="ui button normal" value="viewScenePlay">PLAY</button>
@@ -85,16 +85,20 @@
     </div>
   </body>
 
+  <!-- Namespace -->
+  <script> var TC = TC || {}; </script>
+
   <!-- libs -->
   <script src="js/lib/jquery-2.1.3.min.js"></script>
   <script src="js/lib/snap.svg-min.js"></script>
   <script src="socket.io/socket.io.js"></script>  <!-- served by node (socket.io) -->
 
+  <!-- class -->
+  <script src="js/class/fsm.js"></script>
+  <script src="js/class/observer.js"></script>
+  <script src="js/class/field.js"></script>
+  <script src="js/class/player.js"></script>
   <!-- module -->
-  <script src="js/mod/init.js"></script>
-  <script src="js/mod/fsm.js"></script>
-  <script src="js/mod/observer.js"></script>
-  <script src="js/mod/board.js"></script>
   <script src="js/mod/io.js"></script>
   <script src="js/mod/app.js"></script>
   <script src="js/mod/ui.js"></script>

@@ -24,26 +24,28 @@ var onAdvise = function(data, cb) {
   if (data.name == "state" && data.value == "ready") {
     this.emit("ts", "viewSceneStartup");
   }
-  if (data.name == "viewSceneStartup" && data.value == "clicked") {
+  if (data.name == "viewSceneStartup") {
     this.emit("ts", "viewSceneStartup");
   }
-  if (data.name == "viewSceneHost" && data.value == "clicked") {
+  if (data.name == "viewSceneHost") {
     this.emit("ts", "viewSceneHost");
   }
-  if (data.name == "viewSceneJoin" && data.value == "clicked") {
+  if (data.name == "viewSceneJoin") {
     this.emit("ts", "viewSceneJoin");
   }
-  if (data.name == "viewScenePlay" && data.value == "clicked") {
-    data = require("../view/game/teg/config.json");
-    this.emit("ts", "viewScenePlay", data);
-    // Prepare
-    this.emit('ts', 'board_get_areas', function(data) {
-      // ! Client call this function :) !
-      console.log(data);
-    });
+  if (data.name == "viewScenePlay") {
+    cfg = require("../view/game/" + data.opt.game + "/config.json");
+    cfg.file.path = "/game/" + data.opt.game + "/";
+    this.emit("ts", "viewScenePlay", cfg);
+
+    // prepare
+
+    // this.emit('ts', 'board_get_areas', function(data) {
+    //   // ! Client call this function :) !
+    //   console.log(data);
+    // });
 
     this.emit("ts", "prepare_done", data);
-    this.emit("ts", "move", data);
   }
   if (data.name == "field_clicked") {
     this.emit("ts", "field_clicked", data.value);
@@ -61,12 +63,10 @@ var onAdvise = function(data, cb) {
 };
 
 var hostCreateNewGame = function(data) {
-  // TESTING: use teg board (game folder)
-  cfg = require("../view/game/teg/config.json");
   cfg.gameID = data.gameID;
   cfg.socketID = this.id;
 
-  //this.emit('newGameCreated', cfg);
+  this.emit('newGameCreated', cfg);
 
   // Join the Room and wait for the players (they have to use the right game.ID)
   this.join(cfg.gameID.toString());
