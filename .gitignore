@@ -1,3 +1,4 @@
 .sass-cache/
+*.x.*
 foo/
 node_modules
