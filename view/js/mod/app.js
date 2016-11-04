@@ -113,11 +113,14 @@ TC.App = (function(TC, undefined) {
       // (true = !true : false / false = !false : true)
       TC.UI.Board.field[id].selected = !TC.UI.Board.field[id].selected;
 
+      // log
       if (TC.UI.Board.field[id].selected) {
         console.log("field :" + TC.UI.Board.field[id].name + " is selected");
       } else {
         console.log("field :" + TC.UI.Board.field[id].name + " is not selected");
       }
+      console.log("FieldA: " + TC.UI.Board.fieldA);
+      console.log("FieldB: " + TC.UI.Board.fieldB);
 
       // spot player action:
       if (TC.UI.Board.fieldA === '') {
