@@ -57,6 +57,7 @@
       "place_error": "place"
     },
     "attack": {
+      "dialogFieldInfoDisplay": "attack",
       "attack_opponent": "attack",
       "attack_lose": "attack",
       "attack_won": "attack",
