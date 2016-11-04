@@ -150,12 +150,14 @@ TC.UI = (function(TC, undefined) {
        */
       init: function(cfg) {
         UI.Board.field = {};
+        UI.Board.fieldA = '';
+        UI.Board.fieldB = '';
         UI.Board.load(cfg);
       },
       load: function(cfg) {
         UI.Board.surface = new Snap('#board');
-        //var dom,
-        //  filename = cfg.file.path + cfg.file.board;
+        // var dom,
+        // filename = cfg.file.path + cfg.file.board;
 
         Snap.load(cfg.file.path + cfg.file.board, function(f) {
           // TODO: get viewBox from file.
