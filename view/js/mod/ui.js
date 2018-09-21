@@ -162,12 +162,13 @@ TC.UI = (function(TC, undefined) {
         Snap.load(cfg.file.path + cfg.file.board, function(f) {
           // TODO: get viewBox from file.
           UI.Board.surface.attr({
-            viewBox: "0 0 900 900",
+            viewBox: "0 0 1880 1324",
             width: "100%",
             height: "100%"
           });
           for (var g in cfg.group) {
             for (var m in cfg.group[g].member) {
+              console.log("Init: " + cfg.group[g].member[m].id);
               UI.Board.field[cfg.group[g].member[m].id] = new Field({
                 id: cfg.group[g].member[m].id,
                 name: cfg.group[g].member[m].name,

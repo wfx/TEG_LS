@@ -27,13 +27,18 @@ var app = express(),
 server.listen(cfg.port, cfg.ip);
 
 // request in the Apache combined format to STDOUT
+/* dev: Concise output colored by response status for development use.
+   The :status token will be colored red for server error codes,
+   yellow for client error codes, cyan for redirection codes,
+   and uncolored for all other codes.
+*/
 app.use(morgan('dev'));
 
 // Use the session middleware
 // https://github.com/expressjs/
 app.use(session({
     secret: 'teg la secuela',
-    name: "teglr",
+    name: "tegls",
     cookie: {
         maxAge: 60000
     },
@@ -49,8 +54,8 @@ app.get('/', function(req, res) {
     console.log('respond client with session id: ' + sess);
 });
 
-console.log("Server run at http://127.0.0.1:" + cfg.port + "/");
-
+console.log("Server run at " + cfg.ip + ":" + cfg.port + "/");
+// the magic beginns
 io.sockets.on('connection', function(socket) {
     msg.initGame(io, socket);
 });

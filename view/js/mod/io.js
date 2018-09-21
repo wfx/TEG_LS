@@ -55,13 +55,14 @@ TC.IO = (function(TC, undefined) {
      * [Called on server connection]
      */
     onConnected: function() {
+      // TODO: Never again write only hmmm, a year later i have no idea what it means :/
       TC.App.sessionId = IO.socket.io.engine.id; // hmmm.
       console.log('Client: I\'m connected with id: ' + TC.App.sessionId);
     },
 
     /**
      * [Server can trigger states, if none given then return actualy state and triggers]
-     * @param  {[string]} trigger [Any trigger see tegclient.json]
+     * @param  {[string]} trigger [Any trigger see view/... fsm.json]
      * @param  {[json]}   data    [optional json formated data]
      */
     onTriggerState: function(trigger, data) {
@@ -88,7 +89,7 @@ TC.IO = (function(TC, undefined) {
     },
 
     /**
-     * [Socket for any error (tarzan is an inside jocke)]
+     * [Socket for any error (tarzan is an inside joke)]
      * @param  {[json]} data [Json formated data]
      */
     onGameError: function(data) {

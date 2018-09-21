@@ -1,3 +1,5 @@
+// TODO: message.js ... rename this thing?
+
 var readline = require("readline"),
   exports = module.exports = {},
   cfg = {}; // stores game configuration
@@ -20,6 +22,8 @@ exports.initGame = function(io, socket) {
   socket.on("advise", onAdvise);
 };
 
+// ts: trigger a state
+// The server terminal can also all state emite (by hand)
 var onAdvise = function(data, cb) {
   if (data.name == "state" && data.value == "ready") {
     this.emit("ts", "viewSceneStartup");

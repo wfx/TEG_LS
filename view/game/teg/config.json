@@ -37,18 +37,9 @@
 
       "member": [
         {
-          "name": "Argentinia",
-          "id": "Country-South_America-Argentina",
-          "boundary": ["Country-South_America-Peru", "Country-South_America-Brazil"],
-          "card": {
-            "id": "used element id in file -> cards",
-            "type": "0"
-          }
-        },
-        {
-          "name": "Brazil",
-          "id": "Country-South_America-Brazil",
-          "boundary": ["Country-South_America-Argentina", "Country-South_America-Peru", "Country-South_America-Venezuela"],
+          "name": "Chile",
+          "id": "Country-South_America-Chile",
+          "boundary": ["Country-South_America-Peru", "Country-South_America-Brazil", "Country-South_America-Uruguay"],
           "card": {
             "id": "used element id in file -> cards",
             "type": "0"
@@ -57,15 +48,42 @@
         {
           "name": "Peru",
           "id": "Country-South_America-Peru",
-          "boundary": ["Country-South_America-Venezuela", "Country-South_America-Brazil", "Country-South_America-Argentina"],
+          "boundary": ["Country-South_America-Colombia", "Country-South_America-Venezuela"],
           "card": {
             "id": "used element id in file -> cards",
             "type": "0"
           }
         },
         {
-          "name": "Venezuela",
-          "id": "Country-South_America-Venezuela",
+          "name": "Brazil",
+          "id": "Country-South_America-Brazil",
+          "boundary": ["Country-South_America-Venezuela", "Country-South_America-Argentina"],
+          "card": {
+            "id": "used element id in file -> cards",
+            "type": "0"
+          }
+        },
+        {
+          "name": "Colombia",
+          "id": "Country-South_America-Colombia",
+          "boundary": ["Country-South_America-Peru", "Country-South_America-Brazil"],
+          "card": {
+            "id": "used element id in file -> cards",
+            "type": "0"
+          }
+        },
+        {
+          "name": "Argentinia",
+          "id": "Country-South_America-Argentinia",
+          "boundary": ["Country-South_America-Peru", "Country-South_America-Brazil"],
+          "card": {
+            "id": "used element id in file -> cards",
+            "type": "0"
+          }
+        },
+        {
+          "name": "Uruguay",
+          "id": "Country-South_America-Uruguay",
           "boundary": ["Country-South_America-Peru", "Country-South_America-Brazil"],
           "card": {
             "id": "used element id in file -> cards",
