@@ -21,7 +21,7 @@ var express = require("express"),
 /* Init webserver */
 var app = express(),
     server = http.createServer(app),
-    io = socketIO.listen(server),
+    io = socketIO(server),
     sess = {};
 
 server.listen(cfg.port, cfg.ip);
