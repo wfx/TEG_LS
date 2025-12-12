@@ -1,4 +1,9 @@
-TEG - La Secuela ("the sequel")
+# ⚠️ **ARCHIVED**
+This project is **no longer actively maintained**.
+
+---
+
+jsTEG
 ===
 
 Is a sequel and redevelopment of the original
